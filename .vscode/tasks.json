@@ -1,0 +1,15 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "dev",
+			"path": "metaskills-frontend",
+			"problemMatcher": [
+				"$eslint-stylish"
+			],
+			"label": "npm: dev - metaskills-frontend",
+			"detail": "concurrently -n VITE,BACKEND -c blue,green \"npx vite\" \"npx nodemon --watch ../metaskills-backend ../metaskills-backend\""
+		}
+	]
+}
