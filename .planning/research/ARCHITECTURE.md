@@ -1,25 +1,31 @@
 # Architecture Patterns
 
-**Domain:** Bulk Question Import
-**Researched:** 2024
+**Domain:** Bulk Question Import (PDF Focus)
+**Researched:** 2024-2025
 
-## Recommended Architecture
+## Recommended Architecture: Streaming Import Pipeline
 
-The architecture should cleanly separate the physical parsing of the file from the database operations. 
+The architecture follows a pipeline that processes data page-by-page to maintain responsiveness and handle large documents.
 
 ```
-[ Uploaded File (Text/CSV) ]
-         |
-         v
-[ File Parser (Stream/Buffer) ] -> Extracts raw strings and maps to JSON
-         |
-         v
-[ Validator & Mapper ] -> Verifies data schema, generates Mongoose ObjectIds, links parent Module ID.
-         |
-         v
-[ Transaction Service ] -> Opens Mongoose Session, runs `insertMany`, updates Module, commits.
-         |
-         v
+[ PDF File ]
+     |
+     v
+[ Frontend: PDF Splitter (pdf-lib) ] -> Emits Page Blobs
+     |
+     v
+[ Frontend: OCR Scheduler (Tesseract.js) ] -> Pool of 4 Web Workers
+     |
+     v
+[ Frontend: AI Parser (Optional) ] -> Sends raw text to LLM (JSON output)
+     |
+     v
+[ Frontend: Review State / Editor ] -> Human validates/corrects
+     |
+     v
+[ Backend: Transaction Service ] -> Mongoose `insertMany` in a session
+     |
+     v
 [ MongoDB ]
 ```
 
@@ -27,77 +33,51 @@ The architecture should cleanly separate the physical parsing of the file from t
 
 | Component | Responsibility | Communicates With |
 |-----------|---------------|-------------------|
-| `ImportController` | Handles HTTP file upload (`multer`), invokes parser, returns success/error to client. | Express, `ParserService`, `DatabaseService` |
-| `ParserService` | Takes a file buffer/path, reads it via streams, converts lines into a normalized Javascript array of Question objects. | `ImportController` |
-| `DatabaseService` | Takes the validated array of Question objects, maps relationships, opens a session, executes inserts, and handles rollbacks. | `ImportController`, Mongoose |
+| `PDFSplitter` | Splits PDF into single-page blobs. | Browser File API, `pdf-lib` |
+| `OCRService` | Manages Tesseract worker pool, handles retries, reports progress. | Web Workers, `pdf.js` |
+| `ImportStateStore` | Maintains a "Streaming" list of questions. Updates as pages finish. | React Context/Redux |
+| `BackendController` | Receives final JSON, validates schema, executes transaction. | Express, Mongoose |
+
+### Data Flow (Iterative vs Batch)
+1. **Iterative:** Each page is a separate job. As soon as Page 1 is OCR'ed, it is sent to the AI Parser and then displayed in the UI. 
+2. **Overlap Strategy:** To handle questions split across pages, the AI Parser receives the text of `Current Page + Last 10% of Previous Page`.
 
 ## Patterns to Follow
 
-### Pattern 1: Pre-generating ObjectIds
-**What:** Generating database primary keys in Node.js before saving the document.
-**When:** Whenever inserting bulk child documents that must be linked to a parent document in the same transaction.
+### Pattern 1: Tesseract Worker Recycling
+**What:** Creating a fixed pool of workers and reusing them.
+**When:** To avoid the 2-3s setup cost of starting a new worker for every page.
 **Example:**
-```typescript
-import mongoose from 'mongoose';
-
-const moduleDoc = await Module.findById(moduleId);
-const questionsToInsert = parsedQuestions.map(q => {
-  const newId = new mongoose.Types.ObjectId();
-  return {
-    ...q,
-    _id: newId,
-    moduleId: moduleDoc._id
-  };
-});
-
-// Now we know the IDs of all questions before inserting them
-const questionIds = questionsToInsert.map(q => q._id);
-moduleDoc.questions.push(...questionIds);
+```javascript
+const scheduler = createScheduler();
+const worker = await createWorker('eng');
+scheduler.addWorker(worker); // Add to pool once
+// Reuse scheduler for all pages...
 ```
 
-### Pattern 2: Multi-Document Transaction Wrapper
-**What:** Mongoose's built-in transaction helper that automatically handles committing and aborting.
-**When:** Performing multiple inserts/updates that must be logically bound.
-**Example:**
-```typescript
-const session = await mongoose.startSession();
-
-try {
-  await session.withTransaction(async () => {
-    // 1. Insert all questions
-    await Question.insertMany(questionsToInsert, { session });
-    
-    // 2. Update the parent module
-    await moduleDoc.save({ session });
-  });
-} catch (error) {
-  // Transaction is automatically aborted here by withTransaction
-  throw new Error('Import failed, all changes rolled back.');
-} finally {
-  await session.endSession();
-}
-```
+### Pattern 2: Side-by-Side Context
+**What:** Rendering the PDF page canvas next to the editable OCR text.
+**When:** Essential for UX when OCR accuracy is < 100%.
 
 ## Anti-Patterns to Avoid
 
-### Anti-Pattern 1: The Loop-and-Save
-**What:** Iterating through the parsed array and calling `save()` on each model.
-**Why bad:** Creates N database roundtrips. Incredibly slow. Hard to rollback manually if item 500 fails out of 1000.
-**Instead:** Use `Model.insertMany(array)` inside a single transaction.
+### Anti-Pattern 1: Main-Thread Blocking
+**What:** Running `Tesseract.recognize` without a Web Worker.
+**Why bad:** Freezes the browser tab for 5-10 seconds per page.
+**Instead:** Use `Tesseract.js`'s built-in worker support or `createScheduler`.
 
-### Anti-Pattern 2: Mixing Parsing and Database Logic
-**What:** Reading a file line-by-line and inserting each line into the DB immediately as it is parsed.
-**Why bad:** If a syntax error is found on line 999, you have already inserted 998 items. Rollbacks become complex if streams are left open.
-**Instead:** Read and parse the *entire file* into memory (if size permits), validate it completely, and *then* pass the fully validated array to the database service.
+### Anti-Pattern 2: Sending Images to Backend
+**What:** Uploading every PDF page as an image to a Node.js server for OCR.
+**Why bad:** Massive bandwidth usage and high server CPU load.
+**Instead:** Perform OCR in the browser; only send the final structured text/JSON to the server.
 
 ## Scalability Considerations
 
-| Concern | At 100 questions | At 10K questions | At 1M questions |
-|---------|--------------|--------------|-------------|
-| Memory | Load entire file into RAM | Still safe to load into RAM | Process with streams, use chunked transactions (e.g., commit every 1000 items) |
-| Speed | Instant | Few seconds | Minutes, requires background worker (e.g., BullMQ) and progress tracking |
+| Concern | 1 Page | 50 Pages | 500 Pages |
+|---------|--------|----------|-----------|
+| RAM | ~100MB | ~500MB (due to workers) | Risk of OOM; must limit concurrent workers and clear old blobs. |
+| Time | ~5s | ~1-2 mins | Several minutes; requires robust progress tracking and "Resume" capability. |
 
 ## Sources
-
-- Mongoose bulk operation patterns [HIGH Confidence]
-- Enterprise Node.js Architecture best practices [HIGH Confidence]
+- Tesseract.js Worker Pool Patterns [HIGH Confidence]
+- PDF.js rendering best practices [HIGH Confidence]

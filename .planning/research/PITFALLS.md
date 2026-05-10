@@ -1,44 +1,44 @@
 # Domain Pitfalls
 
 **Domain:** Bulk Question Import
-**Researched:** 2024
+**Researched:** 2024-2025
 
 ## Critical Pitfalls
 
-Mistakes that cause rewrites or major issues.
+### Pitfall 1: Browser Memory Overload (The "Blob" Leak)
+**What goes wrong:** Browser tab crashes during a large PDF import.
+**Why it happens:** Storing hundreds of individual page blobs or canvas elements in memory without clearing them.
+**Consequences:** Loss of work, poor UX.
+**Prevention:** 
+- Revoke Object URLs immediately after use (`URL.revokeObjectURL`).
+- Clear canvas elements after Tesseract is finished.
+- Limit concurrent workers based on `navigator.hardwareConcurrency`.
 
-### Pitfall 1: Attempting Transactions on a Standalone MongoDB Instance
-**What goes wrong:** Calling `mongoose.startSession()` and `session.startTransaction()` throws an error in local development environments.
-**Why it happens:** MongoDB strictly requires a Replica Set for multi-document transactions. Default local MongoDB installs run as Standalone nodes.
-**Consequences:** The entire import feature crashes, blocking testing and development.
-**Prevention:** Configure the local MongoDB Docker container or native install to run as a single-node Replica Set (using `--replSet` flag and `rs.initiate()`).
-**Detection:** `MongoServerError: Transaction numbers are only allowed on a replica set member or mongos`.
-
-### Pitfall 2: Memory Bloat During Parsing
-**What goes wrong:** The Node.js application crashes with an Out-of-Memory (OOM) error when importing a large document.
-**Why it happens:** Using `fs.readFileSync` on a massive file or holding 10,000 parsed Mongoose objects in memory before insertion.
-**Consequences:** The backend server crashes, disrupting other users.
-**Prevention:** Use Node.js streams (`fs.createReadStream`) combined with a chunked parser. If the file is reasonably sized (< 10MB), in-memory parsing is acceptable. Otherwise, enforce file size limits at the upload layer.
-**Detection:** `FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory`.
+### Pitfall 2: Transaction Failures on Large Payloads
+**What goes wrong:** Backend timeout or Mongoose session failure when importing 1000+ questions at once.
+**Why it happens:** Default MongoDB transaction lifetime is 60 seconds.
+**Consequences:** Import fails even if the data is valid.
+**Prevention:** If the payload is massive, break the backend import into chunked transactions (e.g., 200 questions per transaction) or increase the transaction lifetime (not recommended).
 
 ## Moderate Pitfalls
 
-### Pitfall 1: Unhandled Asynchronous Execution in Loops
-**What goes wrong:** Calling `await Question.create()` inside a standard `forEach` loop.
-**Prevention:** Node.js `forEach` does not await promises. Use a `for...of` loop for sequential execution, or map the data and use `Model.insertMany(data, { session })` for vastly superior performance.
+### Pitfall 3: Tesseract Initialization Overhead
+**What goes wrong:** First page takes 15 seconds, subsequent pages take 5.
+**Why it happens:** Workers need to download WASM and language data (`eng.traineddata`).
+**Prevention:** Initialize workers as soon as the user enters the "Import" screen, or use a service worker to cache the assets.
 
-### Pitfall 2: Losing Hierarchical Context
-**What goes wrong:** Questions are imported, but not linked to their parent Module.
-**Prevention:** Pre-generate ObjectIds (`new mongoose.Types.ObjectId()`) for the child questions in memory, map them into an array, push that array to the parent Module's `questions` field, and execute both updates within the same transaction.
+### Pitfall 4: AI Context Clipping
+**What goes wrong:** A question starts on Page 4 and ends on Page 5, but the AI only sees Page 5 and treats it as a broken fragment.
+**Prevention:** Use the "Overlap" strategy (send the last few lines of Page N as context for Page N+1).
 
 ## Phase-Specific Warnings
 
 | Phase Topic | Likely Pitfall | Mitigation |
 |-------------|---------------|------------|
-| Parsing | Regex catastrophic backtracking | Write strict, constrained Regex or use established parsers (like `csv-parser`). |
-| Database | Partial inserts on failure | Wrap the `insertMany` and Module update logic inside a Mongoose `withTransaction` block. |
+| OCR (Phase 1) | Thread Blocking | Mandatory use of `Tesseract.createScheduler` with Web Workers. |
+| AI Parsing (Phase 2) | Token Waste | Don't send the entire raw OCR text if only specific blocks are needed; use a "first-pass" filter to find questions. |
+| DB Insert (Phase 3) | Standalone Mongo | Must use Replica Set for transactions. |
 
 ## Sources
-
-- Mongoose Transactions Documentation [HIGH Confidence]
-- Node.js Performance Guidelines [HIGH Confidence]
+- Tesseract.js Issue Tracker (Memory Leaks) [HIGH Confidence]
+- MongoDB Transaction Best Practices [HIGH Confidence]

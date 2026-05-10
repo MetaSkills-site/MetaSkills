@@ -1,62 +1,124 @@
-# Research Summary: Hybrid Manual/Automated Bulk Question Import
+# Project Research Summary
+
+**Project:** Iterative PDF Import Workflow
+**Domain:** Document Processing / EdTech
+**Researched:** 2024-05-31
+**Confidence:** HIGH
 
 ## Executive Summary
 
-The proposed workflow introduces a hybrid manual/automated approach for bulk question import, utilizing Tesseract.js to extract text from PDFs. Unlike fully automated backend parsers, this approach parses the raw text into a frontend "preview state" before any database insertion. This intermediate step shifts the burden of complex formatting—specifically converting flat strings into the required Slate.js JSON structure and resolving internal ObjectIds for multiple-choice options—away from a rigid backend parser. 
+The research concludes that a robust PDF import workflow should move away from server-side batch processing toward a frontend-centric, iterative "streaming" pipeline. By utilizing `pdf-lib` and `Tesseract.js` within the browser, we can provide immediate feedback to users as each page is processed. This approach minimizes server load and allows for real-time human intervention/review while the rest of the document is still being analyzed.
 
-Instead, admins manually review, augment (adding answers, explanations, images), and format the content using the existing frontend editor. This directly mitigates significant backend concerns around parsing fragile PDFs and structuring complex Mongoose schemas, ensuring data integrity before committing via an all-or-nothing transaction. Ultimately, this approach turns a notoriously brittle process (automated PDF parsing) into a robust, human-in-the-loop workflow.
+The recommended approach involves splitting the PDF into single-page blobs, queuing them for OCR using a worker pool, and sequentially sending the text to an AI parser. This iterative loop ensures that large files do not crash the system and that questions split across page boundaries can be handled by providing small overlapping text fragments to the AI.
+
+The primary risks identified are browser memory exhaustion (OOM) from accumulated blobs/canvases and potential context loss for questions that span multiple pages. These are mitigated by aggressive memory management (URL revocation) and a "last-10%-overlap" strategy for AI parsing context.
 
 ## Key Findings
 
-**From STACK.md:**
-- Node.js (>=18.x) and Mongoose (>=6.x) with a MongoDB Replica Set are required for robust multi-document transactions using `insertMany`.
-- Transactions are crucial for maintaining an "all-or-nothing" import strategy.
+### Recommended Stack
 
-**From FEATURES.md:**
-- Table stakes include all-or-nothing import, strict validation, and error reporting. 
-- The proposed "preview state" functions as a superior "dry run" differentiator, allowing admins to review and correct issues before saving.
+The stack focuses on browser-side performance and backend data integrity.
 
-**From ARCHITECTURE.md:**
-- Architecture must cleanly separate parsing from DB operations. 
-- The user's workflow adapts this by moving the initial parsing phase to the frontend (Tesseract.js) and using the frontend editor as the validation and mapping layer, sending clean JSON to the backend.
+**Core technologies:**
+- **Tesseract.js (^5.x):** Optical Character Recognition — Performs OCR in Web Workers to keep the UI responsive.
+- **pdf-lib (^1.17.x):** PDF Manipulation — Splitting large PDFs into manageable single-page blobs without server round-trips.
+- **pdfjs-dist (^4.x):** PDF Rendering — Renders PDF pages to high-resolution canvases for OCR processing.
+- **Mongoose / MongoDB:** Data Persistence — Using multi-document transactions to ensure "all-or-nothing" imports of the final question set.
 
-**From PITFALLS.md:**
-- Key pitfalls include memory bloat and transactional failures on standalone DBs. 
-- The frontend preview limits payload size per batch and ensures clean data reaches the backend, preventing failed transactions and memory exhaustion.
+### Expected Features
 
-**From FEASIBILITY.md & CONCERNS.md:**
-- Backend parsing of PDFs is difficult and error-prone, but Tesseract.js combined with manual admin review bypasses the unreliability of automated extraction.
-- **Slate.js and ObjectId Mitigation:** The backend requires a complex Slate.js JSON structure for text fields and dynamically generated `ObjectId`s for multiple-choice options. The "preview state" mitigates this because the frontend editor natively understands how to generate the deeply nested `Slate.js` JSON. When finalized, the frontend structures the payload correctly, pre-generating `ObjectId`s before sending a schema-compliant array to the backend.
-- **Role of the Frontend Editor:** Tesseract outputs flat strings. The frontend editor acts as the crucial mapping layer. Admins manually tag answers, add explanations, and insert images. The editor's serialization process transforms this augmented state into the strict Mongoose schema format, bypassing the need for a brittle backend parser to infer complex relationships.
+**Must have (table stakes):**
+- **Page-by-Page Progress:** Visual indicators (progress bars) for each individual page and overall document status.
+- **All-or-Nothing Import:** Ensuring a partially failed import doesn't leave orphan records in the database.
+
+**Should have (competitive):**
+- **Streaming Review UI:** Allowing users to start editing/approving questions from Page 1 while later pages are still being processed.
+- **AI-Assisted Tagging:** Automatically structuring raw OCR text into JSON-formatted questions, options, and metadata.
+
+**Defer (v2+):**
+- **Auto-Merging:** Intelligent merging of multiple separate PDF files into a single context.
+
+### Architecture Approach
+
+A pipeline-based architecture where data flows from raw PDF -> Page Blobs -> OCR Text -> AI JSON -> Review State -> DB.
+
+**Major components:**
+1. **OCR Scheduler:** Manages a pool of Tesseract workers to parallelize page processing (limited by hardware concurrency).
+2. **AI Accumulator:** A state manager that holds partial results and handles the "overlapping context" needed to parse questions split across pages.
+3. **Transaction Service:** A backend module that performs bulk validation and atomic insertion of the final structured data.
+
+### Critical Pitfalls
+
+1. **Memory Overload (Blob Leak):** Failure to revoke object URLs or clear canvases will crash the browser on large PDFs. **Prevention:** Implement strict cleanup hooks after each page finishes.
+2. **Transaction Timeouts:** MongoDB default 60s limit can block large imports. **Prevention:** Use chunked validation but keep the final write atomic.
+3. **Context Clipping:** AI missing parts of questions that span pages. **Prevention:** Pass the tail end of the previous page's text as context for the next page.
 
 ## Implications for Roadmap
 
-Suggested phases: 3
+### Phase 1: Frontend PDF & OCR Engine
+**Rationale:** The core bottleneck and most complex technical part is reliable client-side OCR. This must be solved before UI or AI logic.
+**Delivers:** A working "Page Splitter" and "OCR Worker Pool" that can convert any PDF into a list of text strings.
+**Addresses:** Page-by-Page Progress, PDF Splitting.
+**Avoids:** Main-Thread Blocking.
 
-1. **Phase 1: PDF OCR & Frontend Preview Integration** — Implement Tesseract.js in the frontend to extract raw text from uploaded PDFs and render it into the frontend editor's "preview state." *Rationale: Directly tackles the PDF parsing feasibility issue by utilizing OCR and keeping unvalidated data out of the backend.*
-2. **Phase 2: Editor Augmentation & Mapping** — Enable admins to modify previewed questions, add explanations/images via the UI, and ensure the frontend correctly serializes data into the required `Slate.js` JSON and pre-generates `ObjectId`s. *Rationale: Solves the complex Mongoose schema requirements (Slate.js/ObjectIds) by leveraging existing frontend editor logic.*
-3. **Phase 3: Backend Bulk Transaction** — Develop the backend `ImportController` and `DatabaseService` to receive the fully formatted JSON payload, perform strict Zod/Joi validation, and execute a multi-document Mongoose transaction using `insertMany`. *Rationale: Ensures ACID compliance, all-or-nothing data integrity, and strict validation.*
+### Phase 2: AI Parsing & Context Accumulation
+**Rationale:** Converting raw text into structured questions is the next dependency. This phase handles the logic of questions spanning pages.
+**Delivers:** An "AI Accumulator" that sends page text to LLM and merges results into a unified draft list.
+**Uses:** Overlap context strategy.
+**Implements:** AI-Assisted Tagging.
 
-## Research Flags
+### Phase 3: Iterative Review UI
+**Rationale:** Once data is being parsed, users need a way to see and edit it "streaming" into the page.
+**Delivers:** The 'BulkImportPage' update with side-by-side PDF vs. Editor view and per-page progress bars.
+**Addresses:** Streaming Review UI.
 
-Needs research: Phase 1 (Tesseract.js performance limits in browser vs. backend Node wrapper)
-Standard patterns: Phase 3 (Mongoose bulk insert transactions)
+### Phase 4: Atomic Backend Import
+**Rationale:** The final step is moving the reviewed data from the browser to the database securely.
+**Delivers:** Mongoose Transaction-based API endpoint for bulk question creation.
+**Avoids:** Data corruption from partial failures.
+
+### Phase Ordering Rationale
+
+- **Technical Foundation:** OCR and PDF splitting are the foundation for everything else.
+- **Logic over UI:** AI parsing logic (especially page-spanning questions) is a major risk and should be solved before building the polished Review UI.
+- **Frontend-First:** Since the heavy lifting is in the browser, the backend remains a simple final-stage validator.
+
+### Research Flags
+
+Phases likely needing deeper research during planning:
+- **Phase 2 (AI Parsing):** Specific prompting strategies to handle the "Overlap" text without duplicating questions need validation.
+
+Phases with standard patterns (skip research-phase):
+- **Phase 1 (OCR):** Tesseract.js worker pools are well-documented.
+- **Phase 4 (Backend):** Mongoose transactions are a standard industry pattern.
 
 ## Confidence Assessment
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | HIGH | Based on standard Mongoose/Node.js best practices and documentation. |
-| Features | HIGH | The hybrid workflow perfectly aligns with the requested dry-run capability and user needs. |
-| Architecture | HIGH | Leveraging the frontend editor for complex mapping is a robust and pragmatic pattern. |
-| Pitfalls | HIGH | This approach directly addresses the critical blockers identified in FEASIBILITY.md and CONCERNS.md (PDF parsing, Slate.js formatting). |
+| Stack | HIGH | Library choices are standard and well-tested. |
+| Features | HIGH | Table stakes are well-defined in the competitive landscape. |
+| Architecture | HIGH | Pipeline pattern is robust for this type of data-heavy flow. |
+| Pitfalls | MEDIUM | Memory leaks are always a risk in JS; implementation must be rigorous. |
 
-**Gaps:** Needs verification on the maximum size of PDFs Tesseract.js can comfortably handle in the browser before causing UI freezes.
+**Overall confidence:** HIGH
+
+### Gaps to Address
+
+- **Large Document Performance:** While 50-page PDFs are fine, 500-page PDFs might need "virtual scrolling" or aggressive memory offloading to disk (IndexedDB).
+- **AI Token Cost:** Real-time page-by-page AI parsing could get expensive; consider a "first-pass" local heuristic to skip blank or non-question pages.
 
 ## Sources
-- Mongoose Transactions docs [HIGH]
-- Node.js Streams docs [HIGH]
-- EdTech industry standards (Moodle Aiken format) [HIGH]
-- Enterprise Node.js Architecture best practices [HIGH]
-- Codebase Analysis (CONCERNS.md) [HIGH]
-- Feasibility Assessment (FEASIBILITY.md) [HIGH]
+
+### Primary (HIGH confidence)
+- Tesseract.js v5 Documentation (Worker Pools/WASM)
+- pdf-lib API Reference (Page Splitting)
+- Mongoose Transaction Guide
+
+### Secondary (MEDIUM confidence)
+- PDF.js rendering benchmarks
+- LLM prompt engineering patterns for document parsing
+
+---
+*Research completed: 2024-05-31*
+*Ready for roadmap: yes*

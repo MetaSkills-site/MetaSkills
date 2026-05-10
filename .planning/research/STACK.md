@@ -1,36 +1,46 @@
 # Technology Stack
 
 **Project:** Bulk Question Import
-**Researched:** 2024
+**Researched:** 2024-2025
 
 ## Recommended Stack
 
 ### Core Framework
 | Technology | Version | Purpose | Why |
 |------------|---------|---------|-----|
-| Node.js | >=18.x | Parsing & execution environment | Provides native stream processing via `fs` and `stream` modules for high-performance file reading. |
-| Mongoose | >= 6.x | ODM / Database operations | Provides highly optimized `insertMany()` and robust `startSession()` capabilities for ACID transactions. |
+| React.js | ^18.x | Frontend UI | Handles the "Streaming Import" state and PDF rendering. |
+| Node.js | >=18.x | Backend API | Transactional processing and final data validation. |
+| Mongoose | >= 6.x | ODM / Database operations | Optimized `insertMany()` and `startSession()` for transactions. |
+
+### PDF & OCR (Frontend)
+| Library | Version | Purpose | Why |
+|---------|---------|---------|-----|
+| `pdf-lib` | ^1.17.x | PDF Manipulation | Splitting multi-page PDFs into individual page buffers/blobs. |
+| `pdfjs-dist` | ^4.x | PDF Rendering | Rendering PDF pages to `<canvas>` elements for Tesseract processing. |
+| `Tesseract.js` | ^5.x | Optical Character Recognition | High-performance WASM-based OCR. Supports Worker Pools for parallelism. |
 
 ### Database
 | Technology | Version | Purpose | Why |
 |------------|---------|---------|-----|
-| MongoDB | >= 4.0 | Database | Multi-document transactions were introduced in v4.0. **Must be deployed as a Replica Set.** |
+| MongoDB | >= 4.0 | Database | Multi-document transactions (Replica Set required). |
 
 ### Supporting Libraries
 | Library | Version | Purpose | When to Use |
 |---------|---------|---------|-------------|
-| `multer` | ^1.4.x | File Uploads | Use if the import feature is exposed via an Express REST API endpoint to handle `multipart/form-data`. |
-| `csv-parser` | ^3.x | CSV Parsing | Use if the chosen import format is CSV. Highly optimized streaming parser. |
-| Native Regex / String manipulation | N/A | Aiken / Markdown Parsing | Use if building a custom text-based format. No external library needed. |
+| `multer` | ^1.4.x | File Uploads | Handling multi-part file uploads if using server-side processing. |
+| `p-map` | ^7.x | Concurrency Control | Useful for limiting parallel AI API calls in the frontend. |
 
 ## Alternatives Considered
 
 | Category | Recommended | Alternative | Why Not |
 |----------|-------------|-------------|---------|
-| File Format | CSV / Aiken (Plain Text) | PDF / DOCX | Parsing PDFs for structured relationships is incredibly complex and error-prone. Requires heavy libraries like `pdf-parse` or `mammoth` and yields unreliable hierarchical data. |
-| DB Ops | Mongoose `insertMany` with Sessions | Loop with `save()` | Calling `.save()` in a `for` loop is extremely slow and causes unnecessary database roundtrips. |
+| OCR Execution | Frontend (Tesseract.js) | Backend (Python/Tesseract) | Moving OCR to the frontend saves server CPU and allows for a "streaming" UX where the user sees progress in real-time. |
+| PDF Splitting | `pdf-lib` | `pdf.js` | `pdf.js` is for rendering; `pdf-lib` is better for extracting/modifying pages as standalone blobs. |
+| DB Ops | Mongoose Transactions | Manual Cleanup | Manual cleanup on failure is error-prone and doesn't guarantee integrity. |
 
 ## Sources
 
+- Tesseract.js v5 Release Notes [HIGH]
+- pdf-lib API Documentation [HIGH]
 - Mongoose Transactions docs [HIGH]
 - Node.js Streams docs [HIGH]
