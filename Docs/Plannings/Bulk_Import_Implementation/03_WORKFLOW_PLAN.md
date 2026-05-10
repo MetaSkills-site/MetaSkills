@@ -35,3 +35,11 @@ This phased execution plan ensures safe and verifiable implementation of the bul
 1. **Connect Frontend to Backend:** Point the frontend submit button to the new bulk import endpoint.
 2. **Error Handling & Loading States:** Add spinners for PDF processing, AI parsing, and saving. Implement toast notifications for successes and errors.
 3. **Validation:** Perform a full manual E2E test with a complex PDF, ensuring all layers succeed and the module updates.
+
+## Phase 6: Architectural Gap Fixes (Addendum)
+- [ ] **Bi-Directional Reference Mapping:** Handle linking of questions to modules entirely on the backend by injecting `moduleId` and updating the parent `Module` document.
+- [ ] **Context and Image Detachment:** Implement a side-by-side split view in the UI (PDF left, drafts right) and allow manual image attachments for context.
+- [ ] **Ignored Question Types:** Add a prominent warning in the UI that only MCQs are currently supported by the parser.
+- [ ] **Slate.js Data Transformation:** Update AI prompt to output Markdown, and implement a robust Markdown-to-Slate JSON converter on the frontend.
+- [ ] **Token Limits & AI Truncation:** Implement frontend text chunking, batch requests to the AI proxy, and aggregate results in the UI.
+- [ ] **Frontend ObjectID Generation:** Eliminate client-side ObjectID generation; rely exclusively on Mongoose defaults during backend insertion.

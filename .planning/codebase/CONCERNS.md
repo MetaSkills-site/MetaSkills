@@ -1,42 +1,43 @@
 # Codebase Concerns
 
-**Analysis Date:** 2024-05-30
-
-## Tech Debt
-
-**[Data Layer / Schema Definitions]:**
-- Issue: Heavy reliance on Mongoose `pre('validate')` hooks and manual controller logic for data validation instead of a dedicated validation library (e.g., Zod, Joi).
-- Files: `metaskills-backend/models/Questions.model.js`, `metaskills-backend/controllers/quiz.controller.js`
-- Impact: Malformed data (like missing options for MCQs) fails late at the database layer rather than at the API boundary. This makes error reporting for bulk operations difficult and leads to fragmented validation logic.
-- Fix approach: Introduce Zod or Joi schemas at the route/controller level to strictly validate incoming bulk question payloads before interacting with the database.
-
-**[Large Mongoose Transactions]:**
-- Issue: The `createQuestion` logic uses `session.withTransaction()` to ensure atomic updates between `Question` and `Module` documents.
-- Files: `metaskills-backend/controllers/quiz.controller.js`
-- Impact: If this controller logic is reused in a loop for bulk imports, it will create massive transaction overhead. Wrapping a bulk import of thousands of questions in a single MongoDB transaction could exceed transaction time or size limits, causing the entire import to fail.
-- Fix approach: Implement a dedicated `bulkImportQuestions` function that uses `Model.insertMany()` and bulkWrite operations for updating the related `Module` arrays, rather than individual transactions.
-
-## Structural Concerns for Bulk Import
-
-**[Rich Text (Slate.js) Data Structure]:**
-- Problem: The `question`, `options.mcq`, and `explanation` fields store data in Slate.js JSON array format (`{ slate: mongoose.Schema.Types.Mixed }`). 
-- Files: `metaskills-backend/models/Questions.model.js`
-- Cause: The frontend relies on a rich text editor. A plain text-file or CSV import feature will only provide flat strings.
-- Improvement path: The bulk import feature must include a robust parser that converts plain text (or markdown-like text) into the deeply nested Slate.js JSON node structure required by the database. Otherwise, the frontend editor will crash when attempting to render plain strings.
-
-**[Complex Subdocument ObjectId Referencing for MCQs]:**
-- Files: `metaskills-backend/models/Questions.model.js`
-- Why fragile: MCQ questions require each option to have an auto-generated `_id`, and the `correctOption` field must precisely match one of these subdocument `_id`s. 
-- Safe modification: A bulk import script cannot simply pass `correctOption: 'A'`. It must dynamically generate ObjectIds for each option during parsing, assign them to the `mcq` array, and map the correct option's ObjectId to the `correctOption` field *before* inserting into the database.
-- Test coverage: Ensure unit tests validate the bulk parser's ability to accurately assign and cross-reference these ObjectIds.
-
-## Scaling Limits
-
-**[Many-to-Many Array Unbounded Growth]:**
-- Current capacity: The database handles single question insertions effectively using `$addToSet`.
-- Limit: `Module.model.js` stores an array of `questionIds`. MongoDB has a 16MB document limit. If a module accumulates tens of thousands of questions via bulk import, the `Module` document will hit the BSON size limit and degrade read performance.
-- Scaling path: Consider paginating the relationship or reversing it entirely so that only `Question` stores the `moduleId`, removing the `questionIds` array from `Module` if bulk imports lead to massive modules.
+**Analysis Date:** 2024-05-10
 
 ## Known Bugs
 
-- Not directly identified in data layer logic, but implicit bug risk if `correctOption` reference is orphaned during bulk inserts bypassing standard controller logic.
+**Bulk Import Draft Edit Crash:**
+- Symptoms: The application crashes with the error "Cannot read properties of undefined (reading 'options')" when clicking the 'Edit' button on a question draft in the Bulk Import flow.
+- Files: 
+  - `src/pages/admin/BulkImportPage.jsx`
+  - `src/components/QuestionEditor.jsx`
+- Trigger: Clicking the "Edit" icon on a parsed draft during "Phase 2: Review and Edit" of the Bulk Import process.
+- Cause: `BulkImportPage.jsx` renders `<QuestionEditor />` (the default export) without passing the required `questionData` prop. `QuestionEditor` attempts to read `questionData.options` during its initialization, throwing the error because `questionData` is undefined.
+- Fix approach: `QuestionEditor.jsx` has an internal component `EditQuestionContent` that actually renders the editor UI inside an `EditorProvider`. `BulkImportPage` is already manually setting up an `EditorProvider` with `initialValues` pre-formatted from drafts. To fix the issue, `BulkImportPage` should either import and use `EditQuestionContent` instead of the default `QuestionEditor` export, or `QuestionEditor` should be refactored to allow skipping the `questionData` prop mapping if `EditorContext` is already populated. Alternatively, `BulkImportPage` could construct a mock `questionData` object mimicking a backend response and pass it directly to `<QuestionEditor questionData={mockData} />`, abandoning its custom `EditorProvider` wrapper.
+
+## Tech Debt
+
+**Inconsistent Question Data Structures:**
+- Issue: The structure of a "question" object differs depending on whether it comes from the backend API, the Slate editor context, or the new Bulk Import drafts. This leads to complex transformation and validation logic scattered across multiple components.
+- Files: 
+  - `src/components/QuestionEditor.jsx`
+  - `src/pages/admin/BulkImportPage.jsx`
+  - `src/components/admin/QuestionDisplayTabs.jsx`
+  - `src/components/QuestionPreview.jsx`
+- Impact: It is very easy to introduce bugs (like the Bulk Import crash) because components have conflicting expectations. For example:
+  - `QuestionEditor` expects backend format: `options.mcq` is an Array of objects (`[{ slate, html, _id }]`).
+  - `EditorContext` expects flat format: `options.mcq` is an Object (`{ A, B, C, D, correct, extras }`).
+  - `QuestionDisplayTabs` accepts a hybrid format where it handles both arrays and nested `{ type: 'MCQ', mcq: [...] }` formats conditionally.
+- Fix approach: Define a single, standardized frontend Question entity format. Centralize data transformation functions in a utility file (e.g., `src/utils/questionTransforms.js`) that handle mapping between the "Backend Format" and the "Editor Format" instead of embedding mapping logic directly in component render functions. 
+
+## Fragile Areas
+
+**Question Preview Rendering:**
+- Files: 
+  - `src/components/admin/QuestionDisplayTabs.jsx`
+  - `src/components/QuestionPreview.jsx`
+- Why fragile: The display components rely on deep optional chaining and fallback properties to account for historical data variations or draft states (e.g., `question.answerType || question.options?.type || question.type`). Mock data generators like `buildMockQuestionForView` in `BulkImportPage` have to carefully recreate fake `_id` strings and array structures to trick `QuestionDisplayTabs` into rendering properly without errors.
+- Safe modification: Any new question types or changes to the backend schema will require updating the messy conditional logic in `renderAnswer` inside `QuestionDisplayTabs`. Ensure robust unit tests for different question data variations are created before refactoring these components.
+- Test coverage: Gaps in testing for draft vs. live data representations of questions.
+
+---
+
+*Concerns audit: 2024-05-10*
