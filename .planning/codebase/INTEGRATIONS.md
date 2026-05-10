@@ -1,6 +1,6 @@
 # External Integrations
 
-**Analysis Date:** 2024-05-18
+**Analysis Date:** 2025-02-14
 
 ## APIs & External Services
 
@@ -9,7 +9,8 @@
   - SDK/Client: `@google/genai`
 - OpenAI API - Used for AI generation features
   - SDK/Client: `openai`
-  - Integration logic defined in `metaskills-backend/config/aiPromptConfig.js`
+- Groq / NVIDIA - High-speed inference for fallback and vision pipelines
+  - Integration logic defined in `metaskills-backend/config/aiPromptConfig.js` and `metaskills-backend/services/ai.service.js`
 
 **Email Delivery:**
 - Brevo (formerly Sendinblue) - Transactional emails
@@ -56,16 +57,18 @@
 
 **Required env vars:**
 - `MONGO_URI` - MongoDB connection string
+- `GEMINI_API_KEY` - Google GenAI authentication
+- `GROQ_API_KEY` - Groq API authentication
+- `NVIDIA_API_KEY` - NVIDIA NIM authentication
 - `BREVO_API_KEY` - Email service authentication
 - `GOOGLE_CLIENT_ID` - Google OAuth client ID
 - `GOOGLE_CLIENT_SECRET` - Google OAuth client secret
 - `GOOGLE_REFRESH_TOKEN` - Google OAuth refresh token for Drive integration
-- `DRIVE_FOLDER_URL` - Target folder ID for backups
-- `FIREBASE_*` - Firebase configuration variables (API Key, Auth Domain, Project ID, etc.)
+- `FIREBASE_*` - Firebase configuration variables
 
 **Secrets location:**
 - Stored in a root `.env` file, consumed by both the Node process and Docker Compose context.
 
 ---
 
-*Integration audit: 2024-05-18*
+*Integration audit: 2025-02-14*

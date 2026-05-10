@@ -1,6 +1,6 @@
 # Technology Stack
 
-**Analysis Date:** 2024-05-18
+**Analysis Date:** 2025-02-14
 
 ## Languages
 
@@ -42,6 +42,10 @@
 - `slate` / `slate-react` - Rich text editor framework
 - `mathlive` & `katex` - Math rendering and input
 
+**PDF Processing & OCR (Frontend):**
+- `pdfjs-dist` - PDF text extraction and rendering
+- `tesseract.js` - Client-side OCR for scanned documents
+
 **Infrastructure:**
 - `bcrypt` `^6.0.0` & `jsonwebtoken` `^9.0.2` - Authentication and authorization
 - `express-rate-limit` `^8.2.1` - API rate limiting
@@ -69,4 +73,4 @@
 
 ---
 
-*Stack analysis: 2024-05-18*
+*Stack analysis: 2025-02-14*
