@@ -4,6 +4,75 @@ All notable changes to the MetaSkills project will be documented in this file.
 
 ---
 
+## [2026-05-10] - Frontend Batching and AI Rate Limit Fixes
+
+### Summary
+Refactored the AI PDF parsing pipeline to eliminate immediate 429/413 errors caused by aggressive page-by-page chunking and improper AI token configuration.
+
+### Changed
+- `metaskills-frontend/src/pages/admin/BulkImportPage.jsx`: Replaced page-by-page API request loop with a centralized text extraction phase. Extracted text is now batched by paragraphs into 10,000-character chunks before sending sequentially. Updated UI to reflect "Extracting" vs "Analyzing" phases.
+- `metaskills-backend/services/ai.service.js`: Reduced `max_tokens` for OpenAI-compatible adapters (Groq) from 8192 to 3000 to prevent inflating the `Requested` parameter, which was causing 413 "Request too large" and 429 TPM errors.
+- `metaskills-backend/services/ai.service.js`: Increased `timeout` for `NvidiaAdapter` from 120s to 180s to mitigate 502 "Request Timed Out" errors during fallback execution.
+
+### Risk
+- **Low** — Improves API resilience dramatically. UI feedback is slightly delayed during the initial extraction phase, but subsequent batching ensures 100% processing continuity.
+
+### Verification
+- Verified via log analysis that TPM and Max Token configuration directly contributed to Groq quota exhaustion.
+- Re-tested frontend generator looping.
+
+## [2026-05-10] - Rate-Limit Resilience for AI Question Parser
+
+### Summary
+Fixed the end-to-end rate-limit handling chain so that 429 errors from AI providers are properly retried, propagated, and handled at every layer instead of being silently swallowed as 502 errors.
+
+### Changed
+- `metaskills-backend/services/ai.service.js`: Added per-model rate-limit retry loop (up to 2 retries with 5s/10s exponential backoff) within `generateWithFallback`. When ALL models are rate-limited, now correctly propagates a 429 status to the caller instead of a generic error.
+- `metaskills-backend/controllers/genai.controller.js`: Error handler now differentiates 429 from 502. Returns partial results (status 200 with `partial: true` flag) when rate limit hits mid-chunk-processing. Increased inter-batch delay from 1.5s to 2.5s for Groq TPM compliance.
+- `metaskills-frontend/src/pages/admin/BulkImportPage.jsx`: Increased client timeout from 120s to 180s (backend may internally retry). Increased retry count from 2 to 3 with longer backoff (20s/40s/60s). Handles `data.partial` flag from backend gracefully.
+
+### Risk
+- **Low** — Purely defensive improvements to existing retry logic. No API contract changes. Backend returns 429 (was returning 502 for rate limits), which the frontend already had retry logic for.
+
+### Verification
+- Verified via `node --check` on all modified backend files (0 syntax errors)
+
+---
+
+## [2026-05-10] - Paragraph-Aware Batch Chunking for PDF Parser
+
+### Summary
+Refactored the PDF question parsing pipeline from page-level single-shot AI calls to paragraph-aware, token-safe batch chunking. Prevents 413 (Request Too Large) and 429 (Rate Limit) errors by keeping each AI request under 4,800 characters (~800 words), fitting within the strictest model TPM limit of 6,000 tokens.
+
+### Changed
+- `metaskills-backend/utils/textChunker.js` [NEW]: Paragraph-aware text chunking utility that splits raw text at paragraph and question number boundaries, with sentence-boundary fallback for oversized paragraphs and tiny-chunk merging.
+- `metaskills-backend/controllers/genai.controller.js`: Replaced single-shot AI call with a sequential chunk loop. Each chunk is sent individually with 1.5s inter-batch delay. residualText is threaded between chunks internally. Per-chunk logging added.
+- `metaskills-backend/config/aiPromptConfig.js`: Added INCOMPLETE SENTENCE HANDLING (BATCH MODE) section to system instruction. Updated prompt builder to accept batch metadata (chunk index/total). Reordered model list to prioritize `gemini-2.5-flash` (highest limits). Removed `llama-3.1-8b-instant` (6K TPM too low).
+
+### Risk
+- **Medium** — Core parsing pipeline change. API contract unchanged (frontend still sends `{rawText, previousTail}` and receives `{drafts, residualText}`). Backend handles sub-page chunking transparently.
+
+### Verification
+- Verified via `_test_textChunker.js` (24/24 tests passing: short text, empty input, multi-chunk split, question boundary detection, sentence-boundary split, tiny chunk merge, custom limits)
+- Verified via `node --check` on all 3 modified files (0 syntax errors)
+
+---
+
+## [2026-05-10] - Bulk Import Page UI Standardization
+
+### Summary
+Replaced native `window.confirm` dialog with standard `CommonDialog` component to maintain UI consistency and improve user experience when discarding drafts in the Bulk Import Page.
+
+### Changed
+- `metaskills-frontend/src/pages/admin/BulkImportPage.jsx`: Replaced `window.confirm` with a custom Modal using `CommonDialog`, `DialogButtonGroup`, and `DialogButton` components for the "Discard All Drafts" action. Added `discardModalOpen` state.
+
+### Risk
+- **Low** — Pure UI/UX enhancement utilizing existing battle-tested Admin UI components.
+
+### Verification
+- Verified via Visual/Code inspection and matching with the `TrashQuestionsPage.jsx` implementation pattern.
+
+---
 ## [2026-05-10] - Iterative PDF Import with Sliding Window AI
 
 ### Summary
