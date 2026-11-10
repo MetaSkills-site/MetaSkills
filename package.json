@@ -1,0 +1,24 @@
+{
+  "name": "metaskills-monorepo",
+  "private": true,
+  "packageManager": "pnpm@12.18.0",
+  "scripts": {
+    "preinstall": "only-allow pnpm",
+    "dev": "pnpm --parallel run dev",
+    "dev:api": "pnpm --filter ./api run dev",
+    "dev:web": "pnpm --filter ./web run dev",
+    "build": "pnpm --filter ./web run build",
+    "lint:api": "pnpm --filter ./api run lint",
+    "lint:web": "pnpm --filter ./web run lint",
+    "lint": "pnpm run lint:api && pnpm run lint:web",
+    "test:api": "pnpm --filter ./api run test",
+    "test": "pnpm run test:api"
+  },
+  "workspaces": [
+    "api",
+    "web"
+  ],
+  "devDependencies": {
+    "only-allow": "^1.2.2"
+  }
+}

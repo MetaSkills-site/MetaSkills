@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ELO Architecture - MetaSkills</title>
+    <style>
+      @font-face {
+        font-family: "Made";
+        src: url("fonts/MADE.otf") format("opentype");
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Quicksand";
+        src: url("fonts/quicksand.woff2") format("woff2");
+        font-display: swap;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(45deg, #edebff, #fff7ed);
+        font-family: "Quicksand", sans-serif;
+        color: #333333;
+        line-height: 1.6;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      h1 {
+        font-family: "Made", sans-serif;
+        font-size: 48px;
+        margin-bottom: 10px;
+        background: linear-gradient(90deg, #e91e63d1, #f44336c7, #ff5722bf);
+        -webkit-text-fill-color: transparent;
+        -webkit-background-clip: text;
+        background-clip: text;
+      }
+
+      .subtitle {
+        font-size: 16px;
+        color: #666;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      section {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+        padding: 30px;
+        border-radius: 20px;
+        margin-bottom: 25px;
+        border: 1px solid #eeeeee;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+      }
+
+      h2 {
+        font-family: "Made", sans-serif;
+        font-size: 28px;
+        color: #ff5722;
+        margin-top: 0;
+        margin-bottom: 15px;
+      }
+
+      h3 {
+        font-size: 20px;
+        color: #e91e63;
+        margin-top: 25px;
+        margin-bottom: 10px;
+      }
+
+      p {
+        margin-bottom: 15px;
+      }
+
+      ul {
+        padding-left: 20px;
+        margin-bottom: 15px;
+      }
+
+      li {
+        margin-bottom: 8px;
+      }
+
+      code {
+        background-color: #f0f0f0;
+        color: #e91e63;
+        padding: 2px 5px;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 0.9em;
+      }
+
+      pre {
+        background-color: #282c34;
+        color: #abb2bf;
+        padding: 15px;
+        border-radius: 8px;
+        overflow-x: auto;
+        font-family: monospace;
+        font-size: 14px;
+        margin-bottom: 20px;
+      }
+
+      pre code {
+        background-color: transparent;
+        color: inherit;
+        padding: 0;
+        border-radius: 0;
+      }
+
+      a {
+        color: #ff5722;
+        text-decoration: none;
+        transition: color 0.4s;
+      }
+
+      a:hover {
+        color: #c41c00;
+        text-decoration: underline;
+      }
+
+      hr {
+        border: 0;
+        height: 1px;
+        background: rgba(0, 0, 0, 0.1);
+        margin: 30px 0;
+      }
+
+      .footer {
+        text-align: center;
+        margin-top: 40px;
+        font-size: 14px;
+        color: #888;
+        padding-bottom: 20px;
+      }
+
+      @media (max-width: 600px) {
+        h1 {
+          font-size: 36px;
+        }
+        section {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>ELO Architecture</h1>
+        <p class="subtitle">
+          The MetaSkills application uses a mathematical ELO rating system
+          (originally designed for chess) to dynamically calculate user
+          proficiency and question/vocabulary/passage difficulty over time based
+          on actual performance. This document details the logical workflow,
+          mathematical constants, and explicit codebase integrations that power
+          this system.
+        </p>
+      </header>
+
+      <section>
+        <h2>1. Core Mathematical Logic & Scaling</h2>
+        <p>
+          The core logic of the ELO engine operates completely out of the
+          <code>utils/elo.js</code> file.
+        </p>
+
+        <h3>Expected Score Calculation</h3>
+        <p>
+          Before any rating changes, the system calculates the "Expected Score"
+          (probability of the user getting the answer right) using the standard
+          Elo logistic curve:
+        </p>
+        <pre><code>// utils/elo.js:12
+export function calculateExpectedScore(ratingA, ratingB) {
+  return 1 / (1 + Math.pow(10, (ratingB - ratingA) / 400));
+}</code></pre>
+        <p>
+          If a user with a <code>1400</code> rating attempts a vocabulary word
+          rated at <code>1200</code>, the math indicates the user has a high
+          probability (<code>expectedScore > 0.5</code>) of getting it correct.
+        </p>
+
+        <h3>Rating Adjustment Formula</h3>
+        <p>
+          Once the absolute outcome (<code>actualScore</code>: 1 for correct, 0
+          for incorrect) is determined, the new rating is calculated using a
+          constant Volatility Factor (<code>K = 32</code>).
+        </p>
+        <pre><code>// utils/elo.js:24
+export function calculateNewRating(currentRating, K, actualScore, expectedScore) {
+  return currentRating + K * (actualScore - expectedScore);
+}</code></pre>
+        <p>
+          If a high-rated user gets an easy question wrong, the penalty is
+          severe because <code>(0 - 0.76)</code> is a large negative chunk
+          multiplied by 32.
+        </p>
+
+        <h3>Frontend UI Formatting (Display Difficulty)</h3>
+        <p>
+          Raw Elo ratings (e.g. 1104, 1530) are difficult for standard frontend
+          users to digest. To solve this, the backend translates the raw Elo
+          score into a <code>0 - 100</code> percentage using a sigmoid curve
+          centered strictly around <code>1200</code> (the default starting
+          rating for all users and items).
+        </p>
+        <pre><code>// utils/elo.js:39
+export function getDisplayDifficulty(eloRating) {
+  const x = (eloRating - 1200) / 400;
+  const sigmoid = 1 / (1 + Math.exp(-x));
+  return Math.round(sigmoid * 100);
+}</code></pre>
+      </section>
+
+      <section>
+        <h2>2. Controller Integrations & Triggers</h2>
+        <p>
+          The ELO system is integrated primarily inside the grading endpoints.
+          It updates the database models asynchronously in a "fire-and-forget"
+          pattern so it never bottlenecks the API response times for the user if
+          the calculation fails.
+        </p>
+
+        <h3>Vocabulary Engine integration</h3>
+        <p>
+          When a user evaluates a word in the MCQ Vocabulary Marathon, the
+          system hits the <code>verifyVocabularyResponse</code> controller
+          logic.
+        </p>
+        <ul>
+          <li>
+            <strong>File:</strong>
+            <code>controllers/vocabulary.controller.js</code>
+          </li>
+          <li><strong>Wrapper:</strong> <code>updateVocabEloRatings</code></li>
+        </ul>
+        <pre><code>// 4. Update ELO Ratings
+// Fire and forget (it handles its own errors so it won't crash the request)
+updateVocabEloRatings(userId, vocabId, isCorrect ? 1 : 0).catch((err) =>
+  console.error("updateVocabEloRatings failed", err),
+);</code></pre>
+        <p>
+          This wrapper method inside <code>utils/elo.js</code> ensures that it
+          pulls the user's specific <code>vocabRating</code> (not their general
+          rating) to pit against the specific <code>Vocabulary</code> database
+          collection.
+        </p>
+
+        <h3>Core Quiz & Passage Integration</h3>
+        <p>
+          When a user formally submits a graded Quiz across multiple questions
+          and reading passages, the backend loops through the arrays and
+          calculates the Elo differentials.
+        </p>
+        <ul>
+          <li>
+            <strong>File:</strong> <code>controllers/quiz.controller.js</code>
+          </li>
+        </ul>
+        <pre><code>updateEloRatings(userId, qId, actualScore).catch(...)
+updatePassageEloRatings(userId, pId, actualScore).catch(...)</code></pre>
+      </section>
+
+      <section>
+        <h2>3. Database Aggregation & Complex Sorting</h2>
+        <p>
+          Because the sigmoid difficulty algorithm
+          (<code>displayDifficulty</code>) is mathematically intensive, running
+          it via javascript mapping is inefficient for large UI data grids.
+        </p>
+        <p>
+          When an Admin attempts to view all vocabulary or filter by "Hard", the
+          backend explicitly re-writes the Javascript sigmoid equation natively
+          inside a MongoDB Aggregation Pipeline so the DB engine does the heavy
+          lifting before paginating the data.
+        </p>
+        <ul>
+          <li>
+            <strong>File:</strong>
+            <code>controllers/vocabulary.controller.js</code>
+          </li>
+        </ul>
+        <pre><code>// Add displayDifficulty (mirroring getDisplayDifficulty via sigmoid)
+pipeline.push({
+  $addFields: {
+    displayDifficulty: {
+      $round: [
+        { $multiply: [ { $divide: [ 1, { $add: [ 1, { $exp: { $multiply: [ -1, { $divide: [ { $subtract: [ { $ifNull: ["$rating", 1200] }, 1200, ], }, 400, ], }, ], }, }, ], }, ], }, 100, ], },
+        0,
+      ],
+    },
+  },
+});</code></pre>
+        <p>
+          This is immediately followed by a difficulty band pipeline which
+          translates the <code>0 - 100</code> numeric score into string-labels
+          for the frontend:
+        </p>
+        <ul>
+          <li><code>0-35</code>: "Easy"</li>
+          <li><code>36-60</code>: "Medium"</li>
+          <li><code>61-80</code>: "Hard"</li>
+          <li><code>81+</code>: "Very Hard"</li>
+        </ul>
+      </section>
+
+      <div class="footer">&copy; 2026 MetaSkills. All rights reserved.</div>
+    </div>
+  </body>
+</html>

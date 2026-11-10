@@ -1,0 +1,30 @@
+/**
+ * @file index.css
+ * @description Minimal global CSS for body background and vertical navigation components.
+ * @exports N/A (CSS file)
+ * @interconnections Complements style.css with specific utility styles and overrides.
+ */
+
+body {
+  /* Subtle two-color gradient background to provide a soft base for the UI */
+  background: linear-gradient(45deg, #edebff, #fff7ed);
+}
+
+/* Vertical navigation container styles, used for side-docked navigation buttons */
+.nav-verticle > button {
+  width: -moz-fit-content;
+  width: fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+  margin: 10px 14px;
+  border-radius: 50%; /* Circular button shape */
+  padding: 8px;
+  border: none;
+  background: #ffffffcf; /* Semi-transparent white background */
+}
+
+/* Navigation button icons sizing and alignment */
+.nav-verticle > button > svg {
+  width: 20px;
+  height: 20px;
+}

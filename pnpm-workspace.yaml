@@ -1,0 +1,16 @@
+packages:
+  - "api"
+  - "web"
+
+allowBuilds:
+  '@google/genai': true
+  '@parcel/watcher': true
+  bcrypt: true
+  esbuild: true
+  mongodb-memory-server: true
+  protobufjs: true
+  tesseract.js: true
+
+permissions:
+  compromise:
+    skills: true

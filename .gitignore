@@ -130,4 +130,24 @@ dist
 .pnp.*
 
 
-metaskills*
+# Monorepo specific ignore rules
+scratch/
+metaskills-backend/
+*-key.json
+gcs-key.json
+service-account*.json
+*.pem
+*.key
+*.cert
+output.txt
+*_output.txt
+*.log
+.eslintcache
+dist/
+coverage/
+.nyc_output/
+
+# Test artifacts & auth states
+.auth/
+playwright-report/
+test-results/

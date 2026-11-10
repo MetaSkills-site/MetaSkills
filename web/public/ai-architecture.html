@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI System Architecture - MetaSkills</title>
+    <style>
+      @font-face {
+        font-family: "Made";
+        src: url("fonts/MADE.otf") format("opentype");
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Quicksand";
+        src: url("fonts/quicksand.woff2") format("woff2");
+        font-display: swap;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(45deg, #edebff, #fff7ed);
+        font-family: "Quicksand", sans-serif;
+        color: #333333;
+        line-height: 1.6;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      h1 {
+        font-family: "Made", sans-serif;
+        font-size: 48px;
+        margin-bottom: 10px;
+        background: linear-gradient(90deg, #e91e63d1, #f44336c7, #ff5722bf);
+        -webkit-text-fill-color: transparent;
+        -webkit-background-clip: text;
+        background-clip: text;
+      }
+
+      .subtitle {
+        font-size: 16px;
+        color: #666;
+        max-width: 700px;
+        margin: 0 auto;
+      }
+
+      section {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+        padding: 30px;
+        border-radius: 20px;
+        margin-bottom: 25px;
+        border: 1px solid #eeeeee;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+      }
+
+      h2 {
+        font-family: "Made", sans-serif;
+        font-size: 28px;
+        color: #ff5722;
+        margin-top: 0;
+        margin-bottom: 15px;
+      }
+
+      h3 {
+        font-size: 20px;
+        color: #e91e63;
+        margin-top: 25px;
+        margin-bottom: 10px;
+      }
+
+      p {
+        margin-bottom: 15px;
+      }
+
+      ul {
+        padding-left: 20px;
+        margin-bottom: 15px;
+      }
+
+      li {
+        margin-bottom: 8px;
+      }
+
+      code {
+        background-color: #f0f0f0;
+        color: #e91e63;
+        padding: 2px 5px;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 0.9em;
+      }
+
+      pre {
+        background-color: #1e1e1e;
+        color: #d4d4d4;
+        padding: 15px;
+        border-radius: 8px;
+        overflow-x: auto;
+        font-family: monospace;
+        font-size: 14px;
+        margin-bottom: 20px;
+        border: 1px solid #333;
+      }
+
+      pre code {
+        background-color: transparent;
+        color: inherit;
+        padding: 0;
+        border-radius: 0;
+      }
+
+      a {
+        color: #ff5722;
+        text-decoration: none;
+        transition: color 0.4s;
+      }
+
+      a:hover {
+        color: #c41c00;
+        text-decoration: underline;
+      }
+
+      .footer {
+        text-align: center;
+        margin-top: 40px;
+        font-size: 14px;
+        color: #888;
+        padding-bottom: 20px;
+      }
+
+      @media (max-width: 600px) {
+        h1 {
+          font-size: 36px;
+        }
+        section {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>AI System Architecture</h1>
+        <p class="subtitle">
+          The MetaSkills application features a sophisticated, highly available
+          multi-model AI architecture. The system relies on centralized prompt
+          configurations, intelligent fallback cascading, and real-time NDJSON
+          streaming architectures to guarantee up-time without compromising user
+          experience. This document breaks down the core technical layers in
+          detail.
+        </p>
+      </header>
+
+      <section>
+        <h2>1. The Prompting Engine & Routing Configuration</h2>
+        <p>
+          All AI requests begin by querying the central routing configuration
+          file (<code>config/aiPromptConfig.js</code>) rather than hardcoding
+          logic inside specific controllers. This promotes strict separation of
+          concerns.
+        </p>
+
+        <h3>Dynamic Prompt Builders</h3>
+        <p>
+          Instead of static strings, prompts are dynamically generated via
+          standardized arrow functions that take structured configurations (e.g.
+          <code>difficulty</code>, <code>topic</code>). They also take
+          anti-hallucination lists to strictly prevent outputting duplicate
+          words.
+        </p>
+        <pre><code>// aiPromptConfig.js:4
+export const VOCAB_PROMPT_BUILDER = (count, difficulty, generated = "") => {
+  let basePrompt = \`Generate \${count} English vocabulary words at a **\${difficulty}** difficulty level...\`;
+
+  const hasGeneratedItems = Array.isArray(generated) ? generated.length > 0 : !!generated;
+  if (hasGeneratedItems) {
+    const generatedList = Array.isArray(generated) ? generated.join(', ') : generated;
+    basePrompt += \`\n\n**CRITICAL — DUPLICATE PREVENTION (MANDATORY):**\nThe following words have ALREADY been generated. You MUST NOT include ANY of these words in your output... Blocklisted words: \${generatedList}\`;
+  }
+  return basePrompt;
+};</code></pre>
+
+        <h3>Model Fallback Arrays</h3>
+        <p>
+          The <code>getPromptConfig</code> function pairs every endpoint mode
+          with a hardcoded, prioritized array of diverse models. This guarantees
+          that if one specific model or API parameter goes down, the backend
+          instantly fails over.
+        </p>
+        <pre><code>// aiPromptConfig.js:567
+case 'sentence_evaluator':
+  return {
+    prompt: params?.prompt || SENTENCE_EVALUATOR_PROMPT_TEMPLATE,
+    systemInstruction: SENTENCE_EVALUATOR_SYSTEM_PROMPT,
+    models: ['qwen/qwen3.5-122b-a10b', 'gemini-3-flash-preview', 'gemini-2.5-flash-lite', 'gemini-2.5-flash']
+  };</code></pre>
+      </section>
+
+      <section>
+        <h2>2. Dynamic API Routing & The Graceful Fallback Pipeline</h2>
+        <p>
+          Instead of throwing 500 errors to the frontend when a model is
+          overloaded, the system utilizes a <code>modelsToTry</code> iterative
+          loop inside the <code>genai.controller.js</code>. The backend
+          systematically advances down the queue until a successful HTTP 200
+          payload with valid JSON is parsed.
+        </p>
+
+        <h3>Multi-Vendor API Interoperability</h3>
+        <p>
+          The AI engine supports both Google's official
+          <code>@google/genai</code> SDK and native REST integration with
+          Nvidia's NIM API inside the same <code>try-catch</code> context. It
+          detects the required routing protocol solely by checking the
+          configured <code>modelName</code> string.
+        </p>
+
+        <pre><code>// genai.controller.js:74
+if (modelName.includes("qwen")) {
+  // 1. Route to Nvidia NIM Architecture via node-fetch
+  const nvResponse = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
+    method: "POST",
+    headers: { "Authorization": \`Bearer \${nvApiKey}\` },
+    body: JSON.stringify({ model: modelName, messages: [...] })
+  });
+} else {
+  // 2. Route to Google GenAI SDK Architecture
+  const isGemma = modelName.toLowerCase().startsWith("gemma");
+  
+  if (isGemma) {
+     // Gemma requires manual injection
+     callConfig.contents = \`\${systemInstruction}\n\n\${prompt}\`;
+  } else {
+     // Gemini supports native configuration blocks
+     callConfig.config.systemInstruction = systemInstruction;
+  }
+  
+  const response = await ai.models.generateContent(callConfig);
+}</code></pre>
+      </section>
+
+      <section>
+        <h2>3. Real-Time NDJSON Streaming Architecture</h2>
+        <p>
+          Because generation and evaluation logic can take several seconds per
+          API vendor depending on cluster load, standard REST architectures
+          leave the frontend looking "frozen". MetaSkills solves this by
+          enforcing a <strong>Multiplexed NDJSON Stream</strong> (Newline
+          Delimited JSON) architecture.
+        </p>
+
+        <h3>Backend Interval Generation</h3>
+        <p>
+          Using HTTP Chunked Transfer Encoding, the backend immediately replies
+          with an <code>application/x-ndjson</code> header and actively pumps
+          simulated progress strings into the buffer every 2.5 seconds, while
+          asynchronously awaiting the slow external LLM API logic.
+        </p>
+        <pre><code>// genai.controller.js:318
+  res.setHeader("Content-Type", "application/x-ndjson; charset=utf-8");
+
+  const PROGRESS_STEPS = ["Analyzing sentence structure...", "Scoring usage correctness...", ...];
+  let stepIndex = 0;
+  
+  // Pump simulated JSON progress down the socket actively
+  progressInterval = setInterval(() => {
+    if (stepIndex &lt; PROGRESS_STEPS.length) {
+       res.write(JSON.stringify({ type: 'status', message: PROGRESS_STEPS[stepIndex] }) + '\n');
+       stepIndex++;
+    }
+  }, 2500);
+
+  // ... Wait for API, loop through fallbacks, calculate rewards ...
+  // Send final response and close the circuit.
+  res.write(JSON.stringify({ type: 'complete', response: enhancedResult }) + '\n');
+  res.end();</code></pre>
+
+        <h3>Frontend Stream Decoding</h3>
+        <p>
+          On the frontend (e.g., <code>MarathonSentencePractice.jsx</code>),
+          standard <code>axios.post</code> logic was ripped out and replaced
+          with the native browser <code>ReadableStreamReader</code>. The
+          frontend manually decodes and splits the stream frame-by-frame as
+          bytes arrive over the wire, surfacing the live
+          <code>{ type: 'status', message: '...' }</code> strings dynamically
+          into the React state variable before the final JSON object ever
+          finishes generating.
+        </p>
+      </section>
+
+      <div class="footer">&copy; 2026 MetaSkills. All rights reserved.</div>
+    </div>
+  </body>
+</html>
