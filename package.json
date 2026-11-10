@@ -3,7 +3,7 @@
   "private": true,
   "packageManager": "pnpm@12.18.0",
   "scripts": {
-    "preinstall": "only-allow pnpm",
+    "preinstall": "npx --yes only-allow pnpm",
     "dev": "pnpm --parallel run dev",
     "dev:api": "pnpm --filter ./api run dev",
     "dev:web": "pnpm --filter ./web run dev",
