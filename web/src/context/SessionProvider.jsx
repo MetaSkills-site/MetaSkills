@@ -138,10 +138,13 @@ export default function SessionProvider({ children }) {
 
         setUser(currentUserData);
       } catch (err) {
-        console.error(
-          "Session validation error (likely unauthenticated):",
-          err,
-        );
+        const isUnauthenticated =
+          err.response?.status === 401 ||
+          err.message === "Invalid profile response";
+
+        if (!isUnauthenticated) {
+          console.error("Session validation error:", err);
+        }
         if (user) setUser(null);
 
         // Only redirect if they are trying to access protected content
@@ -149,10 +152,7 @@ export default function SessionProvider({ children }) {
           !location.pathname.startsWith("/auth") &&
           location.pathname !== "/"
         ) {
-          if (
-            err.response?.status === 401 ||
-            err.message === "Invalid profile response"
-          ) {
+          if (isUnauthenticated) {
             toast.error("Session expired. Please login again.");
           }
           navigate("/auth");

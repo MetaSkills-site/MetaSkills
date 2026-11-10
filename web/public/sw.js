@@ -79,6 +79,11 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
 
+  // Bypass service worker for all API requests to allow native network execution and cookie handling
+  if (url.pathname.startsWith("/api")) {
+    return;
+  }
+
   // Ignore non-GET requests
   if (event.request.method !== "GET") {
     return;

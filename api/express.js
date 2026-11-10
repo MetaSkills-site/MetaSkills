@@ -4,7 +4,7 @@
  * @architecture Serves as the main HTTP pipeline router for the backend system.
  */
 import express from "express";
-import { checkDatabaseHealth, isServerShuttingDown } from "./config/database.js";
+import connectDB, { checkDatabaseHealth, isServerShuttingDown } from "./config/database.js";
 import userRoute from "./routes/user.routes.js";
 import quizRoute from "./routes/quiz.routes.js";
 import adminRoute from "./routes/admin.routes.js";
@@ -62,6 +62,16 @@ app.use(csrfProtection);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Ensure MongoDB connection is established for serverless invocations and cold starts
+app.use(async (_req, _res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
 
 // Routes
 app.use("/api/users", userRoute);
