@@ -12,7 +12,7 @@
  */
 
 import styled, { keyframes } from "styled-components";
-import Logo from "../assets/images/icons/apple-touch-icon.png";
+const Logo = "/apple-touch-icon.png";
 
 /**
  * Keyframes for the spinner rotation animation.

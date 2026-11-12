@@ -74,10 +74,8 @@ web_modules/
 
 # dotenv environment variable files
 .env
-.env.development.local
-.env.test.local
-.env.production.local
-.env.local
+.env.*
+!.env.example
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -146,6 +144,28 @@ output.txt
 dist/
 coverage/
 .nyc_output/
+
+# Scratch, backups, and temporary files
+*.skill
+jsdoc_report.json
+*.old
+*.bak
+
+# Diagnostic / ad-hoc scripts
+test_*.js
+_test_*.js
+test-*.js
+refactor.js
+tests/_test_*
+
+# Local database mounts
+mongodb_data/
+
+# Agent & assistant metadata directories
+.agent/
+.gemini/
+.planning/
+.specs/
 
 # Test artifacts & auth states
 .auth/
