@@ -12,13 +12,7 @@ import Brevo from "@getbrevo/brevo";
 const brevo = new Brevo.TransactionalEmailsApi();
 console.log("Initializing Brevo API...");
 console.log("BREVO_API_KEY present:", !!process.env.BREVO_API_KEY);
-if (process.env.BREVO_API_KEY) {
-  console.log("BREVO_API_KEY length:", process.env.BREVO_API_KEY.length);
-  console.log(
-    "BREVO_API_KEY prefix:",
-    process.env.BREVO_API_KEY.substring(0, 5) + "...",
-  );
-} else {
+if (!process.env.BREVO_API_KEY) {
   console.error(
     "CRITICAL: BREVO_API_KEY is missing from environment variables!",
   );

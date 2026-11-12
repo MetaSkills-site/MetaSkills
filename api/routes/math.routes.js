@@ -21,6 +21,9 @@ const router = express.Router();
 
 import { protect } from "../middlewares/authMiddleware.js";
 import idempotencyGuard from "../middlewares/idempotency.js";
+import { mathLimiter } from "../middlewares/rateLimiters.js";
+
+router.use(mathLimiter);
 
 router.get("/topics", protect, mathController.getTopics);
 router.get("/question", protect, mathController.getQuestion);

@@ -229,8 +229,11 @@ export default function ErrorReportPage() {
     if (previewUrl) {
       URL.revokeObjectURL(previewUrl);
     }
-    setScreenshot(file);
-    setPreviewUrl(URL.createObjectURL(file));
+    const objectUrl = URL.createObjectURL(file);
+    if (typeof objectUrl === "string" && objectUrl.startsWith("blob:")) {
+      setScreenshot(file);
+      setPreviewUrl(objectUrl);
+    }
   };
 
   const handleFileChange = (e) => {
@@ -433,7 +436,7 @@ export default function ErrorReportPage() {
                   $hasFile={!!screenshot}
                   $isDragging={isDragging}
                 >
-                  {!previewUrl ? (
+                  {!(previewUrl && typeof previewUrl === "string" && previewUrl.startsWith("blob:")) ? (
                     <>
                       <FaCloudUploadAlt />
                       <p>Click to upload a screenshot</p>

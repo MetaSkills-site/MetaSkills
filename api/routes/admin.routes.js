@@ -8,8 +8,10 @@ import adminAuthControl from "../controllers/admin.auth.controller.js";
 
 const router = express.Router();
 
-import { loginLimiter } from "../middlewares/rateLimiters.js";
+import { loginLimiter, adminLimiter } from "../middlewares/rateLimiters.js";
 router.post("/google-auth", loginLimiter, adminAuthControl.googleAuth);
+
+router.use(adminLimiter);
 
 import { protectAdmin } from "../middlewares/authMiddleware.js";
 router.get("/check", protectAdmin, adminAuthControl.checkAuth);

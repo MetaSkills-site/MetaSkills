@@ -7,8 +7,11 @@ import express from "express";
 import vocabularyController from "../controllers/vocabulary.controller.js";
 import { protectAdmin, protect } from "../middlewares/authMiddleware.js";
 import idempotencyGuard from "../middlewares/idempotency.js";
+import { vocabularyLimiter } from "../middlewares/rateLimiters.js";
 
 const router = express.Router();
+
+router.use(vocabularyLimiter);
 
 // Public (Authenticated) Routes
 router.get("/random", protect, vocabularyController.getRandomVocabulary);

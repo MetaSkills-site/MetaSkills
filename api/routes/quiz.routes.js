@@ -14,8 +14,11 @@ import {
   getSequenceByGradeAndSubject,
   updateSequence,
 } from "../controllers/sequence.controller.js";
+import { quizLimiter } from "../middlewares/rateLimiters.js";
 
 const router = express.Router();
+
+router.use(quizLimiter);
 
 // Question routes
 router.post("/questions", protectAdmin, quizController.createQuestion);

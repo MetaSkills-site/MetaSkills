@@ -15,11 +15,13 @@ import {
   getVocabularyDifficultyStats,
 } from "../controllers/adminAnalytics.controller.js";
 import { protectAdmin } from "../middlewares/authMiddleware.js";
+import { adminAnalyticsLimiter } from "../middlewares/rateLimiters.js";
 
 const router = express.Router();
 
 // All analytics routes should be protected and restricted to admins
 router.use(protectAdmin);
+router.use(adminAnalyticsLimiter);
 
 router.get("/global-stats", getGlobalStats);
 router.get("/engagement-trends", getEngagementTrends);

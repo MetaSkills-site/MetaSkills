@@ -68,3 +68,93 @@ export const genaiRateLimiter = rateLimit({
   legacyHeaders: false,
   handler: customHandler,
 });
+
+/**
+ * @desc    Limits admin endpoints to prevent excessive operations
+ */
+export const adminLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: {
+    success: false,
+    message: "Too many admin requests, please try again later",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: customHandler,
+});
+
+/**
+ * @desc    Limits admin analytics queries to protect DB aggregation performance
+ */
+export const adminAnalyticsLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 200,
+  message: {
+    success: false,
+    message: "Too many analytics requests, please try again later",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: customHandler,
+});
+
+/**
+ * @desc    Limits error report submissions and queries to prevent spam
+ */
+export const errorReportLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 60,
+  message: {
+    success: false,
+    message: "Too many error report requests, please try again later",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: customHandler,
+});
+
+/**
+ * @desc    Limits math evaluation and expression queries
+ */
+export const mathLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 120,
+  message: {
+    success: false,
+    message: "Too many math requests, please try again later",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: customHandler,
+});
+
+/**
+ * @desc    Limits quiz session and question submissions
+ */
+export const quizLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 180,
+  message: {
+    success: false,
+    message: "Too many quiz requests, please try again later",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: customHandler,
+});
+
+/**
+ * @desc    Limits vocabulary queries to prevent dictionary scraping
+ */
+export const vocabularyLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 150,
+  message: {
+    success: false,
+    message: "Too many vocabulary requests, please try again later",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: customHandler,
+});

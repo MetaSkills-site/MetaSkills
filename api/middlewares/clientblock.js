@@ -74,10 +74,11 @@ export const setCorsHeaders = (req, res) => {
   const isAllowed = allowedOrigins.some((regex) => regex.test(origin));
 
   // CORS headers for all responses
-  // Reflect the origin to support credentials for any allowed origin
-  const allowOrigin = isAllowed ? origin : "null";
-
-  res.setHeader("Access-Control-Allow-Origin", allowOrigin);
+  // Reflect origin with credentials ONLY when origin is explicitly allowed
+  if (isAllowed && origin) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+  }
   res.setHeader(
     "Access-Control-Allow-Methods",
     "GET,POST,PUT,PATCH,DELETE,OPTIONS",
@@ -86,7 +87,6 @@ export const setCorsHeaders = (req, res) => {
     "Access-Control-Allow-Headers",
     "Content-Type, Authorization, X-Requested-With, X-Idempotency-Key, Accept, Origin, x-xsrf-token",
   );
-  res.setHeader("Access-Control-Allow-Credentials", "true");
   res.setHeader("Access-Control-Max-Age", "600");
   res.setHeader("Vary", "Origin");
 

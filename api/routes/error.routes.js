@@ -18,8 +18,11 @@ import {
   checkPendingErrorsStatus,
   getScreenshotUploadUrl,
 } from "../controllers/error.controller.js";
+import { errorReportLimiter } from "../middlewares/rateLimiters.js";
 
 const router = express.Router();
+
+router.use(errorReportLimiter);
 
 router.post("/report", protect, idempotencyGuard, reportError);
 router.post("/screenshot-url", protect, getScreenshotUploadUrl);

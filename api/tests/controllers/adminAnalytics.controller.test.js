@@ -41,6 +41,11 @@ describe("Admin Analytics Controller", () => {
     app = express();
     app.use(express.json());
 
+    const { adminAnalyticsLimiter } = await import(
+      "../../middlewares/rateLimiters.js"
+    );
+    app.use(adminAnalyticsLimiter);
+
     const auth = await import("../../middlewares/authMiddleware.js");
 
     app.get("/api/admin/analytics/stats", auth.protectAdmin, getGlobalStats);

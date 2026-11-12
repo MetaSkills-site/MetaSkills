@@ -177,10 +177,10 @@ describe("Robust Database Connection & Caching Suite", () => {
   describe("Security: Credential Masking", () => {
     it("should mask passwords in MongoDB connection strings", () => {
       const masked = maskMongoUri(
-        "mongodb://app_user:p%40ssw0rd123@cluster0.mongodb.net:27017/prod",
+        "mongodb://app_user:p%40ssw0rd123@example.com:27017/prod",
       );
       expect(masked).toBe(
-        "mongodb://app_user:****@cluster0.mongodb.net:27017/prod",
+        "mongodb://app_user:****@example.com:27017/prod",
       );
       expect(masked).not.toContain("p%40ssw0rd123");
     });

@@ -63,6 +63,11 @@ describe("Error Controller", () => {
     app = express();
     app.use(express.json());
 
+    const { errorReportLimiter } = await import(
+      "../../middlewares/rateLimiters.js"
+    );
+    app.use(errorReportLimiter);
+
     // Use mock middleware
     const auth = await import("../../middlewares/authMiddleware.js");
 

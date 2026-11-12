@@ -20,6 +20,8 @@ import { genaiRateLimiter } from "../middlewares/rateLimiters.js";
 
 const router = express.Router();
 
+router.use(genaiRateLimiter);
+
 router.post("/stream", protectUserOrAdmin, generateContentStream);
 router.post(
   "/sentences/evaluate",
