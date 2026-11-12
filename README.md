@@ -5,10 +5,10 @@
 > **Adaptive, Gamified AI Learning Platform for K-12 and Competitive Academic Mastery**
 
 [![Vercel Deployment](https://img.shields.io/badge/Vercel-Deployed-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://metaskills.site)
-[![CI / Build Status](https://img.shields.io/badge/Build-Passing-4CAF50?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/jimfleax/Metaskills-Configuration/actions)
+[![CI / Build Status](https://img.shields.io/badge/Build-Passing-4CAF50?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/jimfleax/MetaSkills/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-FF5722?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)
-[![Release Version](https://img.shields.io/badge/Version-1.2.0-FF9800?style=for-the-badge&logo=semver&logoColor=white)](https://github.com/jimfleax/Metaskills-Configuration/releases)
-[![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-E91E63?style=for-the-badge&logo=git&logoColor=white)](https://github.com/jimfleax/Metaskills-Configuration/pulls)
+[![Release Version](https://img.shields.io/badge/Version-1.2.0-FF9800?style=for-the-badge&logo=semver&logoColor=white)](https://github.com/jimfleax/MetaSkills/releases)
+[![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-E91E63?style=for-the-badge&logo=git&logoColor=white)](https://github.com/jimfleax/MetaSkills/pulls)
 
 <p align="center">
   <a href="#-quick-start"><b>Quick Start</b></a> •
@@ -394,8 +394,8 @@ Student ability and question complexity are modeled on a shared continuous Elo s
 
 ```bash
 # Clone repository
-git clone https://github.com/jimfleax/Metaskills-Configuration.git
-cd Metaskills-Configuration
+git clone https://github.com/jimfleax/MetaSkills.git
+cd MetaSkills
 
 # Install dependencies across all workspaces (strictly enforced via only-allow pnpm)
 pnpm install
