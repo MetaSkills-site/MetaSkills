@@ -249,7 +249,7 @@ importers:
         specifier: ^11.3.0
         version: 11.3.0(bare-buffer@3.7.1)(supports-color@8.1.1)
       prettier:
-        specifier: ^3.8.1
+        specifier: ^3.9.10
         version: 3.9.10
       supertest:
         specifier: ^7.2.2
@@ -430,8 +430,8 @@ importers:
         specifier: ^5.2.0
         version: 5.2.0(eslint@9.39.5(supports-color@5.5.0))
       eslint-plugin-react-refresh:
-        specifier: ^0.4.19
-        version: 0.4.26(eslint@9.39.5(supports-color@5.5.0))
+        specifier: ^0.5.7
+        version: 0.5.7(eslint@9.39.5(supports-color@5.5.0))
       globals:
         specifier: ^16.2.0
         version: 16.5.0
@@ -439,8 +439,8 @@ importers:
         specifier: ^3.1.10
         version: 3.1.14
       prettier:
-        specifier: 3.5.3
-        version: 3.5.3
+        specifier: 3.9.10
+        version: 3.9.10
       vite:
         specifier: ^6.3.5
         version: 6.4.5(@types/node@24.19.2)
@@ -3292,10 +3292,10 @@ packages:
     peerDependencies:
       eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0 || ^9.0.0
 
-  eslint-plugin-react-refresh@0.4.26:
-    resolution: {integrity: sha512-1RETEylht2O6FM/MvgnyvT+8K21wLqDNg4qD51Zj3guhjt433XbnnkVttHMyaVyAFD03QSV4LPS5iE3VQmO7XQ==}
+  eslint-plugin-react-refresh@0.5.7:
+    resolution: {integrity: sha512-XhJSzLljuYD4UjNuFGJu2v7aD3sqNVK12w5/DCUfrNfHWegZo2+TsavNx8MuxMwEquuFAzNbNfXKU0WoZ+YUIg==}
     peerDependencies:
-      eslint: '>=8.40'
+      eslint: ^9 || ^10
 
   eslint-plugin-react@7.37.5:
     resolution: {integrity: sha512-Qteup0SqU15kdocexFNAJMvCJEfa2xUKNV4CC1xsVMrIIqEy3SQ/rqyxCWNzfrd3/ldy6HMlD2e0JDVpDg2qIA==}
@@ -4898,11 +4898,6 @@ packages:
   prelude-ls@1.2.1:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
     engines: {node: '>= 0.8.0'}
-
-  prettier@3.5.3:
-    resolution: {integrity: sha512-QQtaxnoDJeAkDvDKWCLiwIXkTgRhwYDEQCghU9Z6q03iyek/rxRh/2lC3HB7P8sWT2xC/y5JDctPLBIGzHKbhw==}
-    engines: {node: '>=14'}
-    hasBin: true
 
   prettier@3.9.10:
     resolution: {integrity: sha512-skGHTH1Yb9QvaTC4hWnRTzEYtCpApF0UMBPz+t/0ZPzP8ihefo/btKd+QA7pUE0fEwA1SbS/NmhyEcstdXOIdA==}
@@ -8973,7 +8968,7 @@ snapshots:
     dependencies:
       eslint: 9.39.5(supports-color@5.5.0)
 
-  eslint-plugin-react-refresh@0.4.26(eslint@9.39.5(supports-color@5.5.0)):
+  eslint-plugin-react-refresh@0.5.7(eslint@9.39.5(supports-color@5.5.0)):
     dependencies:
       eslint: 9.39.5(supports-color@5.5.0)
 
@@ -11181,8 +11176,6 @@ snapshots:
       source-map-js: 1.2.2
 
   prelude-ls@1.2.1: {}
-
-  prettier@3.5.3: {}
 
   prettier@3.9.10: {}
 
