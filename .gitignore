@@ -171,3 +171,5 @@ mongodb_data/
 .auth/
 playwright-report/
 test-results/
+.vercel
+
