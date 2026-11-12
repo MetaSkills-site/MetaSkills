@@ -48,7 +48,10 @@ describe("Admin Auth Controller", () => {
   });
 
   describe("Unit Tests", () => {
+    let originalEnv;
+
     beforeEach(() => {
+      originalEnv = { ...process.env };
       jest.clearAllMocks();
 
       verifySpy = jest.spyOn(OAuth2Client.prototype, "verifyIdToken");
@@ -57,6 +60,12 @@ describe("Admin Auth Controller", () => {
     });
 
     afterEach(() => {
+      for (const key of Object.keys(process.env)) {
+        if (!(key in originalEnv)) {
+          delete process.env[key];
+        }
+      }
+      Object.assign(process.env, originalEnv);
       jest.restoreAllMocks();
     });
 
@@ -71,6 +80,10 @@ describe("Admin Auth Controller", () => {
 
         expect(res.status).toBe(500);
         expect(res.body.message).toMatch(/Server configuration error/);
+      });
+
+      it("should ensure process.env is restored after env mutation tests", () => {
+        expect(process.env.VITE_GOOGLE_CLIENT_ID).toBeDefined();
       });
 
       it("should return 400 if credential is missing", async () => {
@@ -159,7 +172,10 @@ describe("Admin Auth Controller", () => {
   });
 
   describe("Integration Tests", () => {
+    let originalEnv;
+
     beforeEach(async () => {
+      originalEnv = { ...process.env };
       await Admin.deleteMany({});
       await Session.deleteMany({});
       jest.clearAllMocks();
@@ -170,6 +186,12 @@ describe("Admin Auth Controller", () => {
     });
 
     afterEach(() => {
+      for (const key of Object.keys(process.env)) {
+        if (!(key in originalEnv)) {
+          delete process.env[key];
+        }
+      }
+      Object.assign(process.env, originalEnv);
       jest.restoreAllMocks();
     });
 

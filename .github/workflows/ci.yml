@@ -90,6 +90,8 @@ jobs:
       MONGODB_URI: mongodb://127.0.0.1:27017/metaskills_test
       JWT_SECRET: ci_secret_for_jwt_testing_purposes_only
       PORT: 7860
+      GOOGLE_CLIENT_ID: test_google_client_id_for_ci
+      VITE_GOOGLE_CLIENT_ID: test_google_client_id_for_ci
 
     steps:
       - name: Checkout repository

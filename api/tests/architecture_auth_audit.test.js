@@ -45,7 +45,31 @@ const mockReqRes = (
 };
 
 describe("Architecture Auth Audit Fixes", () => {
+  let originalEnv;
+
+  beforeAll(() => {
+    originalEnv = { ...process.env };
+    process.env.GOOGLE_CLIENT_ID =
+      process.env.GOOGLE_CLIENT_ID || "test-google-client-id";
+    process.env.VITE_GOOGLE_CLIENT_ID =
+      process.env.VITE_GOOGLE_CLIENT_ID || "test-google-client-id";
+  });
+
+  afterAll(() => {
+    for (const key of Object.keys(process.env)) {
+      if (!(key in originalEnv)) {
+        delete process.env[key];
+      }
+    }
+    Object.assign(process.env, originalEnv);
+  });
+
   beforeEach(async () => {
+    process.env.GOOGLE_CLIENT_ID =
+      process.env.GOOGLE_CLIENT_ID || "test-google-client-id";
+    process.env.VITE_GOOGLE_CLIENT_ID =
+      process.env.VITE_GOOGLE_CLIENT_ID || "test-google-client-id";
+
     await Admin.deleteMany({});
     await Session.deleteMany({});
     await User.deleteMany({});

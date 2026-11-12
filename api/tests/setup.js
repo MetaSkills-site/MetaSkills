@@ -2,7 +2,11 @@ import "../config/env.js";
 import mongoose from "mongoose";
 import { MongoMemoryReplSet } from "mongodb-memory-server";
 
-process.env.JWT_SECRET = "supersecret_for_testing";
+process.env.JWT_SECRET = process.env.JWT_SECRET || "supersecret_for_testing";
+process.env.GOOGLE_CLIENT_ID =
+  process.env.GOOGLE_CLIENT_ID || "test-google-client-id";
+process.env.VITE_GOOGLE_CLIENT_ID =
+  process.env.VITE_GOOGLE_CLIENT_ID || "test-google-client-id";
 
 let mongoServer;
 

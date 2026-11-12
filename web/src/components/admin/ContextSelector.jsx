@@ -157,9 +157,8 @@ export default function ContextSelector({
   const { data, isLoading: loading } = useQuery({
     queryKey: ["contextAttachments", search],
     queryFn: async () => {
-      const { getContextAttachments } = await import(
-        "../../services/passagesService"
-      );
+      const { getContextAttachments } =
+        await import("../../services/passagesService");
       return getContextAttachments({ search });
     },
     staleTime: 30_000,
@@ -175,9 +174,8 @@ export default function ContextSelector({
    */
   const createContextMutation = useMutation({
     mutationFn: async ({ title, text }) => {
-      const { createContextAttachment } = await import(
-        "../../services/passagesService"
-      );
+      const { createContextAttachment } =
+        await import("../../services/passagesService");
       return createContextAttachment({ title, text });
     },
     onSuccess: (res) => {

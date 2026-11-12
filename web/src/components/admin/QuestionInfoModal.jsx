@@ -193,9 +193,8 @@ export default function QuestionInfoModal({ questionId, open, onOpenChange }) {
     queryKey: ["question", questionId],
     queryFn: async () => {
       // Dynamic import of service to keep initial bundle size smaller
-      const { getQuestionByIdAdmin } = await import(
-        "../../services/quizService"
-      );
+      const { getQuestionByIdAdmin } =
+        await import("../../services/quizService");
       const res = await getQuestionByIdAdmin(questionId);
       return res?.data ?? null;
     },

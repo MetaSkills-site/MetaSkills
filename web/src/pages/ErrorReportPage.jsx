@@ -436,7 +436,11 @@ export default function ErrorReportPage() {
                   $hasFile={!!screenshot}
                   $isDragging={isDragging}
                 >
-                  {!(previewUrl && typeof previewUrl === "string" && previewUrl.startsWith("blob:")) ? (
+                  {!(
+                    previewUrl &&
+                    typeof previewUrl === "string" &&
+                    previewUrl.startsWith("blob:")
+                  ) ? (
                     <>
                       <FaCloudUploadAlt />
                       <p>Click to upload a screenshot</p>
