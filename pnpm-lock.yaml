@@ -231,7 +231,7 @@ importers:
         version: 8.24.8(supports-color@8.1.1)
       openai:
         specifier: ^6.29.0
-        version: 6.49.0(ws@8.22.2)
+        version: 6.49.0(ws@8.22.2)(zod@4.6.7)
     devDependencies:
       '@eslint/js':
         specifier: ^9.14.0
@@ -433,8 +433,8 @@ importers:
         specifier: ^7.37.5
         version: 7.37.5(eslint@9.39.5(supports-color@5.5.0))
       eslint-plugin-react-hooks:
-        specifier: ^5.2.0
-        version: 5.2.0(eslint@9.39.5(supports-color@5.5.0))
+        specifier: ^7.1.1
+        version: 7.1.1(eslint@9.39.5(supports-color@5.5.0))(supports-color@5.5.0)
       eslint-plugin-react-refresh:
         specifier: ^0.5.7
         version: 0.5.7(eslint@9.39.5(supports-color@5.5.0))
@@ -3264,11 +3264,11 @@ packages:
     resolution: {integrity: sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==}
     engines: {node: '>=10'}
 
-  eslint-plugin-react-hooks@5.2.0:
-    resolution: {integrity: sha512-+f15FfK64YQwZdJNELETdn5ibXEUQmW1DZL6KXhNnc2heoy/sg9VJJeT7n8TlMWouzWqSWavFkIhHyIbIAEapg==}
-    engines: {node: '>=10'}
+  eslint-plugin-react-hooks@7.1.1:
+    resolution: {integrity: sha512-f2I7Gw6JbvCexzIInuSbZpfdQ44D7iqdWX01FKLvrPgqxoE7oMj8clOfto8U6vYiz4yd5oKu39rRSVOe1zRu0g==}
+    engines: {node: '>=18'}
     peerDependencies:
-      eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0 || ^9.0.0
+      eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0 || ^9.0.0 || ^10.0.0
 
   eslint-plugin-react-refresh@0.5.7:
     resolution: {integrity: sha512-XhJSzLljuYD4UjNuFGJu2v7aD3sqNVK12w5/DCUfrNfHWegZo2+TsavNx8MuxMwEquuFAzNbNfXKU0WoZ+YUIg==}
@@ -3747,6 +3747,12 @@ packages:
 
   hastscript@9.0.3:
     resolution: {integrity: sha512-1ALZXSmCGmW3h8AMz4R4+QKSKFi7sNgXLVwmwB8FYVtl1CwQ3WDkSAEY/d5tp1g/vbQgq2s1WlHgfO3jbw1TsA==}
+
+  hermes-estree@0.25.1:
+    resolution: {integrity: sha512-0wUoCcLp+5Ev5pDW2OriHC2MJCbwLwuRx+gAqMTOkGKJJiBCLjtrvy4PWUGn6MIVefecRpzoOZ/UV6iGdOr+Cw==}
+
+  hermes-parser@0.25.1:
+    resolution: {integrity: sha512-6pEjquH3rqaI6cYAXYPcz9MS4rY6R4ngRgrgfDshRptUZIc3lw0MCIJIGDj9++mfySOuPTHB4nrSW99BCvOPIA==}
 
   html-dom-parser@5.1.8:
     resolution: {integrity: sha512-MCIUng//mF2qTtGHXJWr6OLfHWmg3Pm8ezpfiltF83tizPWY17JxT4dRLE8lykJ5bChJELoY3onQKPbufJHxYA==}
@@ -5856,6 +5862,15 @@ packages:
 
   zlibjs@0.3.1:
     resolution: {integrity: sha512-+J9RrgTKOmlxFSDHo0pI1xM6BLVUv+o0ZT9ANtCxGkjIVCCUdx9alUF8Gm+dGLKbkkkidWIHFDZHDMpfITt4+w==}
+
+  zod-validation-error@4.0.2:
+    resolution: {integrity: sha512-Q6/nZLe6jxuU80qb/4uJ4t5v2VEZ44lzQjPDhYJNztRQ4wyWc6VF3D3Kb/fAuPetZQnhS3hnajCf9CsWesghLQ==}
+    engines: {node: '>=18.0.0'}
+    peerDependencies:
+      zod: ^3.25.0 || ^4.0.0
+
+  zod@4.6.7:
+    resolution: {integrity: sha512-g8W2D2kU6a8untc053fX1uVBKzM7yqAxW/3zwk83+6RyF2+SKOuV+c0wBDhUwzV1PaGapmZH+rmcUzPf+3CGwg==}
 
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
@@ -8857,9 +8872,16 @@ snapshots:
 
   escape-string-regexp@4.0.0: {}
 
-  eslint-plugin-react-hooks@5.2.0(eslint@9.39.5(supports-color@5.5.0)):
+  eslint-plugin-react-hooks@7.1.1(eslint@9.39.5(supports-color@5.5.0))(supports-color@5.5.0):
     dependencies:
+      '@babel/core': 7.29.13(supports-color@5.5.0)
+      '@babel/parser': 7.29.13
       eslint: 9.39.5(supports-color@5.5.0)
+      hermes-parser: 0.25.1
+      zod: 4.6.7
+      zod-validation-error: 4.0.2(zod@4.6.7)
+    transitivePeerDependencies:
+      - supports-color
 
   eslint-plugin-react-refresh@0.5.7(eslint@9.39.5(supports-color@5.5.0)):
     dependencies:
@@ -9601,6 +9623,12 @@ snapshots:
       hast-util-parse-selector: 4.0.0
       property-information: 7.2.0
       space-separated-tokens: 2.0.2
+
+  hermes-estree@0.25.1: {}
+
+  hermes-parser@0.25.1:
+    dependencies:
+      hermes-estree: 0.25.1
 
   html-dom-parser@5.1.8:
     dependencies:
@@ -10899,9 +10927,10 @@ snapshots:
     dependencies:
       which-pm-runs: 1.1.0
 
-  openai@6.49.0(ws@8.22.2):
+  openai@6.49.0(ws@8.22.2)(zod@4.6.7):
     optionalDependencies:
       ws: 8.22.2
+      zod: 4.6.7
 
   opencollective-postinstall@2.0.3: {}
 
@@ -12290,5 +12319,11 @@ snapshots:
   yocto-queue@0.1.0: {}
 
   zlibjs@0.3.1: {}
+
+  zod-validation-error@4.0.2(zod@4.6.7):
+    dependencies:
+      zod: 4.6.7
+
+  zod@4.6.7: {}
 
   zwitch@2.0.4: {}
