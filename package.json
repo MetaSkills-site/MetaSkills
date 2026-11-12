@@ -11,6 +11,8 @@
     "lint:api": "pnpm --filter ./api run lint",
     "lint:web": "pnpm --filter ./web run lint",
     "lint": "pnpm run lint:api && pnpm run lint:web",
+    "format:check": "pnpm --filter ./web exec prettier --check \"src/**/*.{js,jsx}\" && pnpm --filter ./api exec prettier --check \"controllers/**/*.js\" \"routes/**/*.js\" \"models/**/*.js\"",
+    "check:docs": "node scripts/check-jsdoc-coverage.js . --ignore scratch,test",
     "test:api": "pnpm --filter ./api run test",
     "test": "pnpm run test:api"
   },
