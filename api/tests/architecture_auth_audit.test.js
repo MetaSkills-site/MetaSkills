@@ -12,18 +12,28 @@ jest.unstable_mockModule("google-auth-library", () => ({
       getPayload: () => ({
         email: "test@example.com",
         name: "Google Name",
-        picture: "google-pic.jpg"
-      })
-    })
-  }))
+        picture: "google-pic.jpg",
+      }),
+    }),
+  })),
 }));
 
 // We must dynamically import the controllers after the mock is set up
-const adminAuthController = (await import("../controllers/admin.auth.controller.js")).default;
-const userController = (await import("../controllers/user.controller.js")).default;
-const quizController = (await import("../controllers/quiz.controller.js")).default;
+const adminAuthController = (
+  await import("../controllers/admin.auth.controller.js")
+).default;
+const userController = (await import("../controllers/user.controller.js"))
+  .default;
+const quizController = (await import("../controllers/quiz.controller.js"))
+  .default;
 
-const mockReqRes = (body = {}, cookies = {}, headers = {}, user = null, admin = null) => {
+const mockReqRes = (
+  body = {},
+  cookies = {},
+  headers = {},
+  user = null,
+  admin = null,
+) => {
   const req = { body, cookies, headers, user, admin };
   const res = {
     status: jest.fn().mockReturnThis(),
@@ -50,7 +60,7 @@ describe("Architecture Auth Audit Fixes", () => {
         email: "test@example.com",
         password: "hashedpassword123", // Assuming password might be required by schema
         role: "admin",
-        fullname: "Old Admin Name"
+        fullname: "Old Admin Name",
       });
 
       const { req, res } = mockReqRes({ credential: "dummy-google-token" });
@@ -69,18 +79,23 @@ describe("Architecture Auth Audit Fixes", () => {
         email: "admin@example.com",
         password: "hashedpassword123",
         role: "admin",
-        fullname: "Admin User"
+        fullname: "Admin User",
       });
 
       // Create an initial session
-      const { req: req1, res: res1 } = mockReqRes({ credential: "dummy-google-token" });
-      
+      const { req: req1, res: res1 } = mockReqRes({
+        credential: "dummy-google-token",
+      });
+
       // We need to update the mock to return admin@example.com
       const { OAuth2Client } = await import("google-auth-library");
       OAuth2Client.mockImplementationOnce(() => ({
         verifyIdToken: jest.fn().mockResolvedValue({
-          getPayload: () => ({ email: "admin@example.com", name: "Admin User" })
-        })
+          getPayload: () => ({
+            email: "admin@example.com",
+            name: "Admin User",
+          }),
+        }),
       }));
 
       await adminAuthController.googleAuth(req1, res1);
@@ -89,13 +104,15 @@ describe("Architecture Auth Audit Fixes", () => {
       // Now call checkAuth
       const { req: req2, res: res2 } = mockReqRes({}, {}, {}, null, admin);
       req2.cookies = { adminToken: initialToken };
-      
+
       await adminAuthController.checkAuth(req2, res2);
 
       // Verify that the token returned in the cookie is the SAME as the initial token
       // or at least that it didn't do an unnecessary DB upsert that invalidates old tokens.
-      res2.cookie.mock.calls.length > 0 ? res2.cookie.mock.calls[0][1] : initialToken;
-      
+      res2.cookie.mock.calls.length > 0
+        ? res2.cookie.mock.calls[0][1]
+        : initialToken;
+
       const session = await Session.findOne({ id: admin._id });
       // The session token in DB should match the original token
       expect(session.token).toBe(initialToken);
@@ -108,16 +125,27 @@ describe("Architecture Auth Audit Fixes", () => {
       const user = await User.create({
         fullname: "No Grade User",
         email: "nograde@example.com",
-        carrots: { count: 0 }
+        carrots: { count: 0 },
       });
 
       // Mock the req with a user object that lacks a grade
-      const { req, res } = mockReqRes({}, {}, {}, { _id: user._id, email: user.email }); // missing grade
+      const { req, res } = mockReqRes(
+        {},
+        {},
+        {},
+        { _id: user._id, email: user.email },
+      ); // missing grade
 
       // Create a sequence that shouldn't be accessed
-      await Sequence.create({ grade: 12, subject: "english", sequences: ["m1"] });
-      
-      await expect(quizController.getModulesWithProgress(req, res)).rejects.toThrow(/Profile incomplete|Grade is required/);
+      await Sequence.create({
+        grade: 12,
+        subject: "english",
+        sequences: ["m1"],
+      });
+
+      await expect(
+        quizController.getModulesWithProgress(req, res),
+      ).rejects.toThrow(/Profile incomplete|Grade is required/);
     });
   });
 
@@ -126,7 +154,7 @@ describe("Architecture Auth Audit Fixes", () => {
       const user = await User.create({
         fullname: "Custom User Name", // The custom name
         email: "test@example.com",
-        carrots: { count: 0 }
+        carrots: { count: 0 },
       });
 
       const { req, res } = mockReqRes({ credential: "dummy-google-token" });
@@ -134,7 +162,7 @@ describe("Architecture Auth Audit Fixes", () => {
       await userController.googleAuth(req, res);
 
       const updatedUser = await User.findById(user._id);
-      
+
       // Verify that the custom name was preserved, not overwritten by "Google Name"
       expect(updatedUser.fullname).toBe("Custom User Name");
     });

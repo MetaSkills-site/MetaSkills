@@ -1,4 +1,11 @@
 /**
+ * @file ModuleSelector.jsx
+ * @description Reusable administrative selector for educational modules supporting subject filtering, search, and infinite scrolling.
+ * @architecture Admin form control integrating infinite scrolling and subject filtering to associate questions with modules.
+ * @agent_note Check multiSelect handling when binding to single-module vs multi-module administrative workflows.
+ */
+
+/**
  * FILE: ModuleSelector.jsx
  * PURPOSE: A reusable component for selecting educational modules with support for subjects, search, and infinite scrolling.
  * DEPENDENCIES:
@@ -93,6 +100,17 @@ const SearchInput = styled.input`
   }
 `;
 
+/**
+ * ModuleSelector component for selecting educational modules.
+ *
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {Array<string|Object>} [props.selectedModules=[]] - Currently selected module items or IDs.
+ * @param {Function} props.onToggleModule - Callback invoked when a module selection is toggled.
+ * @param {boolean} [props.multiSelect=true] - Whether multiple modules can be selected simultaneously.
+ * @param {number} [props.refetchCounter=0] - Counter trigger to reload modules from backend.
+ * @returns {JSX.Element} Interactive module picker with search and filters.
+ */
 export default function ModuleSelector({
   selectedModules = [],
   onToggleModule,

@@ -17,7 +17,7 @@ import ContextAttachment from "../../models/ContextAttachments.model.js";
 const createTestApp = () => {
   const app = express();
   app.use(express.json());
-  
+
   // Mock user for protect middlewares in real app
   app.use((req, res, next) => {
     req.user = { _id: new mongoose.Types.ObjectId(), isAdmin: true };
@@ -35,7 +35,10 @@ const createTestApp = () => {
   app.put("/api/questions/update", quizController.updateQuestion);
   app.put("/api/questions/restore", quizController.restoreQuestion);
   app.delete("/api/questions/delete", quizController.deleteQuestion);
-  app.delete("/api/questions/deletePermanent", quizController.deleteQuestionPermanently);
+  app.delete(
+    "/api/questions/deletePermanent",
+    quizController.deleteQuestionPermanently,
+  );
   app.post("/api/bulk-import", quizController.bulkImportQuestions);
 
   app.use(errorHandler);
@@ -70,11 +73,14 @@ describe("Quiz Controller - Questions", () => {
           subject: "english",
           difficulty: "easy",
           type: "mcq",
-          modules: [new mongoose.Types.ObjectId()], skills: ["grammar"]
+          modules: [new mongoose.Types.ObjectId()],
+          skills: ["grammar"],
         };
-        
-        jest.spyOn(Question, "create").mockRejectedValueOnce(new Error("Database error"));
-        
+
+        jest
+          .spyOn(Question, "create")
+          .mockRejectedValueOnce(new Error("Database error"));
+
         const res = await request(app).post("/api/questions").send(payload);
         expect(res.status).toBe(400);
       });
@@ -85,7 +91,9 @@ describe("Quiz Controller - Questions", () => {
         jest.spyOn(Question, "findByIdAndUpdate").mockResolvedValueOnce(null);
         jest.spyOn(Question, "findById").mockResolvedValueOnce(null);
 
-        const res = await request(app).delete("/api/questions/delete").send({ id: new mongoose.Types.ObjectId() });
+        const res = await request(app)
+          .delete("/api/questions/delete")
+          .send({ id: new mongoose.Types.ObjectId() });
         expect(res.status).toBeGreaterThanOrEqual(400);
       });
     });
@@ -109,7 +117,8 @@ describe("Quiz Controller - Questions", () => {
           subject: "english",
           difficulty: "easy",
           type: "mcq",
-          modules: [new mongoose.Types.ObjectId()], skills: ["grammar"]
+          modules: [new mongoose.Types.ObjectId()],
+          skills: ["grammar"],
         };
         const res = await request(app).post("/api/questions").send(payload);
         if (res.status !== 201) console.error("CREATE ERROR:", res.body);
@@ -121,11 +130,21 @@ describe("Quiz Controller - Questions", () => {
     describe("GET /api/questions/skills", () => {
       it("should return skills from questions", async () => {
         await Question.create({
-          question: { slate: [] }, answerType: "SA", options: { type: "SA", sa: "A" }, explanation: { slate: [] }, modules: [new mongoose.Types.ObjectId()], skills: ["grammar"],
-          subject: "english", difficulty: "easy", type: "mcq",
-          skill: "grammar", subSkill: "verbs"
+          question: { slate: [] },
+          answerType: "SA",
+          options: { type: "SA", sa: "A" },
+          explanation: { slate: [] },
+          modules: [new mongoose.Types.ObjectId()],
+          skills: ["grammar"],
+          subject: "english",
+          difficulty: "easy",
+          type: "mcq",
+          skill: "grammar",
+          subSkill: "verbs",
         });
-        const res = await request(app).get("/api/questions/skills?subject=english");
+        const res = await request(app).get(
+          "/api/questions/skills?subject=english",
+        );
         expect(res.status).toBe(200);
         expect(res.body.data).toContain("grammar");
       });
@@ -134,10 +153,19 @@ describe("Quiz Controller - Questions", () => {
     describe("POST /api/questions/get", () => {
       it("should return paginated questions", async () => {
         await Question.create({
-          question: { slate: [] }, answerType: "SA", options: { type: "SA", sa: "A" }, explanation: { slate: [] }, modules: [new mongoose.Types.ObjectId()], skills: ["grammar"],
-          subject: "english", difficulty: "easy", type: "mcq"
+          question: { slate: [] },
+          answerType: "SA",
+          options: { type: "SA", sa: "A" },
+          explanation: { slate: [] },
+          modules: [new mongoose.Types.ObjectId()],
+          skills: ["grammar"],
+          subject: "english",
+          difficulty: "easy",
+          type: "mcq",
         });
-        const res = await request(app).post("/api/questions/get").send({ page: 1, limit: 10, subject: "english" });
+        const res = await request(app)
+          .post("/api/questions/get")
+          .send({ page: 1, limit: 10, subject: "english" });
         expect(res.status).toBe(200);
         expect(res.body.data.length).toBe(1);
       });
@@ -146,10 +174,19 @@ describe("Quiz Controller - Questions", () => {
     describe("DELETE /api/questions/delete", () => {
       it("should soft delete a question", async () => {
         const q = await Question.create({
-          question: { slate: [] }, answerType: "SA", options: { type: "SA", sa: "A" }, explanation: { slate: [] }, modules: [new mongoose.Types.ObjectId()], skills: ["grammar"],
-          subject: "english", difficulty: "easy", type: "mcq"
+          question: { slate: [] },
+          answerType: "SA",
+          options: { type: "SA", sa: "A" },
+          explanation: { slate: [] },
+          modules: [new mongoose.Types.ObjectId()],
+          skills: ["grammar"],
+          subject: "english",
+          difficulty: "easy",
+          type: "mcq",
         });
-        const res = await request(app).delete("/api/questions/delete").send({ id: q._id });
+        const res = await request(app)
+          .delete("/api/questions/delete")
+          .send({ id: q._id });
         expect(res.status).toBe(200);
         const check = await Question.findById(q._id);
         expect(check.active).toBe(false);
@@ -159,8 +196,16 @@ describe("Quiz Controller - Questions", () => {
     describe("DELETE /api/questions/deletePermanent", () => {
       it("should permanently delete a question and cascade to Responses and ContextAttachments", async () => {
         const q = await Question.create({
-          question: { slate: [{ text: "Q" }] }, answerType: "SA", options: { type: "SA", sa: "A" }, explanation: { slate: [] }, modules: [new mongoose.Types.ObjectId()], skills: ["grammar"],
-          subject: "english", difficulty: "easy", type: "mcq", isDeleted: true
+          question: { slate: [{ text: "Q" }] },
+          answerType: "SA",
+          options: { type: "SA", sa: "A" },
+          explanation: { slate: [] },
+          modules: [new mongoose.Types.ObjectId()],
+          skills: ["grammar"],
+          subject: "english",
+          difficulty: "easy",
+          type: "mcq",
+          isDeleted: true,
         });
         await Responses.create({
           userId: new mongoose.Types.ObjectId(),
@@ -177,15 +222,19 @@ describe("Quiz Controller - Questions", () => {
           questionId: q._id,
         });
 
-        const res = await request(app).delete("/api/questions/deletePermanent").send({ id: q._id });
+        const res = await request(app)
+          .delete("/api/questions/deletePermanent")
+          .send({ id: q._id });
         expect(res.status).toBe(200);
         const check = await Question.findById(q._id);
         expect(check).toBeNull();
-        
+
         const resps = await Responses.countDocuments({ questionId: q._id });
         expect(resps).toBe(0);
-        
-        const atts = await ContextAttachment.countDocuments({ questionId: q._id });
+
+        const atts = await ContextAttachment.countDocuments({
+          questionId: q._id,
+        });
         expect(atts).toBe(0);
       });
     });

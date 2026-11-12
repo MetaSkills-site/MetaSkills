@@ -1,4 +1,11 @@
 /**
+ * @file slateUtils.js
+ * @description Rich-text manipulation utilities for Slate AST validation, blank extraction, HTML conversion, and Markdown-to-Slate parsing.
+ * @architecture Content transform layer bridging raw text/Markdown, rich Slate JSON trees, and serialized HTML for editors and quiz renderers.
+ * @agent_note When generating inline void elements (math, inline-blank), ensure empty-string text guards flank them to prevent Slate normalization drops.
+ */
+
+/**
  * FILE PURPOSE: Utility layer for parsing, traversing, and serializing Slate JSON content structures.
  *
  * DEPENDENCIES:

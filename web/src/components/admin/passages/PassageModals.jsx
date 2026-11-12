@@ -1,3 +1,10 @@
+/**
+ * @file PassageModals.jsx
+ * @description Modals manager for viewing, creating, editing, bulk-adding sentences, and deleting reading passages.
+ * @architecture Admin modal presentation layer hosting dialog workflows and hooking into passage management services.
+ * @agent_note Coordinate modal visibility state with parent Passage container handlers to prevent unsaved state drops.
+ */
+
 import styled from "styled-components";
 import CommonDialog from "../../common/CommonDialog";
 import { DialogButtonGroup, DialogButton } from "../AdminStyles";
@@ -21,6 +28,32 @@ const TextArea = styled.textarea`
   }
 `;
 
+/**
+ * PassageModals component managing modal workflows for reading passages.
+ *
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {Object} [props.user] - Current administrative user profile.
+ * @param {boolean} props.viewModalOpen - Whether view modal is open.
+ * @param {Function} props.setViewModalOpen - View modal visibility setter.
+ * @param {Object} [props.selectedPassage] - Currently active passage for view/edit.
+ * @param {boolean} props.createModalOpen - Whether creation modal is open.
+ * @param {Function} props.setCreateModalOpen - Creation modal visibility setter.
+ * @param {boolean} props.editModalOpen - Whether editing modal is open.
+ * @param {Function} props.setEditModalOpen - Editing modal visibility setter.
+ * @param {boolean} props.deleteModalOpen - Whether delete confirmation is open.
+ * @param {Function} props.setDeleteModalOpen - Delete modal visibility setter.
+ * @param {boolean} props.bulkModalOpen - Whether bulk sentence modal is open.
+ * @param {Function} props.setBulkModalOpen - Bulk sentence modal visibility setter.
+ * @param {string} props.bulkText - Controlled text for bulk sentence creation.
+ * @param {Function} props.setBulkText - Bulk text setter.
+ * @param {Function} props.onUpdate - Callback invoked when saving edited passage.
+ * @param {Function} props.onCreate - Callback invoked when creating a new passage.
+ * @param {Function} props.onBulkCreate - Callback invoked for bulk sentence creation.
+ * @param {Function} props.onDelete - Callback invoked to confirm passage deletion.
+ * @param {Function} props.onUpdateLocal - Callback for updating active passage in local parent state.
+ * @returns {JSX.Element} Collection of passage-related dialog modals.
+ */
 const PassageModals = ({
   user,
   viewModalOpen,

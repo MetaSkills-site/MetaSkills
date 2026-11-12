@@ -1,4 +1,11 @@
 /**
+ * @file TagInput.jsx
+ * @description Multi-tag input field component allowing users to add, review, and delete tag chips via keyboard.
+ * @architecture Common form input component wrapping Tag chips and managed keyboard text inputs.
+ * @agent_note Enter key commits unique tags; trim input before updating parent tags array.
+ */
+
+/**
  * FILE PURPOSE: A multi-tag input component that allows users to type and manage a list of tags.
  *
  * DEPENDENCIES:
@@ -35,6 +42,16 @@ const TagInputField = styled.input`
   padding: 4px;
 `;
 
+/**
+ * TagInput component for managing arrays of string tags.
+ *
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {Array<string>} props.tags - Current list of string tags.
+ * @param {Function} props.setTags - State updater function for the tag list.
+ * @param {string} [props.placeholder="Type tag and press Enter"] - Input placeholder text.
+ * @returns {JSX.Element} Interactive tag input container.
+ */
 export default function TagInput({
   tags,
   setTags,

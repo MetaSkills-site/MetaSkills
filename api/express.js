@@ -4,7 +4,10 @@
  * @architecture Serves as the main HTTP pipeline router for the backend system.
  */
 import express from "express";
-import connectDB, { checkDatabaseHealth, isServerShuttingDown } from "./config/database.js";
+import connectDB, {
+  checkDatabaseHealth,
+  isServerShuttingDown,
+} from "./config/database.js";
 import userRoute from "./routes/user.routes.js";
 import quizRoute from "./routes/quiz.routes.js";
 import adminRoute from "./routes/admin.routes.js";
@@ -34,7 +37,9 @@ const livenessHandler = (_req, res) => {
 
 const readinessHandler = async (_req, res) => {
   if (isServerShuttingDown()) {
-    return res.status(503).json({ status: "DOWN", reason: "Server is shutting down" });
+    return res
+      .status(503)
+      .json({ status: "DOWN", reason: "Server is shutting down" });
   }
   const health = await checkDatabaseHealth();
   if (!health.ok) {

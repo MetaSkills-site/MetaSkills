@@ -1,4 +1,11 @@
 /**
+ * @file MathMarathonQuiz.jsx
+ * @description Controller for the Math Marathon mode managing tokenized question fetching, problem decoding, and multi-step math quizzes.
+ * @architecture Marathon subsystem controller connecting tokenized math backend services with TokenQuestionRenderer.
+ * @agent_note Handles multi-stage math problem transitions via onNextStep and reports question data to ReportErrorModal.
+ */
+
+/**
  * FILE PURPOSE: MathMarathonQuiz — The primary controller for the Math Marathon practice mode.
  *
  * ROLE:
@@ -33,6 +40,10 @@ import QuizResultDisplay from "./common/QuizResultDisplay";
 import TokenQuestionRenderer from "./TokenQuestionRenderer";
 import ReportErrorModal from "./common/ReportErrorModal";
 
+/**
+ * @component
+ * @returns {JSX.Element} The rendered math marathon quiz session or loading splash page.
+ */
 function MathMarathonQuiz() {
   const { questionId } = useParams();
   const navigate = useNavigate();

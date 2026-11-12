@@ -1,3 +1,10 @@
+/**
+ * @file migratePassageRating.js
+ * @description Initializes default Elo ratings to 1200 for legacy passage documents missing the rating field.
+ * @architecture Part of the database migration layer aligning reading comprehension passages with the Elo-based adaptive rating system.
+ * @agent_note Safe to re-run idempotently as it filters exclusively for documents where the rating field does not exist.
+ */
+
 import mongoose from "mongoose";
 import "../config/env.js";
 import Passages from "../models/Passages.model.js";
@@ -12,6 +19,10 @@ const LINE = "═".repeat(66);
  * - Adds `rating: 1200` to all Passages missing this field.
  */
 
+/**
+ * @desc Connects to MongoDB, identifies passages lacking ratings, and backfills them with default Elo scores.
+ * @returns {Promise<void>} Resolves when passage ratings have been updated and DB connection closed.
+ */
 const migrate = async () => {
   try {
     if (!process.env.MONGODB_URI) {

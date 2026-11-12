@@ -1,4 +1,11 @@
 /**
+ * @file ModuleStartSkeleton.jsx
+ * @description Centered skeleton placeholder for module introductory screens matching StartPage layout.
+ * @architecture Suspense fallback component for module start routes, mirroring title, metrics, and start CTA buttons.
+ * @agent_note Replaces splash screen loaders for faster perceived transition into quiz modules.
+ */
+
+/**
  * FILE PURPOSE: ModuleStartSkeleton — Suspense fallback for the module intro/start page.
  *
  * ROLE:
@@ -18,6 +25,12 @@
  */
 import { SkeletonRect, SkeletonText } from "../SkeletonLoader.jsx";
 
+/**
+ * ModuleStartSkeleton Suspense fallback component.
+ *
+ * @component
+ * @returns {JSX.Element} Centered intro layout skeleton for quiz start screens.
+ */
 export default function ModuleStartSkeleton() {
   return (
     <div

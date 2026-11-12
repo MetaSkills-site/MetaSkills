@@ -1,13 +1,8 @@
 /**
- * FILE: ViewUsers.jsx
- * PURPOSE: Administrative interface for user management, featuring virtualized infinite scrolling, search, and grade-based filtering.
- * DEPENDENCIES:
- *   - useInfiniteQuery: TanStack Query hook for efficient paginated data fetching.
- *   - useAdminVirtualizer: Custom hook for windowing long lists to maintain performance.
- *   - adminService: API services for user-related CRUD operations.
- *   - react-hot-toast: For displaying success/error notifications.
- * EXPORTS: ViewUsers (Default export)
- * INTERCONNECTIONS: Serves as the primary entry point for managing user accounts and viewing their activity history.
+ * @file UsersViewPage.jsx
+ * @description Administrative user management page providing virtualized infinite scrolling, search, grade filtering, and user editing/deletion controls.
+ * @architecture Mounted within the admin routing tree, consumes adminService endpoints via TanStack Query infinite query and virtualized with useAdminVirtualizer.
+ * @agent_note Features debounced search, grade multi-select filtering, view toggle modes (compact/details), and countdown confirmations for user deletion.
  */
 
 import { IconButton } from "../../components/admin/AdminStyles";
@@ -102,6 +97,11 @@ const ViewToggleButton = styled.button`
 import useInfiniteScroll from "../../hooks/useInfiniteScroll";
 import { useAdminAuth } from "../../components/admin/AdminAuthProvider";
 
+/**
+ * Admin user accounts management page component supporting virtualized list rendering, search, and account moderation tools.
+ * @component
+ * @returns {JSX.Element}
+ */
 export default function UsersViewPage() {
   const navigate = useNavigate();
   // Retrieve admin user details from local storage for authentication

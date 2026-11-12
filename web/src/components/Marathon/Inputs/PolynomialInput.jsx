@@ -1,3 +1,10 @@
+/**
+ * @file PolynomialInput.jsx
+ * @description Provides a specialized input field series for entering polynomial coefficients with automatic focus progression and grouping support.
+ * @architecture Marathon input layer component for algebraic question types formatting coefficient arrays into delimited strings.
+ * @agent_note Sanitizes HTML labels with DOMPurify and handles colon/comma group splitting for multi-variable polynomials.
+ */
+
 import DOMPurify from "dompurify";
 import { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
@@ -37,6 +44,20 @@ const HintText = styled.div`
   font-style: italic;
 `;
 
+/**
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {string} props.value - Serialized coefficient values string.
+ * @param {Function} props.onChange - Handler invoked with updated serialized coefficient values.
+ * @param {boolean} [props.disabled=false] - Whether inputs are disabled.
+ * @param {Array<string>} [props.labels=[]] - Polynomial term labels (e.g., ['x³', 'x²', 'x', '']).
+ * @param {string} [props.hint=""] - Optional hint text rendered below the input grid.
+ * @param {number} [props.groupBy=0] - Number of coefficients grouped with colons before comma separation.
+ * @param {string|null} [props.prefix=null] - Optional HTML/text prefix rendered before first input.
+ * @param {string|null} [props.separator="+"] - Operator string displayed between polynomial terms.
+ * @param {Function} [props.onKeyDown] - Keydown event handler triggered on Enter in final input.
+ * @returns {JSX.Element} The rendered polynomial coefficient input grid.
+ */
 function PolynomialInput({
   value,
   onChange,

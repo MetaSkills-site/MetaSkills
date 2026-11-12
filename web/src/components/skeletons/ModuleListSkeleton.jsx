@@ -1,4 +1,11 @@
 /**
+ * @file ModuleListSkeleton.jsx
+ * @description Grid skeleton placeholder representing subject module lists and card metadata.
+ * @architecture View-layer Suspense fallback component emulating the auto-fill card grid in ModuleList.
+ * @agent_note Generates a fixed 6-card grid with simulated title, counter, and badge placeholders.
+ */
+
+/**
  * FILE PURPOSE: ModuleListSkeleton — Suspense fallback for /modules/:subject routes.
  *
  * ROLE:
@@ -53,6 +60,12 @@ const ModuleCardSkeleton = styled.div`
 
 /* ─── Main Component ─── */
 
+/**
+ * ModuleListSkeleton Suspense fallback component.
+ *
+ * @component
+ * @returns {JSX.Element} Responsive grid of module card skeletons.
+ */
 export default function ModuleListSkeleton() {
   return (
     <Container>

@@ -1,7 +1,18 @@
+/**
+ * @file migrateModuleUniqueIndex.js
+ * @description Migrates the Module collection index from subject-order compound index to a unique subject-name index with deduplication, supporting rollbacks.
+ * @architecture Part of the database migration layer adjusting MongoDB index constraints on the Module model for curriculum uniqueness guarantees.
+ * @agent_note Destructively removes duplicate modules keeping only the first document when running forward migration, and supports a rollback argument.
+ */
+
 import mongoose from "mongoose";
 import "../config/env.js";
 import Module from "../models/Module.model.js";
 
+/**
+ * @desc Executes either the compound unique index migration or its rollback for the Module collection based on CLI arguments.
+ * @returns {Promise<void>} Resolves when indexing and document cleanup operations complete.
+ */
 const migrate = async () => {
   const isRollback = process.argv[2] === "rollback";
 

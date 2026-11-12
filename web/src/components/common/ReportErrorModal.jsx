@@ -1,4 +1,11 @@
 /**
+ * @file ReportErrorModal.jsx
+ * @description Modal dialog allowing users to report question or content issues with automated screenshot capture.
+ * @architecture Common feedback dialog feature integrating html2canvas and Google Cloud Storage image upload.
+ * @agent_note Exclude dialog overlay from screenshot capture by ensuring ignore-on-screenshot class is applied.
+ */
+
+/**
  * FILE PURPOSE: A modal component that allows users to report errors or issues with specific questions.
  * It captures user feedback, question data, and system/environment metadata.
  *
@@ -76,6 +83,16 @@ const AttachmentInfo = styled.div`
   }
 `;
 
+/**
+ * ReportErrorModal component for submitting error reports and screenshots.
+ *
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {boolean} props.open - Modal visibility state.
+ * @param {Function} props.onOpenChange - Visibility change callback.
+ * @param {Object} props.environment - Contextual system and question metadata.
+ * @returns {JSX.Element} Error reporting dialog modal.
+ */
 export default function ReportErrorModal({ open, onOpenChange, environment }) {
   const { user } = useContext(SessionContext);
   const [description, setDescription] = useState("");

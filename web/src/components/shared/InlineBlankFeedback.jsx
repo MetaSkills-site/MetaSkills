@@ -1,4 +1,11 @@
 /**
+ * @file InlineBlankFeedback.jsx
+ * @description Inline feedback component rendering correctness styles and diff arrows for fill-in-the-blank questions.
+ * @architecture Shared UI element within question exercise renderers for inline post-submission evaluation.
+ * @agent_note Defaults to case-insensitive comparison if the isCorrect boolean override is not explicitly passed.
+ */
+
+/**
  * FILE PURPOSE: InlineBlankFeedback — Displays visual feedback for fill-in-the-blank questions.
  *
  * ROLE:
@@ -18,6 +25,16 @@
  */
 import { getInlineFeedbackStyle } from "../../utils/feedbackStyles";
 
+/**
+ * InlineBlankFeedback component rendering inline result feedback.
+ *
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {string} [props.userAnswer] - User submitted answer string.
+ * @param {string} [props.correctAnswer] - Expected canonical answer string.
+ * @param {boolean} [props.isCorrect] - Explicit correctness flag override.
+ * @returns {JSX.Element} Color-coded inline feedback span.
+ */
 export default function InlineBlankFeedback({
   userAnswer,
   correctAnswer,

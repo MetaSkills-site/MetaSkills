@@ -1,4 +1,11 @@
 /**
+ * @file OptionsGrid.jsx
+ * @description Renders marathon choice options by bridging common option grids with marathon-specific fuzzy validation logic and dynamic layouts.
+ * @architecture Marathon presentation component calculating layout strategies (list vs grid) based on option content length.
+ * @agent_note Adapts answer evaluation via validateAnswer to support text tolerance and percentage thresholds.
+ */
+
+/**
  * Proxies to Common/OptionsGrid while injecting Marathon-specific validation and layout logic.
  *
  * DEPENDENCIES:
@@ -15,6 +22,17 @@
 import CommonOptionsGrid from "../../common/OptionsGrid";
 import { validateAnswer } from "../../../utils/answerValidation";
 
+/**
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {Array<string|Object>} props.options - Array of answer choices.
+ * @param {Array<string>} props.userAnswers - Currently selected answers array.
+ * @param {boolean} props.submitted - Whether the current choice has been submitted.
+ * @param {Function} props.handleAnswerChange - Callback handling answer choice updates.
+ * @param {Object} props.questionData - Complete question configuration schema.
+ * @param {Array<string>} [props.correctAnswers] - Explicit correct answer tokens for post-submission verification.
+ * @returns {JSX.Element|null} The rendered options grid or list layout.
+ */
 const OptionsGrid = ({
   options,
   userAnswers,

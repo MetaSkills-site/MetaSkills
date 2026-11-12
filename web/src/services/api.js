@@ -1,4 +1,11 @@
 /**
+ * @file api.js
+ * @description Core Axios HTTP client configuration with CSRF handling, in-memory GET response caching, and request/response interceptors.
+ * @architecture Base networking layer consumed by domain services and query hooks for communication with the backend API.
+ * @agent_note Mutations (POST, PUT, PATCH, DELETE) automatically clear the in-memory cache and attach the CSRF token from fetchCsrfToken.
+ */
+
+/**
  * FILE PURPOSE: Core API client configuration.
  * Provides a pre-configured axios instance used by all service modules.
  * Centralizes base URL, authentication header generation, and request interceptors.
@@ -44,8 +51,18 @@ const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 let csrfToken = null;
 
+/**
+ * Returns the currently stored CSRF token.
+ *
+ * @returns {string|null} The cached CSRF token, or null if uninitialized.
+ */
 export const getCsrfToken = () => csrfToken;
 
+/**
+ * Fetches and stores a fresh CSRF token from the server.
+ *
+ * @returns {Promise<void>} Resolves when token has been set in module memory.
+ */
 export const fetchCsrfToken = async () => {
   const res = await apiClient.get("/api/csrf-token");
   csrfToken = res.data.csrfToken;
@@ -82,6 +99,13 @@ apiClient.interceptors.response.use(
   (error) => Promise.reject(error),
 );
 
+/**
+ * Performs a cached HTTP GET request, returning cached response if within TTL window.
+ *
+ * @param {string} url - Target request URL.
+ * @param {Object} [options={}] - Axios configuration options and query parameters.
+ * @returns {Promise<Object>} Response object from cache or network request.
+ */
 apiClient.cachedGet = async (url, options = {}) => {
   const cacheKey = `GET:${url}:${JSON.stringify(options.params || {})}`;
   const cached = apiCache.get(cacheKey);

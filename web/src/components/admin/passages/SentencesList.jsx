@@ -1,3 +1,10 @@
+/**
+ * @file SentencesList.jsx
+ * @description List display for standalone reading sentences with difficulty badges and deletion controls.
+ * @architecture Admin presentation component rendering sentence items with infinite scroll support.
+ * @agent_note Ensure lastElementRef is linked to the last sentence node to trigger paginated fetches.
+ */
+
 import { IconButton } from "../AdminStyles";
 import styled from "styled-components";
 import { LuTrash2, LuFileText } from "react-icons/lu";
@@ -24,6 +31,18 @@ const MetaContainer = styled.div`
   gap: 8px;
 `;
 
+/**
+ * SentencesList component rendering list of individual sentences.
+ *
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {Array<Object>} props.passages - Array of sentence/passage objects.
+ * @param {boolean} props.loading - Loading indicator flag.
+ * @param {string} [props.searchQuery] - Search filter text for empty state messaging.
+ * @param {Function} props.onDelete - Callback when deleting a sentence.
+ * @param {React.Ref} [props.lastElementRef] - Infinite scroll intersection observer target ref.
+ * @returns {JSX.Element} Column list of sentence cards or skeleton/empty view.
+ */
 const SentencesList = ({
   passages,
   loading,

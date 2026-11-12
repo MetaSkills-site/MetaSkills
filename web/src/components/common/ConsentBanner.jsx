@@ -1,3 +1,10 @@
+/**
+ * @file ConsentBanner.jsx
+ * @description Cookie consent banner prompting users for analytics and tracking agreement with local storage persistence.
+ * @architecture Root-level floating notification layer displayed conditionally based on local storage consent status.
+ * @agent_note Checks and writes to "metaskills-cookie-consent" key in localStorage; ensure safe fallback when storage is unavailable.
+ */
+
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 
@@ -64,6 +71,12 @@ const ConsentBannerWrapper = styled.div`
   }
 `;
 
+/**
+ * ConsentBanner component prompting user for cookie consent.
+ *
+ * @component
+ * @returns {JSX.Element|null} Fixed cookie consent notification banner or null if already consented.
+ */
 const ConsentBanner = () => {
   const [isVisible, setIsVisible] = useState(false);
 

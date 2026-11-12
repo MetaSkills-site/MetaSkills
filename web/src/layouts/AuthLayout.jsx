@@ -1,4 +1,11 @@
 /**
+ * @file AuthLayout.jsx
+ * @description Layout wrapper providing branding, keyframe glow animations, and navigation shell for authentication workflows.
+ * @architecture Wraps public authentication child routes (/auth, /admin/login) using React Router's Outlet, managing cover image skeleton states.
+ * @agent_note Ensure subHeader prop defaults and UniversalBackButton navigation behavior remain intact when adjusting styling or nested routing.
+ */
+
+/**
  * FILE PURPOSE: Authentication layout wrapper for MetaSkills.
  * Provides a consistent visual background with animations and a responsive container for auth-related forms (Login, Signup, etc.).
  *
@@ -131,6 +138,14 @@ const Section = styled.section`
   position: relative;
 `;
 
+/**
+ * Authentication layout component wrapping child auth views with branding and animated background.
+ *
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {string} [props.subHeader="Sign in to MetaSkills"] - Subtitle displayed below the application brand name.
+ * @returns {JSX.Element} The rendered layout containing background glow, header branding, cover image, and nested route outlet.
+ */
 export default function AuthLayout({ subHeader = "Sign in to MetaSkills" }) {
   const navigate = useNavigate();
   // isCoverLoaded tracks image loading to toggle visibility between Skeleton and Img

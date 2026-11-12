@@ -1,7 +1,18 @@
+/**
+ * @file migrateCarrotsObject.js
+ * @description Transforms scalar numeric carrots fields on User documents into rich subdocuments containing count, lastdate, and weekly history.
+ * @architecture Part of the database maintenance script layer upgrading gamification reward data structures to support activity streaks.
+ * @agent_note Uses User.collection.updateOne directly to bypass Mongoose schema type validation during the type transition.
+ */
+
 import mongoose from "mongoose";
 import "../config/env.js";
 import User from "../models/user.model.js";
 
+/**
+ * @desc Scans all users and converts scalar carrot counts into structured objects with history arrays and timestamp tracking.
+ * @returns {Promise<void>} Resolves when all scalar carrot values are transformed into subdocuments.
+ */
 const runMigration = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI);

@@ -1,4 +1,11 @@
 /**
+ * @file SkeletonLoader.jsx
+ * @description Provides reusable CSS shimmer animation primitives for rendering text, circular, and rectangular skeleton loading states.
+ * @architecture UI presentation foundation providing animated placeholder components for asynchronous views across the application.
+ * @agent_note Uses transient styled-components props ($width, $height, $size, $mb, $radius) to customize placeholder dimensions.
+ */
+
+/**
  * FILE PURPOSE: SkeletonLoader — A library of shimmer-effect primitives for loading states.
  *
  * ROLE:
@@ -55,8 +62,13 @@ const SkeletonBase = styled.div`
 `;
 
 /**
- * SkeletonText
- * Specifically sized to match standard font-heights and line-margins.
+ * @component
+ * @description Sized to match standard font-heights and line-margins.
+ * @param {Object} props - Styled component properties.
+ * @param {string} [props.$width="100%"] - CSS width specification.
+ * @param {string} [props.$height="1em"] - CSS height specification.
+ * @param {string} [props.$mb="0"] - CSS margin-bottom specification.
+ * @returns {JSX.Element} Text line placeholder with shimmer animation.
  */
 export const SkeletonText = styled(SkeletonBase)`
   width: ${(props) => props.$width || "100%"};
@@ -65,8 +77,11 @@ export const SkeletonText = styled(SkeletonBase)`
 `;
 
 /**
- * SkeletonCircle
- * Used for avatars and circular iconography fallback.
+ * @component
+ * @description Used for avatars and circular iconography fallback.
+ * @param {Object} props - Styled component properties.
+ * @param {string} [props.$size="40px"] - Circle diameter width and height.
+ * @returns {JSX.Element} Circular placeholder with shimmer animation.
  */
 export const SkeletonCircle = styled(SkeletonBase)`
   width: ${(props) => props.$size || "40px"};
@@ -75,8 +90,13 @@ export const SkeletonCircle = styled(SkeletonBase)`
 `;
 
 /**
- * SkeletonRect
- * A generic block-level placeholder for custom component shapes.
+ * @component
+ * @description A generic block-level placeholder for custom component shapes.
+ * @param {Object} props - Styled component properties.
+ * @param {string} [props.$width="100%"] - CSS width specification.
+ * @param {string} [props.$height="100px"] - CSS height specification.
+ * @param {string} [props.$radius="8px"] - CSS border-radius specification.
+ * @returns {JSX.Element} Rectangular box placeholder with shimmer animation.
  */
 export const SkeletonRect = styled(SkeletonBase)`
   width: ${(props) => props.$width || "100%"};

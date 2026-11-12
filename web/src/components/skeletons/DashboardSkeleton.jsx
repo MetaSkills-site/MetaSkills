@@ -1,4 +1,11 @@
 /**
+ * @file DashboardSkeleton.jsx
+ * @description Layout skeleton mirroring the two-column dashboard structure with header greeting and cards.
+ * @architecture View-layer Suspense fallback component maintaining viewport height and navigation during bundle loading.
+ * @agent_note Mirrors the exact dimensions of GreetingWrapper and CardWrapper in Dashboard layout.
+ */
+
+/**
  * FILE PURPOSE: DashboardSkeleton — Suspense fallback for the /dashboard route.
  *
  * ROLE:
@@ -83,6 +90,12 @@ const CardWrapper = styled.div`
 
 /* ─── Main Component ─── */
 
+/**
+ * DashboardSkeleton Suspense fallback component.
+ *
+ * @component
+ * @returns {JSX.Element} Two-column dashboard layout skeleton.
+ */
 export default function DashboardSkeleton() {
   return (
     <>

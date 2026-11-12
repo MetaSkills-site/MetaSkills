@@ -1,9 +1,20 @@
+/**
+ * @file cleanup-sessions.js
+ * @description Cleans up orphaned session documents and normalizes polymorphic onModel references for Users and Admins.
+ * @architecture Part of the database maintenance and session management subsystem ensuring referential integrity of active authentication tokens.
+ * @agent_note Deletes sessions whose associated User or Admin record no longer exists, directly invoking process.exit on finish.
+ */
+
 import "../config/env.js";
 import connectDB from "../config/database.js";
 import Session from "../models/session.model.js";
 import User from "../models/user.model.js";
 import Admin from "../models/admin.model.js";
 
+/**
+ * @desc Scans all session documents, purges orphaned sessions, and updates onModel discriminators for valid sessions.
+ * @returns {Promise<void>} Resolves when session cleanup and reference verification finishes.
+ */
 const cleanup = async () => {
   try {
     await connectDB();

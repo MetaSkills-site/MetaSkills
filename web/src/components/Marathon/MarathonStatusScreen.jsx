@@ -1,3 +1,10 @@
+/**
+ * @file MarathonStatusScreen.jsx
+ * @description Full-screen or container status view for marathon milestones showing goal completion, cooldown countdown timers, and navigation triggers.
+ * @architecture Marathon module view layer feedback screen displayed when daily quotas or review cooldown limits are encountered.
+ * @agent_note Manages interval-driven countdown timers to track time remaining until next review cycle and triggers onRefresh when expired.
+ */
+
 import { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
@@ -99,6 +106,20 @@ const formatTimeUntil = (difference) => {
   return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 };
 
+/**
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {React.ReactNode} [props.icon=<IoCheckmarkCircleOutline />] - Main illustration or status icon.
+ * @param {string} [props.title="Daily Goal Reached!"] - Header title text.
+ * @param {string} [props.message] - Explanatory status text or motivation copy.
+ * @param {string|number|Date} [props.timeUntilNext] - Target timestamp or date string for the review cooldown countdown.
+ * @param {Function} [props.onRefresh] - Callback invoked when the countdown timer reaches zero.
+ * @param {React.ReactNode} [props.buttonIcon=<IoHomeOutline size={20} />] - Icon rendered inside action button.
+ * @param {string} [props.buttonText="Back to Marathon Home"] - Label text for action button.
+ * @param {Function} [props.buttonAction] - Click handler for the action button (defaults to navigating to /marathon).
+ * @param {boolean} [props.fullScreen=true] - Whether to render in full-viewport mode or as an inline card.
+ * @returns {JSX.Element} The rendered marathon status and cooldown screen.
+ */
 export default function MarathonStatusScreen({
   icon = <IoCheckmarkCircleOutline />,
   title = "Daily Goal Reached!",

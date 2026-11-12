@@ -1,4 +1,11 @@
 /**
+ * @file GenericPageSkeleton.jsx
+ * @description General-purpose loading placeholder rendering title and rectangular content row skeletons.
+ * @architecture Shared fallback view for low-traffic or administrative routes lacking dedicated skeleton screens.
+ * @agent_note Excludes navigation header intentionally to avoid double nav rendering within nested layouts.
+ */
+
+/**
  * FILE PURPOSE: GenericPageSkeleton — A versatile fallback for low-traffic or administrative routes.
  *
  * ROLE:
@@ -19,6 +26,12 @@
  */
 import { SkeletonRect, SkeletonText } from "../SkeletonLoader.jsx";
 
+/**
+ * GenericPageSkeleton fallback component.
+ *
+ * @component
+ * @returns {JSX.Element} Generic title and row-based placeholder layout.
+ */
 export default function GenericPageSkeleton() {
   return (
     <div

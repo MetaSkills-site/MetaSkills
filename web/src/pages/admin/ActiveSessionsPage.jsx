@@ -1,24 +1,8 @@
 /**
- * ActiveSessions.jsx
- *
- * PURPOSE:
- * Provides an administrative interface for monitoring and managing active user sessions.
- * Admins can view who is currently online, inspect user profiles, and terminate
- * (suspend) individual or all active sessions to force logouts.
- *
- * DEPENDENCIES:
- * - @tanstack/react-query: For real-time session monitoring and data synchronization.
- * - radix-ui: Specifically for accessible Avatar components.
- * - react-icons: For UI visual cues (server status, sort, eye, trash).
- * - adminService: To interface with backend session management endpoints.
- * - CommonDialog: For confirmation-heavy operations like bulk logout.
- *
- * EXPORTS:
- * - ActiveSessions (default): The main functional component for the session manager.
- *
- * INTERCONNECTIONS:
- * - Accessed from the Admin main navigation menu.
- * - Triggers backend invalidation of the 'adminSessions' query upon session termination.
+ * @file ActiveSessionsPage.jsx
+ * @description Administrative session monitoring dashboard for viewing active user logins and terminating individual or bulk sessions.
+ * @architecture Mounted within the admin routing tree, interfaces with adminService endpoints and invalidates TanStack Query session caches.
+ * @agent_note Coordinates modal confirmation dialogs for destructive bulk logouts and fetches on-demand profile details for inspected users.
  */
 
 import { useState, useRef, useEffect } from "react";
@@ -193,6 +177,11 @@ const ClearAllButton = styled.button`
   }
 `;
 
+/**
+ * Admin active sessions management page component providing live user tracking and session revocation tools.
+ * @component
+ * @returns {JSX.Element}
+ */
 export default function ActiveSessionsPage() {
   // Safe authentication token retrieval
 

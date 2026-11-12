@@ -1,3 +1,10 @@
+/**
+ * @file removeOrderProperty.js
+ * @description Removes deprecated order properties from Module and Question collections using non-strict schema updates.
+ * @architecture Part of the database migration layer cleaning up legacy sequence attributes superseded by dynamic ordering or array indexes.
+ * @agent_note Exported function can be run standalone via CLI or invoked programmatically within migration suites.
+ */
+
 import mongoose from "mongoose";
 import "../config/env.js";
 import Module from "../models/Module.model.js";
@@ -5,6 +12,10 @@ import Question from "../models/Questions.model.js";
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
+/**
+ * @desc Connects to MongoDB if unestablished and unsets the order field from all Module and Question documents.
+ * @returns {Promise<{success: boolean, modifiedModules: number, modifiedQuestions: number}>} Summary of modified document counts.
+ */
 export const removeOrderProperty = async () => {
   let openedConnection = false;
   try {

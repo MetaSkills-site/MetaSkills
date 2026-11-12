@@ -1,4 +1,11 @@
 /**
+ * @file CreatePassage.jsx
+ * @description Administrative modal form component for authoring and persisting new reading passages.
+ * @architecture Admin dialog feature component wrapping PassageEditor with TanStack mutation logic for passage persistence.
+ * @agent_note Verify both title and text properties are present in passageData before triggering mutation.
+ */
+
+/**
  * FILE: CreatePassage.jsx
  * PURPOSE: Administrative component for creating new reading passages for the English Marathon.
  * DEPENDENCIES:
@@ -16,6 +23,15 @@ import { createPassage } from "../../services/passagesService";
 import PassageEditor from "./PassageEditor";
 import { DialogButtonGroup, DialogButton } from "./AdminStyles";
 
+/**
+ * CreatePassage modal dialog component.
+ *
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {Function} props.onClose - Callback to close the creation modal.
+ * @param {Function} [props.onCreate] - Callback invoked when a passage is successfully created.
+ * @returns {JSX.Element} Passage creation form with actions.
+ */
 export default function CreatePassage({ onClose, onCreate }) {
   // Local state for tracking passage title and content
   const [passageData, setPassageData] = useState({ title: "", text: "" });

@@ -1,4 +1,11 @@
 /**
+ * @file AdminDashboardView.jsx
+ * @description Centralized barrel export aggregating admin views, context providers, shared styles, and utility helpers.
+ * @architecture Serves as an aggregation barrel for the administrative subsystem, organizing admin routing dependencies.
+ * @agent_note When modifying admin route exports or adding new admin modules, update the corresponding re-exports here.
+ */
+
+/**
  * FILE PURPOSE: AdminComponents — A centralized barrel export for administrative UI components.
  *
  * ROLE:

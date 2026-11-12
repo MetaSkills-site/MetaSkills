@@ -31,22 +31,26 @@ describe("Admin Auth Controller", () => {
   beforeAll(() => {
     app = express();
     app.use(express.json());
-    
+
     // Setup routes
     app.post("/api/admin/auth/google", adminAuthController.googleAuth);
-    app.get("/api/admin/auth/check", (req, res, next) => {
-      // Mock protectAdmin middleware behavior
-      req.admin = { _id: new mongoose.Types.ObjectId() };
-      next();
-    }, adminAuthController.checkAuth);
-    
+    app.get(
+      "/api/admin/auth/check",
+      (req, res, next) => {
+        // Mock protectAdmin middleware behavior
+        req.admin = { _id: new mongoose.Types.ObjectId() };
+        next();
+      },
+      adminAuthController.checkAuth,
+    );
+
     app.use(errorHandler);
   });
 
   describe("Unit Tests", () => {
     beforeEach(() => {
       jest.clearAllMocks();
-      
+
       verifySpy = jest.spyOn(OAuth2Client.prototype, "verifyIdToken");
       process.env.VITE_GOOGLE_CLIENT_ID = "test-client-id";
       process.env.JWT_SECRET = "testsecret";
@@ -60,18 +64,18 @@ describe("Admin Auth Controller", () => {
       it("should return 500 if Google Client ID is missing", async () => {
         delete process.env.VITE_GOOGLE_CLIENT_ID;
         delete process.env.GOOGLE_CLIENT_ID;
-        
+
         const res = await request(app)
           .post("/api/admin/auth/google")
           .send({ credential: "mock-token" });
-          
+
         expect(res.status).toBe(500);
         expect(res.body.message).toMatch(/Server configuration error/);
       });
 
       it("should return 400 if credential is missing", async () => {
         const res = await request(app).post("/api/admin/auth/google").send({});
-        
+
         expect(res.status).toBe(400);
         expect(res.body.message).toMatch(/Google credential is required/);
       });
@@ -80,11 +84,11 @@ describe("Admin Auth Controller", () => {
         verifySpy.mockResolvedValue({
           getPayload: () => ({ email: null, name: "Test" }),
         });
-        
+
         const res = await request(app)
           .post("/api/admin/auth/google")
           .send({ credential: "mock-token" });
-          
+
         expect(res.status).toBe(400);
         expect(res.body.message).toMatch(/missing required fields/);
       });
@@ -94,11 +98,11 @@ describe("Admin Auth Controller", () => {
           getPayload: () => ({ email: "notadmin@test.com", name: "Test" }),
         });
         jest.spyOn(Admin, "findOne").mockResolvedValue(null);
-        
+
         const res = await request(app)
           .post("/api/admin/auth/google")
           .send({ credential: "mock-token" });
-          
+
         expect(res.status).toBe(401);
         expect(res.body.message).toMatch(/not authorized/);
       });
@@ -108,25 +112,28 @@ describe("Admin Auth Controller", () => {
           getPayload: () => ({ email: "error@test.com", name: "Test" }),
         });
         jest.spyOn(Admin, "findOne").mockRejectedValue(new Error("DB Error"));
-        
+
         const res = await request(app)
           .post("/api/admin/auth/google")
           .send({ credential: "mock-token" });
-          
+
         expect(res.status).toBe(401);
       });
-      
+
       it("should return 401 and handle DB error during admin update", async () => {
         verifySpy.mockResolvedValue({
           getPayload: () => ({ email: "admin@test.com", name: "Test" }),
         });
-        const mockAdmin = { _id: new mongoose.Types.ObjectId(), save: jest.fn().mockRejectedValue(new Error("Update Error")) };
+        const mockAdmin = {
+          _id: new mongoose.Types.ObjectId(),
+          save: jest.fn().mockRejectedValue(new Error("Update Error")),
+        };
         jest.spyOn(Admin, "findOne").mockResolvedValue(mockAdmin);
-        
+
         const res = await request(app)
           .post("/api/admin/auth/google")
           .send({ credential: "mock-token" });
-          
+
         expect(res.status).toBe(401);
       });
     });
@@ -134,18 +141,18 @@ describe("Admin Auth Controller", () => {
     describe("GET /api/admin/auth/check", () => {
       it("should return 401 if fresh admin is not found in DB", async () => {
         jest.spyOn(Admin, "findById").mockResolvedValue(null);
-        
+
         const res = await request(app).get("/api/admin/auth/check");
-        
+
         expect(res.status).toBe(401);
         expect(res.body.message).toBe("Admin validation failed");
       });
 
       it("should handle DB error during findById", async () => {
         jest.spyOn(Admin, "findById").mockRejectedValue(new Error("DB Error"));
-        
+
         const res = await request(app).get("/api/admin/auth/check");
-        
+
         expect(res.status).not.toBe(200);
       });
     });
@@ -156,7 +163,7 @@ describe("Admin Auth Controller", () => {
       await Admin.deleteMany({});
       await Session.deleteMany({});
       jest.clearAllMocks();
-      
+
       verifySpy = jest.spyOn(OAuth2Client.prototype, "verifyIdToken");
       process.env.VITE_GOOGLE_CLIENT_ID = "test-client-id";
       process.env.JWT_SECRET = "testsecret";
@@ -175,7 +182,10 @@ describe("Admin Auth Controller", () => {
         });
 
         verifySpy.mockResolvedValue({
-          getPayload: () => ({ email: "admin@test.com", name: "New Google Name" }),
+          getPayload: () => ({
+            email: "admin@test.com",
+            name: "New Google Name",
+          }),
         });
 
         const res = await request(app)
@@ -188,7 +198,7 @@ describe("Admin Auth Controller", () => {
         // Verify DB was updated
         const updatedAdmin = await Admin.findById(admin._id);
         expect(updatedAdmin.fullname).toBe("New Google Name");
-        
+
         const session = await Session.findOne({ id: admin._id });
         expect(session).toBeTruthy();
         expect(session.onModel).toBe("Admin");
@@ -206,14 +216,18 @@ describe("Admin Auth Controller", () => {
 
         const testApp = express();
         testApp.use(express.json());
-        testApp.get("/api/admin/auth/check", (req, res, next) => {
-          req.admin = { _id: admin._id };
-          next();
-        }, adminAuthController.checkAuth);
+        testApp.get(
+          "/api/admin/auth/check",
+          (req, res, next) => {
+            req.admin = { _id: admin._id };
+            next();
+          },
+          adminAuthController.checkAuth,
+        );
         testApp.use(errorHandler);
 
         const res = await request(testApp).get("/api/admin/auth/check");
-        
+
         expect(res.status).toBe(200);
         expect(res.body.success).toBe(true);
 

@@ -1,3 +1,10 @@
+/**
+ * @file MathInput.jsx
+ * @description Provides a LaTeX-capable math input field converting MathLive expressions to normalized backend string formats.
+ * @architecture Marathon input layer wrapper around MathField supporting forward refs and imperative focus handles.
+ * @agent_note Strips formatting and converts LaTeX math constructs into canonical expression strings via convertLatexToString.
+ */
+
 import { useRef, forwardRef, useImperativeHandle, useCallback } from "react";
 import styled from "styled-components";
 import MathField from "../../MathField";
@@ -68,6 +75,18 @@ const convertLatexToString = (latex) => {
   return str;
 };
 
+/**
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {string|number} props.value - LaTeX or plaintext representation of the math input.
+ * @param {Function} props.onChange - Handler called with normalized string representation of the math input.
+ * @param {boolean} [props.disabled=false] - Whether the math input is disabled.
+ * @param {string} [props.placeholder] - Placeholder text rendered inside the math field.
+ * @param {boolean} [props.autoFocus=false] - Whether the field automatically focuses on mount.
+ * @param {Function} [props.onKeyDown] - Keydown event handler.
+ * @param {React.Ref} ref - Forwarded reference to the underlying MathField imperative element.
+ * @returns {JSX.Element} The rendered MathLive input wrapper.
+ */
 const MathInput = forwardRef(
   (
     { value, onChange, disabled, placeholder, autoFocus = false, onKeyDown },

@@ -14,17 +14,17 @@ const adminId = new mongoose.Types.ObjectId();
 const adminToken = generateToken({ id: adminId, role: "admin" });
 
 jest.unstable_mockModule("../../middlewares/idempotency.js", () => ({
-  default: (req, res, next) => next()
+  default: (req, res, next) => next(),
 }));
 
 jest.unstable_mockModule("../../middlewares/rateLimiters.js", () => ({
-  genaiRateLimiter: (req, res, next) => next()
+  genaiRateLimiter: (req, res, next) => next(),
 }));
 
 jest.unstable_mockModule("../../middlewares/authMiddleware.js", () => ({
   protect: (req, res, next) => next(),
   protectAdmin: (req, res, next) => next(),
-  protectUserOrAdmin: (req, res, next) => next()
+  protectUserOrAdmin: (req, res, next) => next(),
 }));
 
 jest.unstable_mockModule("../../services/ai.service.js", () => ({
@@ -37,18 +37,38 @@ jest.unstable_mockModule("../../services/ai.service.js", () => ({
     }),
     generateWithFallback: jest.fn(async (models, prompt, sys, opts) => {
       if (opts && opts.onStatus) opts.onStatus("generating");
-      if (prompt.includes("Sentence Evaluator") || prompt.includes("evaluateSentence") || (sys && sys.includes("Evaluator"))) {
-        return { text: JSON.stringify({ accuracy: 80, errors: [] }), usedModel: models[0] };
+      if (
+        prompt.includes("Sentence Evaluator") ||
+        prompt.includes("evaluateSentence") ||
+        (sys && sys.includes("Evaluator"))
+      ) {
+        return {
+          text: JSON.stringify({ accuracy: 80, errors: [] }),
+          usedModel: models[0],
+        };
       }
       if (prompt.includes("Parse the following raw text")) {
-        return { text: JSON.stringify({ questions: [{ questionText: "Q1", questionType: "mcq", options: ["A", "B"], correctOptionIndex: 0 }], residualText: "" }), usedModel: models[0] };
+        return {
+          text: JSON.stringify({
+            questions: [
+              {
+                questionText: "Q1",
+                questionType: "mcq",
+                options: ["A", "B"],
+                correctOptionIndex: 0,
+              },
+            ],
+            residualText: "",
+          }),
+          usedModel: models[0],
+        };
       }
       return { text: "Mocked AI Response", usedModel: models[0] };
     }),
     generateTTS: jest.fn(async () => {
       return "base64audio";
-    })
-  }
+    }),
+  },
 }));
 
 const { default: genaiRoutes } = await import("../../routes/genai.routes.js");
@@ -79,12 +99,28 @@ describe("GenAI Controller", () => {
       jest.spyOn(Vocabulary, "find").mockReturnValue({
         sort: jest.fn().mockReturnValue({
           limit: jest.fn().mockReturnValue({
-            select: jest.fn().mockResolvedValue([{ word: "MockWord1" }, { word: "MockWord2" }])
-          })
-        })
+            select: jest
+              .fn()
+              .mockResolvedValue([
+                { word: "MockWord1" },
+                { word: "MockWord2" },
+              ]),
+          }),
+        }),
       });
-      jest.spyOn(Vocabulary, "findOne").mockResolvedValue({ _id: new mongoose.Types.ObjectId(), word: "TestWord", definition: "A mocked definition" });
-      jest.spyOn(VocabProgress, "findOne").mockResolvedValue({ box: 2, lastSentenceTestedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000) });
+      jest
+        .spyOn(Vocabulary, "findOne")
+        .mockResolvedValue({
+          _id: new mongoose.Types.ObjectId(),
+          word: "TestWord",
+          definition: "A mocked definition",
+        });
+      jest
+        .spyOn(VocabProgress, "findOne")
+        .mockResolvedValue({
+          box: 2,
+          lastSentenceTestedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
+        });
       jest.spyOn(VocabProgress, "findOneAndUpdate").mockResolvedValue({});
       jest.spyOn(User, "adjustCarrots").mockResolvedValue({ carrots: 50 });
     });
@@ -98,9 +134,11 @@ describe("GenAI Controller", () => {
         const res = await request(app).post("/api/genai/stream").send({});
         expect(res.status).toBe(400);
       });
-      
+
       it("should return 400 if apiMode is provided without params", async () => {
-        const res = await request(app).post("/api/genai/stream").send({ apiMode: "vocab" });
+        const res = await request(app)
+          .post("/api/genai/stream")
+          .send({ apiMode: "vocab" });
         expect(res.status).toBe(400);
       });
 
@@ -108,16 +146,16 @@ describe("GenAI Controller", () => {
         jest.spyOn(Vocabulary, "find").mockReturnValue({
           sort: jest.fn().mockReturnValue({
             limit: jest.fn().mockReturnValue({
-              select: jest.fn().mockRejectedValue(new Error("DB Error"))
-            })
-          })
+              select: jest.fn().mockRejectedValue(new Error("DB Error")),
+            }),
+          }),
         });
 
         const res = await request(app)
           .post("/api/genai/stream")
           .set("Authorization", `Bearer ${userToken}`)
           .send({ apiMode: "vocab", params: { count: 10 } });
-        
+
         expect(res.status).toBe(200);
         expect(res.headers["content-type"]).toContain("application/x-ndjson");
       });
@@ -137,18 +175,20 @@ describe("GenAI Controller", () => {
           .post("/api/genai/sentences/evaluate")
           .set("Authorization", `Bearer ${userToken}`)
           .send({ word: "TestWord", sentence: "This is a test sentence." });
-        
+
         expect(res.status).toBe(200);
         expect(res.text).toContain("accuracy");
       });
 
       it("should handle DB error when adjusting carrots gracefully", async () => {
-        jest.spyOn(User, "adjustCarrots").mockRejectedValue(new Error("DB Update Error"));
+        jest
+          .spyOn(User, "adjustCarrots")
+          .mockRejectedValue(new Error("DB Update Error"));
         const res = await request(app)
           .post("/api/genai/sentences/evaluate")
           .set("Authorization", `Bearer ${userToken}`)
           .send({ word: "TestWord", sentence: "This is a test sentence." });
-        
+
         expect(res.status).toBe(200);
         expect(res.text).toContain("Failed to record evaluation progress.");
       });
@@ -160,7 +200,7 @@ describe("GenAI Controller", () => {
           .post("/api/genai/explanation")
           .set("Authorization", `Bearer ${userToken}`)
           .send({ questionText: "q1", answerText: "a1" });
-        
+
         expect(res.status).toBe(200);
         expect(res.text).toContain("Mocked AI Response");
       });
@@ -180,7 +220,7 @@ describe("GenAI Controller", () => {
           .post("/api/genai/tts")
           .set("Authorization", `Bearer ${userToken}`)
           .send({ text: "Hello", voice: "alloy" });
-        
+
         expect(res.status).toBe(200);
         expect(res.body.success).toBe(true);
         expect(res.body.audioBase64).toBe("base64audio");
@@ -193,7 +233,7 @@ describe("GenAI Controller", () => {
           .send({});
         expect(res.status).toBe(400);
       });
-      
+
       it("should return 400 if text is too long", async () => {
         const res = await request(app)
           .post("/api/genai/tts")
@@ -208,8 +248,10 @@ describe("GenAI Controller", () => {
         const res = await request(app)
           .post("/api/genai/parse-questions")
           .set("Authorization", `Bearer ${adminToken}`)
-          .send({ rawText: "1. Question A? This text is longer than 20 characters." });
-        
+          .send({
+            rawText: "1. Question A? This text is longer than 20 characters.",
+          });
+
         expect(res.status).toBe(200);
         expect(res.body.success).toBe(true);
       });
@@ -229,10 +271,21 @@ describe("GenAI Controller", () => {
       await User.deleteMany({});
       await Vocabulary.deleteMany({});
       await VocabProgress.deleteMany({});
-      
-      const v = await Vocabulary.create({ word: "TestWord", definition: "A test word", difficulty: "Easy" });
+
+      const v = await Vocabulary.create({
+        word: "TestWord",
+        definition: "A test word",
+        difficulty: "Easy",
+      });
       await VocabProgress.create({ user: userId, word: v._id, box: 2 });
-      await User.create({ _id: userId, fullname: "Test User", email: "test@example.com", authProvider: "local", password: "password", carrots: 0 });
+      await User.create({
+        _id: userId,
+        fullname: "Test User",
+        email: "test@example.com",
+        authProvider: "local",
+        password: "password",
+        carrots: 0,
+      });
     });
 
     describe("POST /api/genai/stream", () => {
@@ -241,7 +294,7 @@ describe("GenAI Controller", () => {
           .post("/api/genai/stream")
           .set("Authorization", `Bearer ${userToken}`)
           .send({ apiMode: "vocab", params: { count: 10 } });
-        
+
         expect(res.status).toBe(200);
         expect(res.headers["content-type"]).toContain("application/x-ndjson");
         expect(res.text).toContain("generating");
@@ -255,7 +308,7 @@ describe("GenAI Controller", () => {
           .post("/api/genai/sentences/evaluate")
           .set("Authorization", `Bearer ${userToken}`)
           .send({ word: "TestWord", sentence: "This is a test sentence." });
-        
+
         expect(res.status).toBe(200);
         expect(res.text).toContain("accuracy");
 

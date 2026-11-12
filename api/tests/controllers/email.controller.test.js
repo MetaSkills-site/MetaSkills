@@ -8,8 +8,8 @@ jest.unstable_mockModule("../../config/brevo.js", () => ({
     sendTransacEmail: jest.fn(async (payload) => {
       if (payload.subject.includes("FailEmail")) throw new Error("Brevo Error");
       return { messageId: "123" };
-    })
-  }
+    }),
+  },
 }));
 
 jest.unstable_mockModule("../../services/ai.service.js", () => ({
@@ -17,11 +17,12 @@ jest.unstable_mockModule("../../services/ai.service.js", () => ({
     generateWithFallback: jest.fn(async (models, prompt) => {
       if (prompt.includes("FailAI")) throw new Error("AI Error");
       return { text: "AI Analysis Details", usedModel: models[0] };
-    })
-  }
+    }),
+  },
 }));
 
-const { sendErrorReport } = await import("../../controllers/email.controller.js");
+const { sendErrorReport } =
+  await import("../../controllers/email.controller.js");
 
 describe("Email Controller", () => {
   let app;
@@ -43,9 +44,9 @@ describe("Email Controller", () => {
             url: "http://localhost",
             userAgent: "Jest",
             platform: "Node",
-            language: "en"
+            language: "en",
           });
-        
+
         expect(res.status).toBe(200);
         expect(res.body.success).toBe(true);
         expect(res.body.message).toBe("Error report sent successfully");
@@ -59,9 +60,9 @@ describe("Email Controller", () => {
             url: "http://localhost",
             userAgent: "Jest",
             platform: "Node",
-            language: "en"
+            language: "en",
           });
-        
+
         expect(res.status).toBe(200);
         expect(res.body.success).toBe(true);
         expect(res.body.message).toBe("Error report sent successfully");
@@ -75,22 +76,20 @@ describe("Email Controller", () => {
             url: "http://localhost",
             userAgent: "Jest",
             platform: "Node",
-            language: "en"
+            language: "en",
           });
-        
+
         expect(res.status).toBe(500);
       });
 
       it("should handle missing error details gracefully", async () => {
-        const res = await request(app)
-          .post("/api/email/error-report")
-          .send({
-            url: "http://localhost",
-            userAgent: "Jest",
-            platform: "Node",
-            language: "en"
-          });
-        
+        const res = await request(app).post("/api/email/error-report").send({
+          url: "http://localhost",
+          userAgent: "Jest",
+          platform: "Node",
+          language: "en",
+        });
+
         expect(res.status).toBe(200);
         expect(res.body.success).toBe(true);
         expect(res.body.message).toBe("Error report sent successfully");

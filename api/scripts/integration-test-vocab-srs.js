@@ -1,3 +1,10 @@
+/**
+ * @file integration-test-vocab-srs.js
+ * @description Runs end-to-end integration tests for vocabulary Spaced Repetition System quizzes, Leitner box progressions, and daily limits.
+ * @architecture Part of the automated test and validation harness exercising HTTP endpoints against live MongoDB collections.
+ * @agent_note Requires the API server running on port 7860 and automatically tears down its ephemeral test user and progress records upon completion.
+ */
+
 import axios from "axios";
 import mongoose from "mongoose";
 import "../config/env.js";
@@ -12,6 +19,10 @@ const TEST_EMAIL = `srs_tester_${Date.now()}@example.com`;
 axios.defaults.headers.common["Origin"] = "http://localhost:5173";
 axios.defaults.headers.common["Referer"] = "http://localhost:5173/";
 
+/**
+ * @desc Executes an automated E2E test suite covering user creation, 20-word quiz grading, daily limit enforcement, Leitner intervals, and review priority overrides.
+ * @returns {Promise<void>} Resolves when all test assertions and cleanups conclude.
+ */
 async function runTests() {
   console.log("🚀 Starting Extensive SRS Integration Tests...\n");
   let token = null;

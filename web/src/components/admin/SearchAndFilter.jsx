@@ -1,4 +1,11 @@
 /**
+ * @file SearchAndFilter.jsx
+ * @description Suite of reusable UI components for searching, filtering, and displaying result counts in admin data views.
+ * @architecture Shared admin presentation layer providing Radix UI popovers, styled search bars, and filter badges.
+ * @agent_note When adding custom filter panels, wrap contents in FilterButton popover container.
+ */
+
+/**
  * FILE: SearchAndFilter.jsx
  * PURPOSE: A collection of reusable UI components for searching and filtering datasets within the administrative dashboard.
  * DEPENDENCIES:
@@ -34,7 +41,16 @@ const CountBadgeWrapper = styled.div`
 `;
 
 /**
- * SearchContainer: Provides a layout wrapper for search/filter controls, optionally displaying a result count.
+ * Layout container for search and filter bars with optional count badge display.
+ *
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {React.ReactNode} props.children - Child elements (inputs, action buttons).
+ * @param {number} [props.count] - Total results count to display.
+ * @param {string} [props.label] - Optional prefix label for count badge.
+ * @param {Object} [props.style] - Custom container styles.
+ * @param {string} [props.className] - Custom container CSS class.
+ * @returns {JSX.Element} Search container layout.
  */
 export function SearchContainer({ children, count, label, style, className }) {
   return (
@@ -81,7 +97,14 @@ const StyledSearchInput = styled.input`
 `;
 
 /**
- * SearchInput: Renders a text input optimized for search operations with a consistent icon and style.
+ * Text input optimized for search operations with integrated search icon.
+ *
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {string} props.value - Controlled input text value.
+ * @param {Function} props.onChange - Input change event handler.
+ * @param {string} [props.placeholder="Search..."] - Input placeholder text.
+ * @returns {JSX.Element} Rendered search input field.
  */
 export function SearchInput({ value, onChange, placeholder = "Search..." }) {
   return (
@@ -143,7 +166,13 @@ export const FilterPopoverContent = styled(Popover.Content)`
 `;
 
 /**
- * FilterButton: Renders a button that triggers a Radix Popover containing filter options.
+ * Trigger button opening a Radix UI popover containing filter options.
+ *
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {boolean|number} [props.active] - Filter state flag or number of active filters.
+ * @param {React.ReactNode} props.children - Popover filter options content.
+ * @returns {JSX.Element} Filter popover trigger and content portal.
  */
 export function FilterButton({ active, children }) {
   return (
@@ -194,7 +223,14 @@ const StyledFilterHeader = styled.div`
 `;
 
 /**
- * FilterSectionHeader: A common header for filter groups, including a title and an optional 'Clear' button.
+ * Section header within a filter menu providing section title and clear button.
+ *
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {string} props.title - Filter section title.
+ * @param {Function} [props.onClear] - Clear action callback.
+ * @param {boolean} [props.showClear] - Whether to display the clear action button.
+ * @returns {JSX.Element} Filter header row.
  */
 export function FilterSectionHeader({ title, onClear, showClear }) {
   return (

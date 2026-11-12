@@ -1,3 +1,10 @@
+/**
+ * @file migrate-question-modules.js
+ * @description Migrates legacy single 'module' references on Question documents into the 'modules' array field and unsets the old field.
+ * @architecture Part of the database maintenance script layer adapting schema relations from single-module ownership to multi-module membership.
+ * @agent_note Safely handles documents that already have modules populated using $addToSet and unsets legacy scalar module fields.
+ */
+
 import "../config/env.js";
 import connectDB from "../config/database.js";
 import Question from "../models/Questions.model.js";
@@ -9,6 +16,10 @@ import Question from "../models/Questions.model.js";
 // However, `find` usually returns what's in DB.
 // Let's rely on the model import.
 
+/**
+ * @desc Scans all Question documents and transforms scalar module ObjectIds into entries within the modules array.
+ * @returns {Promise<void>} Resolves when all matching questions are migrated and process terminates.
+ */
 const migrate = async () => {
   await connectDB();
 

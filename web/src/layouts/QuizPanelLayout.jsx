@@ -1,4 +1,11 @@
 /**
+ * @file QuizPanelLayout.jsx
+ * @description Educational module quiz attempt layout managing question fetching, active timer, answer submission, carrot rewards, and review modes.
+ * @architecture Serves as the interactive quiz runner orchestrating API calls with question components, error reporting modals, and completion transitions.
+ * @agent_note Be cautious with question review state versus unsubmitted state, query cache invalidations for user performance, and timer cleanup on unmount.
+ */
+
+/**
  * FILE PURPOSE: Main orchestrator for educational module quizzes.
  * Manages question fetching, timer state, answer submission, and review modes.
  *
@@ -232,6 +239,12 @@ const ActionButton = styled.button`
   }
 `;
 
+/**
+ * Quiz panel layout component that manages module progression, real-time timer tracking, and answer evaluation.
+ *
+ * @component
+ * @returns {JSX.Element} Interactive quiz execution view with header stats, question container, and submission controls.
+ */
 function QuizPanelLayout() {
   const { moduleId } = useParams();
   const { user, updateUser } = useContext(SessionContext);
@@ -404,7 +417,7 @@ function QuizPanelLayout() {
 
         // Invalidate performance cache so the dashboard progress bar updates immediately
         queryClient.invalidateQueries({ queryKey: ["user-performance"] });
-        
+
         // Increment submitCount to trigger carrot component re-refresh
         setSubmitCount((prev) => prev + 1);
 

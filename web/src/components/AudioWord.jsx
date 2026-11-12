@@ -1,4 +1,11 @@
 /**
+ * @file AudioWord.jsx
+ * @description Provides interactive pronunciation audio for text elements using a tiered fallback mechanism (Groq AI, Dictionary API, SpeechSynthesis).
+ * @architecture Reusable presentation and utility component integrated across vocabulary and reading comprehension modules.
+ * @agent_note Maintain the abort controller cleanup and three-tier fallback logic to avoid audio playback memory leaks and hangs.
+ */
+
+/**
  * FILE PURPOSE: AudioWord — Text-to-Speech (TTS) component for word pronunciation.
  *
  * ROLE:
@@ -341,6 +348,13 @@ async function speakWord(
 
 /* ─── Main Component ─── */
 
+/**
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {React.ReactNode} props.children - Word or phrase text to render and pronounce.
+ * @param {string} [props.voice="autumn"] - Voice model identifier to request from the TTS backend.
+ * @returns {JSX.Element} The interactive clickable word with hover tooltip and pronunciation audio triggers.
+ */
 export default function AudioWord({ children, voice = "autumn" }) {
   const [speaking, setSpeaking] = useState(false);
   const [hasError, setHasError] = useState(false);

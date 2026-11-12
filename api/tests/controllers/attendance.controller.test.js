@@ -9,17 +9,18 @@ let mockUser = {
   _id: userId,
   days: [-1, -1, -1, -1, -1, -1, -1],
   week: 1,
-  lastSeen: new Date()
+  lastSeen: new Date(),
 };
 
 jest.unstable_mockModule("../../middlewares/authMiddleware.js", () => ({
   protect: (req, res, next) => {
     req.user = mockUser;
     next();
-  }
+  },
 }));
 
-const { attendance } = await import("../../controllers/attendance.controller.js");
+const { attendance } =
+  await import("../../controllers/attendance.controller.js");
 const { default: User } = await import("../../models/user.model.js");
 
 describe("Attendance Controller", () => {
@@ -31,7 +32,7 @@ describe("Attendance Controller", () => {
 
     const auth = await import("../../middlewares/authMiddleware.js");
     app.get("/api/attendance", auth.protect, attendance);
-    
+
     app.use(errorHandler);
   });
 
@@ -45,9 +46,9 @@ describe("Attendance Controller", () => {
         _id: userId,
         days: null, // this will cause error when trying to mutate days
         week: 1,
-        lastSeen: new Date()
+        lastSeen: new Date(),
       };
-      
+
       const res = await request(app).get("/api/attendance");
       expect(res.status).toBe(500);
       expect(res.body.message).toBeDefined();
@@ -58,11 +59,13 @@ describe("Attendance Controller", () => {
         _id: userId,
         days: [-1, -1, -1, -1, -1, -1, -1],
         week: 1,
-        lastSeen: new Date()
+        lastSeen: new Date(),
       };
-      
-      jest.spyOn(User, "findByIdAndUpdate").mockRejectedValue(new Error("DB connection lost"));
-      
+
+      jest
+        .spyOn(User, "findByIdAndUpdate")
+        .mockRejectedValue(new Error("DB connection lost"));
+
       const res = await request(app).get("/api/attendance");
       expect(res.status).toBe(500);
       expect(res.body.message).toMatch(/Something went wrong/);
@@ -81,7 +84,7 @@ describe("Attendance Controller", () => {
           _id: userId,
           days: [-1, -1, -1, -1, -1, -1, -1],
           week: 1,
-          lastSeen: today
+          lastSeen: today,
         };
 
         await User.create({
@@ -91,13 +94,13 @@ describe("Attendance Controller", () => {
           password: "123",
           role: "student",
           days: [-1, -1, -1, -1, -1, -1, -1],
-          week: 1
+          week: 1,
         });
 
         const res = await request(app).get("/api/attendance");
         expect(res.status).toBe(200);
         expect(res.body.week).toBe(1);
-        
+
         const day = today.getDay();
         expect(res.body.days[day]).toBe(1);
       });
@@ -106,12 +109,12 @@ describe("Attendance Controller", () => {
         // Set lastSeen to a month ago to force new week branch
         const lastMonth = new Date();
         lastMonth.setMonth(lastMonth.getMonth() - 1);
-        
+
         mockUser = {
           _id: userId,
           days: [1, 1, 1, 1, 1, 1, 1],
           week: 1,
-          lastSeen: lastMonth
+          lastSeen: lastMonth,
         };
 
         await User.create({
@@ -121,13 +124,13 @@ describe("Attendance Controller", () => {
           password: "123",
           role: "student",
           days: [1, 1, 1, 1, 1, 1, 1],
-          week: 1
+          week: 1,
         });
 
         const res = await request(app).get("/api/attendance");
         expect(res.status).toBe(200);
         expect(res.body.week).toBe(2);
-        
+
         const day = new Date().getDay();
         expect(res.body.days[day]).toBe(1);
       });

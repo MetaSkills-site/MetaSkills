@@ -1,3 +1,10 @@
+/**
+ * @file PassageQuestion.jsx
+ * @description Interactive fill-in-the-blank passage renderer supporting optional word banks and inline feedback.
+ * @architecture Marathon presentation component parsing text with `[_]` blank placeholders and injecting smart blank inputs.
+ * @agent_note Sanitizes HTML segments using DOMPurify and checks user answers against correct answer tokens after submission.
+ */
+
 import DOMPurify from "dompurify";
 import { Fragment } from "react";
 import SmartBlankInput from "../../shared/SmartBlankInput";
@@ -10,6 +17,17 @@ import {
   WordChip,
 } from "../MarathonStyles";
 
+/**
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {Object} props.questionData - Question configuration containing passage text with `[_]` placeholders.
+ * @param {Array<string>} props.userAnswers - Array of user-provided answers matching each blank index.
+ * @param {boolean} props.submitted - Whether the passage question has been submitted for verification.
+ * @param {Function} props.handleAnswerChange - Callback handling answer updates for individual blank inputs.
+ * @param {Array<string>} [props.wordBank] - Optional list of bank words available to assist in completing blanks.
+ * @param {Array<string>} [props.correctAnswers] - Correct answer values used for inline submission evaluation.
+ * @returns {JSX.Element} The rendered fill-in-the-blank passage and word bank component.
+ */
 const PassageQuestion = ({
   questionData,
   userAnswers,

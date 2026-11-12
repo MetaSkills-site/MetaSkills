@@ -1,4 +1,11 @@
 /**
+ * @file DashboardCard.jsx
+ * @description Renders navigational dashboard cards in vertical grid or horizontal list layouts with icon and text.
+ * @architecture UI presentation card integrated into dashboard landing pages and subject overview grids.
+ * @agent_note Supports vertical and horizontal layout variants with elevation and hover animations; wrapped in React.memo.
+ */
+
+/**
  * FILE PURPOSE: DashboardCard — The primary navigational building block of the user dashboard.
  *
  * ROLE:
@@ -110,6 +117,19 @@ const HorizontalCard = styled(Link)`
 
 /* ─── Main Component ─── */
 
+/**
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {"vertical"|"horizontal"} [props.variant="vertical"] - Layout presentation variant.
+ * @param {React.ReactNode} props.icon - Icon element rendered inside card.
+ * @param {string} props.title - Title text of the card.
+ * @param {string} props.description - Explanatory text beneath title.
+ * @param {string} [props.to="#"] - Navigation route path for react-router Link.
+ * @param {Function} [props.onClick] - Optional click event handler.
+ * @param {string} [props.className] - CSS class name override.
+ * @param {Object} [props.style] - Inline styling override.
+ * @returns {JSX.Element} The rendered navigational dashboard card.
+ */
 const DashboardCard = ({
   variant = "vertical",
   icon,

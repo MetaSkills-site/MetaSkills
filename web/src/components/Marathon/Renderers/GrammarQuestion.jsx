@@ -1,3 +1,10 @@
+/**
+ * @file GrammarQuestion.jsx
+ * @description Interactive grammar question renderer allowing word-level selection with instantaneous post-submission feedback styling.
+ * @architecture Marathon question renderer formatting sentence tokens into interactive, selectable word chips.
+ * @agent_note Applies normalization to words when matching against correct answers to ignore punctuation differences.
+ */
+
 import { useEffect } from "react";
 import styled from "styled-components";
 import { InstructionText, WordContainer } from "../MarathonStyles";
@@ -30,6 +37,17 @@ const WordSpan = styled.span`
   }
 `;
 
+/**
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {Object} props.questionData - Question configuration containing instruction, text sentence, and answer keys.
+ * @param {Array<string>} props.userAnswers - Currently selected word tokens.
+ * @param {boolean} props.submitted - Whether the current question attempt has been submitted.
+ * @param {Function} props.handleAnswerChange - Callback handling word selection or deselection.
+ * @param {Function} [props.onInvalidQuestion] - Error notification callback for malformed questions.
+ * @param {Array<string>} [props.correctAnswers] - Optional explicit correct answer tokens for post-submission verification.
+ * @returns {JSX.Element} The rendered grammar word-selection question.
+ */
 const GrammarQuestion = ({
   questionData,
   userAnswers,

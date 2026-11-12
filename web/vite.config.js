@@ -1,3 +1,10 @@
+/**
+ * @file vite.config.js
+ * @description Bundler and development server configuration for the Vite-powered React client application.
+ * @architecture Configures plugins, esbuild stripping, production chunk splitting, development proxy routing to backend port 7860, and module aliasing.
+ * @agent_note Pay attention to proxy mappings, manual chunk groupings, and aliased dependencies when adjusting builds or adding heavy third-party packages.
+ */
+
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";

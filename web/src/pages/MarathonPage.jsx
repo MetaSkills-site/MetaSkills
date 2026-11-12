@@ -1,18 +1,8 @@
 /**
- * FILE PURPOSE: Subject selection portal for the MarathonPage feature.
- * Serves as the primary entry point where users choose between different subject-specific marathon paths (e.g., English, Math).
- *
- * DEPENDENCIES:
- * - DashboardCard: Navigation card component with icon, title, and description.
- * - AdminHeader: Standardized page header with a back-navigation button.
- * - react-icons: Provides subject-specific iconography (FaBook, FaCalculator).
- *
- * EXPORTS:
- * - MarathonPage (default): Subject selection view (consumed by src/main.jsx for routing).
- *
- * INTERCONNECT:
- * - Links to specialized marathon sub-pages like '/marathon/english' and '/marathon/math'.
- * - Provides a clear path back to the main user dashboard.
+ * @file MarathonPage.jsx
+ * @description Subject selection portal for marathon practice sessions, routing users to English or Math tracks.
+ * @architecture Mounted at `/marathon`, renders DashboardCard components inside a styled container with AdminHeader navigation.
+ * @agent_note Serves as the primary branching hub for the marathon practice system, pointing to `/marathon/english` and `/marathon/math`.
  */
 
 import styled from "styled-components";
@@ -46,6 +36,11 @@ const TitleHeader = styled.div`
   margin-bottom: 20px;
 `;
 
+/**
+ * Subject selection page component routing students into specialized marathon practice tracks.
+ * @component
+ * @returns {JSX.Element}
+ */
 function MarathonPage() {
   return (
     <Background>

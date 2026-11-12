@@ -22,11 +22,14 @@ jest.unstable_mockModule("../../middlewares/authMiddleware.js", () => ({
   protectAdmin: (req, res, next) => {
     req.user = { _id: adminId, role: "admin" };
     next();
-  }
+  },
 }));
 
-const notificationController = (await import("../../controllers/notification.controller.js")).default;
-const { default: Notification } = await import("../../models/Notification.model.js");
+const notificationController = (
+  await import("../../controllers/notification.controller.js")
+).default;
+const { default: Notification } =
+  await import("../../models/Notification.model.js");
 
 describe("Notification Controller", () => {
   let app;
@@ -36,12 +39,32 @@ describe("Notification Controller", () => {
     app.use(express.json());
 
     const auth = await import("../../middlewares/authMiddleware.js");
-    app.get("/api/notifications/unread", auth.protect, notificationController.getUnreadStatus);
-    app.get("/api/notifications", auth.protect, notificationController.getNotifications);
-    app.post("/api/notifications", auth.protectAdmin, notificationController.createNotification);
-    app.get("/api/notifications/all", auth.protectAdmin, notificationController.getAllNotifications);
-    app.delete("/api/notifications", auth.protectAdmin, notificationController.deleteNotification);
-    
+    app.get(
+      "/api/notifications/unread",
+      auth.protect,
+      notificationController.getUnreadStatus,
+    );
+    app.get(
+      "/api/notifications",
+      auth.protect,
+      notificationController.getNotifications,
+    );
+    app.post(
+      "/api/notifications",
+      auth.protectAdmin,
+      notificationController.createNotification,
+    );
+    app.get(
+      "/api/notifications/all",
+      auth.protectAdmin,
+      notificationController.getAllNotifications,
+    );
+    app.delete(
+      "/api/notifications",
+      auth.protectAdmin,
+      notificationController.deleteNotification,
+    );
+
     app.use(errorHandler);
   });
 
@@ -52,7 +75,9 @@ describe("Notification Controller", () => {
 
     describe("GET /api/notifications/unread", () => {
       it("should handle server errors gracefully", async () => {
-        jest.spyOn(Notification, "findOne").mockRejectedValueOnce(new Error("DB Error"));
+        jest
+          .spyOn(Notification, "findOne")
+          .mockRejectedValueOnce(new Error("DB Error"));
         const res = await request(app).get("/api/notifications/unread");
         expect(res.status).toBe(500);
         expect(res.body.message).toBe("Server error");
@@ -61,7 +86,9 @@ describe("Notification Controller", () => {
 
     describe("GET /api/notifications", () => {
       it("should handle server errors gracefully", async () => {
-        jest.spyOn(Notification, "findOne").mockRejectedValueOnce(new Error("DB Error"));
+        jest
+          .spyOn(Notification, "findOne")
+          .mockRejectedValueOnce(new Error("DB Error"));
         const res = await request(app).get("/api/notifications");
         expect(res.status).toBe(500);
         expect(res.body.message).toBe("Server error");
@@ -70,14 +97,20 @@ describe("Notification Controller", () => {
 
     describe("POST /api/notifications", () => {
       it("should require title and content", async () => {
-        const res = await request(app).post("/api/notifications").send({ title: "Only Title" });
+        const res = await request(app)
+          .post("/api/notifications")
+          .send({ title: "Only Title" });
         expect(res.status).toBe(400);
         expect(res.body.message).toMatch(/Title and content are required/);
       });
 
       it("should handle server errors gracefully", async () => {
-        jest.spyOn(Notification, "findOne").mockRejectedValueOnce(new Error("DB Error"));
-        const res = await request(app).post("/api/notifications").send({ title: "T", content: "C" });
+        jest
+          .spyOn(Notification, "findOne")
+          .mockRejectedValueOnce(new Error("DB Error"));
+        const res = await request(app)
+          .post("/api/notifications")
+          .send({ title: "T", content: "C" });
         expect(res.status).toBe(500);
         expect(res.body.message).toBe("Server error");
       });
@@ -85,7 +118,9 @@ describe("Notification Controller", () => {
 
     describe("GET /api/notifications/all", () => {
       it("should handle server errors gracefully", async () => {
-        jest.spyOn(Notification, "findOne").mockRejectedValueOnce(new Error("DB Error"));
+        jest
+          .spyOn(Notification, "findOne")
+          .mockRejectedValueOnce(new Error("DB Error"));
         const res = await request(app).get("/api/notifications/all");
         expect(res.status).toBe(500);
         expect(res.body.message).toBe("Server error");
@@ -94,8 +129,12 @@ describe("Notification Controller", () => {
 
     describe("DELETE /api/notifications", () => {
       it("should handle server errors gracefully", async () => {
-        jest.spyOn(Notification, "findOne").mockRejectedValueOnce(new Error("DB Error"));
-        const res = await request(app).delete("/api/notifications").send({ notificationId: "someId", clearSeen: false });
+        jest
+          .spyOn(Notification, "findOne")
+          .mockRejectedValueOnce(new Error("DB Error"));
+        const res = await request(app)
+          .delete("/api/notifications")
+          .send({ notificationId: "someId", clearSeen: false });
         expect(res.status).toBe(500);
         expect(res.body.message).toBe("Server error");
       });
@@ -110,7 +149,10 @@ describe("Notification Controller", () => {
 
     describe("GET /api/notifications/unread", () => {
       it("should return true if user has not seen notifications", async () => {
-        await Notification.create({ data: [{ title: "T1", content: "C1" }], seenBy: [] });
+        await Notification.create({
+          data: [{ title: "T1", content: "C1" }],
+          seenBy: [],
+        });
 
         const res = await request(app).get("/api/notifications/unread");
         expect(res.status).toBe(200);
@@ -118,7 +160,10 @@ describe("Notification Controller", () => {
       });
 
       it("should return false if user has seen notifications", async () => {
-        await Notification.create({ data: [{ title: "T1", content: "C1" }], seenBy: [userId] });
+        await Notification.create({
+          data: [{ title: "T1", content: "C1" }],
+          seenBy: [userId],
+        });
 
         const res = await request(app).get("/api/notifications/unread");
         expect(res.status).toBe(200);
@@ -128,7 +173,13 @@ describe("Notification Controller", () => {
 
     describe("GET /api/notifications", () => {
       it("should fetch notifications and mark as read", async () => {
-        await Notification.create({ data: [{ title: "T1", content: "C1" }, { title: "T2", content: "C2" }], seenBy: [] });
+        await Notification.create({
+          data: [
+            { title: "T1", content: "C1" },
+            { title: "T2", content: "C2" },
+          ],
+          seenBy: [],
+        });
 
         const res = await request(app).get("/api/notifications");
         expect(res.status).toBe(200);
@@ -146,7 +197,7 @@ describe("Notification Controller", () => {
 
         const res = await request(app).post("/api/notifications").send({
           title: "New Update",
-          content: "System will be down"
+          content: "System will be down",
         });
         expect(res.status).toBe(201);
         expect(res.body.message).toBe("Notification created");
@@ -164,12 +215,14 @@ describe("Notification Controller", () => {
           data: [
             { title: "1", content: "1" },
             { title: "2", content: "2" },
-            { title: "3", content: "3" }
+            { title: "3", content: "3" },
           ],
-          seenBy: []
+          seenBy: [],
         });
 
-        const res = await request(app).get("/api/notifications/all?page=1&limit=2");
+        const res = await request(app).get(
+          "/api/notifications/all?page=1&limit=2",
+        );
         expect(res.status).toBe(200);
         expect(res.body.success).toBe(true);
         expect(res.body.data.length).toBe(2);
@@ -181,14 +234,20 @@ describe("Notification Controller", () => {
     describe("DELETE /api/notifications", () => {
       it("should delete a specific notification", async () => {
         const doc = await Notification.create({
-          data: [{ title: "T1", content: "C1" }, { title: "T2", content: "C2" }],
-          seenBy: [userId]
+          data: [
+            { title: "T1", content: "C1" },
+            { title: "T2", content: "C2" },
+          ],
+          seenBy: [userId],
         });
 
         const res = await request(app)
           .delete("/api/notifications")
-          .send({ notificationId: doc.data[0]._id.toString(), clearSeen: false });
-        
+          .send({
+            notificationId: doc.data[0]._id.toString(),
+            clearSeen: false,
+          });
+
         expect(res.status).toBe(200);
 
         const updated = await Notification.findOne();
@@ -200,13 +259,16 @@ describe("Notification Controller", () => {
       it("should clear seenBy if requested", async () => {
         const doc = await Notification.create({
           data: [{ title: "T1", content: "C1" }],
-          seenBy: [userId]
+          seenBy: [userId],
         });
 
         const res = await request(app)
           .delete("/api/notifications")
-          .send({ notificationId: doc.data[0]._id.toString(), clearSeen: true });
-        
+          .send({
+            notificationId: doc.data[0]._id.toString(),
+            clearSeen: true,
+          });
+
         expect(res.status).toBe(200);
 
         const updated = await Notification.findOne();

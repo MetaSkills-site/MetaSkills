@@ -1,23 +1,8 @@
 /**
- * AnalyticsPage.jsx
- *
- * PURPOSE:
- * A comprehensive administrative dashboard for monitoring platform performance, student engagement,
- * and curriculum effectiveness. It aggregates data into visual charts and tables to provide
- * actionable insights into question difficulty, user activity, and module completion rates.
- *
- * DEPENDENCIES:
- * - @tanstack/react-query: For efficient, parallel data fetching and caching.
- * - Chart.js (via ChartWidget): For rendering various data visualizations (line, bar, scatter, etc.).
- * - react-icons: For visual identifiers across the stats grid.
- * - adminService: To interface with the backend analytics endpoints.
- *
- * EXPORTS:
- * - AnalyticsPage (default): The main functional component for the platform analytics page.
- *
- * INTERCONNECTIONS:
- * - Accessed from the Admin main menu.
- * - Links to various management pages (users, modules, questions) based on stat cards.
+ * @file AdminAnalyticsPage.jsx
+ * @description Comprehensive administrative analytics dashboard displaying platform metrics, student engagement trends, and curriculum statistics.
+ * @architecture Mounted within the admin routing tree, consumes getDashboardAnalytics from adminService via TanStack Query and visualizes metrics using ChartWidget.
+ * @agent_note Queries computationally intensive dashboard data with a 5-minute cache time and requires administrative privileges.
  */
 
 import { useEffect } from "react";
@@ -215,6 +200,11 @@ const DifficultyBadge = styled.span`
   text-align: center;
 `;
 
+/**
+ * Administrative platform analytics page component aggregating system-wide engagement, difficulty, and curriculum metrics.
+ * @component
+ * @returns {JSX.Element}
+ */
 export default function AdminAnalyticsPage() {
   /**
    * Data Fetching:

@@ -1,3 +1,10 @@
+/**
+ * @file AdminTabs.jsx
+ * @description Animated navigation tabs with keyboard shortcut support for switching views in the admin console.
+ * @architecture Admin UI navigation component integrating framer-motion layout animations and useStepperShortcuts event hooks.
+ * @agent_note Ensure layoutId remains unique per tab grouping to prevent framer-motion animation clashes.
+ */
+
 import { motion, LayoutGroup } from "framer-motion";
 import { TabContainer, Tab } from "./AdminStyles";
 import useStepperShortcuts from "../../hooks/event-hooks/useStepperShortcuts";
@@ -5,15 +12,18 @@ import Tooltip from "../Tooltip";
 import { Kbd } from "../InfoTooltip";
 
 /**
- * @component AdminTabs
- * @description A unified, animated tab component for the admin dashboard.
- * Provides a smooth sliding indicator and keyboard shortcuts (Alt + . / Alt + ,).
+ * Animated AdminTabs component for sub-view navigation.
  *
- * @param {Object[]} tabs - Array of tab objects { id: string, label: string, style?: object }
- * @param {string} activeTab - The ID of the currently active tab
- * @param {function} onChange - Callback function when a tab is clicked
- * @param {string} [layoutId="activeTabIndicator"] - Unique ID for framer-motion layout animations
- * @param {Object} [containerStyle] - Optional styles for the TabContainer
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {Object[]} props.tabs - Array of tab objects { id: string, label: string, style?: object }
+ * @param {string} props.activeTab - The ID of the currently active tab
+ * @param {function} props.onChange - Callback function when a tab is clicked
+ * @param {string} [props.layoutId="activeTabIndicator"] - Unique ID for framer-motion layout animations
+ * @param {Object} [props.containerStyle] - Optional styles for the TabContainer
+ * @param {boolean} [props.disableShortcuts=false] - Whether to disable keyboard navigation shortcuts
+ * @param {boolean} [props.isNextDisabled=false] - Whether forward navigation is blocked
+ * @returns {JSX.Element} Rendered tab navigation element.
  */
 export default function AdminTabs({
   tabs,

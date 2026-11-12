@@ -1,4 +1,11 @@
 /**
+ * @file migratePostAnalyticsFix.js
+ * @description Dynamically seeds missing schema defaults and prunes explicitly defined legacy fields across all registered Mongoose models.
+ * @architecture Part of the database maintenance layer serving as a schema-driven idempotent synchronizer between application models and MongoDB storage.
+ * @agent_note Supports --dry-run CLI flag and includes protective safety checks before unsetting fields like candies on the User model.
+ */
+
+/**
  * migrations/migratePostAnalyticsFix.js
  *
  * Schema-Driven Migration
@@ -99,6 +106,10 @@ const DIV = "─".repeat(66);
  * We use `schemaType.instance` (a string like "String", "Number", "Array",
  * "Embedded", "DocumentArray") instead of `instanceof` checks because the
  * mongoose types are not reliably accessible across ESM module boundaries.
+ *
+ * @desc Extracts leaf schema paths that carry explicit default values across a Mongoose schema.
+ * @param {import("mongoose").Schema} schema - The Mongoose schema instance to inspect.
+ * @returns {Array<{path: string, defaultValue: *}>} Array of path and resolved default value pairs.
  */
 const getSeededPaths = (schema) => {
   const seeds = [];
@@ -130,7 +141,15 @@ const getSeededPaths = (schema) => {
   return seeds;
 };
 
-/** Run one updateMany and print a detailed result line. */
+/**
+ * @desc Executes an updateMany query on a collection with progress logging and dry-run support.
+ * @param {import("mongodb").Collection} collection - MongoDB native collection.
+ * @param {Object} filter - Query filter criteria.
+ * @param {Object} update - Update operators and field values.
+ * @param {string} description - Human-readable label for operation logging.
+ * @param {boolean} dryRun - If true, previews changes without writing to the database.
+ * @returns {Promise<{matched: number, modified: number}>} Matched and modified document counts.
+ */
 const applyOp = async (collection, filter, update, description, dryRun) => {
   const matched = await collection.countDocuments(filter);
 
@@ -160,6 +179,10 @@ const applyOp = async (collection, filter, update, description, dryRun) => {
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 
+/**
+ * @desc Performs schema-driven data synchronization by seeding missing default values and pruning declared legacy fields.
+ * @returns {Promise<void>} Resolves when all collections have been migrated and the connection is closed.
+ */
 const migrate = async () => {
   if (!process.env.MONGODB_URI)
     throw new Error("MONGODB_URI is not defined in environment.");

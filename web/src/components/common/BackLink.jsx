@@ -1,4 +1,11 @@
 /**
+ * @file BackLink.jsx
+ * @description Simplified navigation wrapper configuring UniversalBackButton for secondary link-style navigation.
+ * @architecture Shared common UI component delegating route traversal and keyboard shortcut handling to UniversalBackButton.
+ * @agent_note Accepts either children or text prop; forwards optional custom onClick or destination path.
+ */
+
+/**
  * FILE PURPOSE: A simplified wrapper component for the UniversalBackButton.
  * Specifically configured for the 'link' variant, typically used for secondary navigation.
  *
@@ -14,6 +21,18 @@
 
 import UniversalBackButton from "./UniversalBackButton";
 
+/**
+ * BackLink navigation component rendering a link-styled back button.
+ *
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {Function} [props.onClick] - Optional custom click handler.
+ * @param {string} [props.text] - Text label for the back link.
+ * @param {React.ReactNode} [props.children] - Optional custom child content.
+ * @param {boolean} [props.enableShortcut=true] - Whether Alt+Left keyboard shortcut is enabled.
+ * @param {string} [props.path] - Explicit navigation route target.
+ * @returns {JSX.Element} Configured UniversalBackButton instance.
+ */
 export default function BackLink({
   onClick,
   text,

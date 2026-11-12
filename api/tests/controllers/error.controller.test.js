@@ -9,7 +9,10 @@ import errorHandler from "../../middlewares/errorHandler.js";
 jest.unstable_mockModule("../../utils/screenshotStorage.js", () => ({
   generateScreenshotUploadSignedUrl: jest.fn(async (filename) => {
     if (filename === "fail.png") throw new Error("GCS Error");
-    return { uploadUrl: `http://signed-url/${filename}`, finalUrl: `http://final-url/${filename}` };
+    return {
+      uploadUrl: `http://signed-url/${filename}`,
+      finalUrl: `http://final-url/${filename}`,
+    };
   }),
   generateScreenshotReadUrl: jest.fn(async (filename) => {
     if (filename === "fail_read.png") throw new Error("GCS Read Error");
@@ -20,7 +23,7 @@ jest.unstable_mockModule("../../utils/screenshotStorage.js", () => ({
   }),
   deleteScreenshots: jest.fn(async (filenames) => {
     return { deletedCount: filenames.length };
-  })
+  }),
 }));
 
 // Mock auth middleware
@@ -37,7 +40,7 @@ jest.unstable_mockModule("../../middlewares/authMiddleware.js", () => ({
   protectUserOrAdmin: (req, res, next) => {
     req.user = { _id: userId, role: "admin" };
     next();
-  }
+  },
 }));
 
 const {
@@ -47,7 +50,7 @@ const {
   resolveError,
   resolveAllErrors,
   checkPendingErrorsStatus,
-  getScreenshotUploadUrl
+  getScreenshotUploadUrl,
 } = await import("../../controllers/error.controller.js");
 
 const { default: ErrorModel } = await import("../../models/Errors.model.js");
@@ -65,12 +68,20 @@ describe("Error Controller", () => {
 
     app.post("/api/errors/report", auth.protect, reportError);
     app.get("/api/errors", auth.protectAdmin, getErrors);
-    app.get("/api/errors/pending-status", auth.protectAdmin, checkPendingErrorsStatus);
+    app.get(
+      "/api/errors/pending-status",
+      auth.protectAdmin,
+      checkPendingErrorsStatus,
+    );
     app.get("/api/errors/:id", auth.protectAdmin, getErrorById);
     app.delete("/api/errors/:id", auth.protectAdmin, resolveError);
     app.delete("/api/errors", auth.protectAdmin, resolveAllErrors);
-    app.post("/api/errors/screenshot-url", auth.protect, getScreenshotUploadUrl);
-    
+    app.post(
+      "/api/errors/screenshot-url",
+      auth.protect,
+      getScreenshotUploadUrl,
+    );
+
     app.use(errorHandler);
   });
 
@@ -81,14 +92,12 @@ describe("Error Controller", () => {
 
     describe("POST /api/errors/report", () => {
       it("should validate required fields", async () => {
-        const res = await request(app)
-          .post("/api/errors/report")
-          .send({});
+        const res = await request(app).post("/api/errors/report").send({});
 
         expect(res.status).toBe(400);
         expect(res.body.success).toBe(false);
       });
-      
+
       it("should sanitize and validate systemMetadata", async () => {
         const res = await request(app)
           .post("/api/errors/report")
@@ -98,29 +107,31 @@ describe("Error Controller", () => {
             systemMetadata: {
               userAgent: "Mozilla/5.0",
               version: "1.0",
-              extraField: "invalid"
-            }
+              extraField: "invalid",
+            },
           });
 
         expect(res.status).toBe(400); // Because of extraField
       });
 
       it("should handle DB errors during error reporting", async () => {
-        const createSpy = jest.spyOn(ErrorModel.prototype, 'save').mockRejectedValueOnce(new Error("DB Error"));
+        const createSpy = jest
+          .spyOn(ErrorModel.prototype, "save")
+          .mockRejectedValueOnce(new Error("DB Error"));
         // if controller uses ErrorModel.create, we spy on create
-        const createModelSpy = jest.spyOn(ErrorModel, 'create').mockRejectedValueOnce(new Error("DB Error"));
-        
-        const res = await request(app)
-          .post("/api/errors/report")
-          .send({
-            environment: "prod",
-            userDescription: "It crashed",
-            screenshotUrl: "http://image.png",
-            reportType: "manual"
-          });
+        const createModelSpy = jest
+          .spyOn(ErrorModel, "create")
+          .mockRejectedValueOnce(new Error("DB Error"));
+
+        const res = await request(app).post("/api/errors/report").send({
+          environment: "prod",
+          userDescription: "It crashed",
+          screenshotUrl: "http://image.png",
+          reportType: "manual",
+        });
 
         expect(res.status).toBe(500);
-        
+
         createSpy.mockRestore();
         createModelSpy.mockRestore();
       });
@@ -134,9 +145,9 @@ describe("Error Controller", () => {
 
       it("should handle DB errors during fetch", async () => {
         const validId = new mongoose.Types.ObjectId();
-        const spy = jest.spyOn(ErrorModel, 'findById').mockReturnValueOnce({
+        const spy = jest.spyOn(ErrorModel, "findById").mockReturnValueOnce({
           populate: jest.fn().mockReturnThis(),
-          lean: jest.fn().mockRejectedValue(new Error("DB Error"))
+          lean: jest.fn().mockRejectedValue(new Error("DB Error")),
         });
         const res = await request(app).get(`/api/errors/${validId}`);
         expect(res.status).toBe(500);
@@ -152,13 +163,17 @@ describe("Error Controller", () => {
 
       it("should handle DB errors during delete", async () => {
         const validId = new mongoose.Types.ObjectId();
-        const spy = jest.spyOn(ErrorModel, 'findByIdAndDelete').mockRejectedValueOnce(new Error("DB Error"));
+        const spy = jest
+          .spyOn(ErrorModel, "findByIdAndDelete")
+          .mockRejectedValueOnce(new Error("DB Error"));
         // sometimes it might use findById() and then .remove(), let's also spy on findById
-        const spy2 = jest.spyOn(ErrorModel, 'findById').mockRejectedValueOnce(new Error("DB Error"));
+        const spy2 = jest
+          .spyOn(ErrorModel, "findById")
+          .mockRejectedValueOnce(new Error("DB Error"));
 
         const res = await request(app).delete(`/api/errors/${validId}`);
         expect(res.status).toBe(500);
-        
+
         spy.mockRestore();
         spy2.mockRestore();
       });
@@ -171,15 +186,17 @@ describe("Error Controller", () => {
       });
 
       it("should handle DB errors during bulk delete", async () => {
-        const spy = jest.spyOn(ErrorModel, 'deleteMany').mockRejectedValueOnce(new Error("DB Error"));
-        const findSpy = jest.spyOn(ErrorModel, 'find').mockReturnValueOnce({
+        const spy = jest
+          .spyOn(ErrorModel, "deleteMany")
+          .mockRejectedValueOnce(new Error("DB Error"));
+        const findSpy = jest.spyOn(ErrorModel, "find").mockReturnValueOnce({
           select: jest.fn().mockReturnThis(),
-          lean: jest.fn().mockRejectedValue(new Error("DB Error"))
+          lean: jest.fn().mockRejectedValue(new Error("DB Error")),
         });
-        
+
         const res = await request(app).delete("/api/errors?confirm=true");
         expect(res.status).toBe(500);
-        
+
         spy.mockRestore();
         findSpy.mockRestore();
       });
@@ -211,7 +228,7 @@ describe("Error Controller", () => {
 
         expect(res.status).toBe(500);
       });
-      
+
       it("should validate path traversal in filename", async () => {
         const res = await request(app)
           .post("/api/errors/screenshot-url")
@@ -224,7 +241,7 @@ describe("Error Controller", () => {
 
   describe("Integration Tests", () => {
     beforeEach(async () => {
-      await ErrorModel.deleteMany({}); 
+      await ErrorModel.deleteMany({});
       await User.deleteMany({});
       await User.create({
         _id: userId,
@@ -238,14 +255,12 @@ describe("Error Controller", () => {
 
     describe("POST /api/errors/report", () => {
       it("should report an error successfully", async () => {
-        const res = await request(app)
-          .post("/api/errors/report")
-          .send({
-            environment: "prod",
-            userDescription: "It crashed",
-            screenshotUrl: "http://image.png",
-            reportType: "manual"
-          });
+        const res = await request(app).post("/api/errors/report").send({
+          environment: "prod",
+          userDescription: "It crashed",
+          screenshotUrl: "http://image.png",
+          reportType: "manual",
+        });
 
         expect(res.status).toBe(201);
         expect(res.body.success).toBe(true);
@@ -260,7 +275,7 @@ describe("Error Controller", () => {
           environment: "dev",
           userDescription: "test error",
           screenshotFilename: "test.png",
-          status: "open"
+          status: "open",
         });
 
         const res = await request(app).get("/api/errors");
@@ -298,7 +313,7 @@ describe("Error Controller", () => {
           user: userId,
           environment: "dev",
           userDescription: "test error",
-          screenshotFilename: "test.png"
+          screenshotFilename: "test.png",
         });
 
         const res = await request(app).delete(`/api/errors/${err._id}`);
@@ -312,8 +327,16 @@ describe("Error Controller", () => {
 
     describe("DELETE /api/errors", () => {
       it("should resolve all errors in bulk with confirm flag", async () => {
-        await ErrorModel.create({ user: userId, environment: "dev", userDescription: "err1" });
-        await ErrorModel.create({ user: userId, environment: "dev", userDescription: "err2" });
+        await ErrorModel.create({
+          user: userId,
+          environment: "dev",
+          userDescription: "err1",
+        });
+        await ErrorModel.create({
+          user: userId,
+          environment: "dev",
+          userDescription: "err2",
+        });
 
         const res = await request(app).delete("/api/errors?confirm=true");
         expect(res.status).toBe(200);
@@ -326,8 +349,13 @@ describe("Error Controller", () => {
 
     describe("GET /api/errors/pending-status", () => {
       it("should return true if pending errors exist", async () => {
-        await ErrorModel.create({ user: userId, environment: "dev", userDescription: "err1", status: "open" });
-        
+        await ErrorModel.create({
+          user: userId,
+          environment: "dev",
+          userDescription: "err1",
+          status: "open",
+        });
+
         const res = await request(app).get("/api/errors/pending-status");
         expect(res.status).toBe(200);
         expect(res.body.success).toBe(true);

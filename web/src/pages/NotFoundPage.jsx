@@ -1,20 +1,8 @@
 /**
- * FILE PURPOSE: NotFound — The fallback page for unhandled application routes (404).
- *
- * ROLE:
- * Provides a user-friendly and visually engaging way to inform users that
- * the requested URL does not exist. It includes a primary action button
- * to return to the home dashboard.
- *
- * DEPENDENCIES:
- * - react-router-dom: useNavigate for client-side redirection.
- * - styled-components: For full-screen layout, themed gradients, and floating animations.
- *
- * EXPORTS:
- * - NotFound (default): The functional component rendering the 404 UI.
- *
- * INTERCONNECTIONS:
- * - Defined as the catch-all '*' route in the primary router configuration.
+ * @file NotFoundPage.jsx
+ * @description Fallback 404 error page displayed when users navigate to non-existent application routes.
+ * @architecture Configured as the wildcard `*` route in the application router, providing styled fallback UI and redirection home.
+ * @agent_note Styled with floating animation and provides a direct navigation path back to the application root.
  */
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
@@ -117,6 +105,11 @@ const Illustration = styled.div`
 
 /* ─── Main Component ─── */
 
+/**
+ * Application 404 error page component rendering a missing page graphic and link to home.
+ * @component
+ * @returns {JSX.Element}
+ */
 export default function NotFoundPage() {
   const navigate = useNavigate();
 

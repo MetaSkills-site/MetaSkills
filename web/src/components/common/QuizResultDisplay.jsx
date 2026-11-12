@@ -1,4 +1,11 @@
 /**
+ * @file QuizResultDisplay.jsx
+ * @description Comprehensive post-submission feedback panel showing correctness, correct answers, and AI explanations.
+ * @architecture Common assessment feedback layer integrated into quiz containers, coordinating rich text rendering and AI explanations.
+ * @agent_note Handles keyboard listener for Enter key to advance to next question; disconnects when modals or inputs are focused.
+ */
+
+/**
  * FILE PURPOSE: A comprehensive feedback component displayed after a question is submitted.
  * It shows correctness (Success/Partial/Failure), the ground-truth answer, and an optional explanation.
  *
@@ -219,6 +226,20 @@ const EnterHint = styled.span`
   }
 `;
 
+/**
+ * QuizResultDisplay post-submission feedback container.
+ *
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {Object} props.result - Submission outcome details including correctness and correct answer.
+ * @param {Object} [props.question] - Question metadata and body.
+ * @param {Function} props.onNext - Handler invoked to advance to the subsequent item.
+ * @param {string} [props.nextLabel="Next Question"] - Label displayed on progression button.
+ * @param {string} [props.answerType] - Question answer type ('MCQ', 'SA', etc.).
+ * @param {Object} [props.options] - Available question options for label resolution.
+ * @param {boolean} [props.reportModalOpen=false] - Whether error reporting dialog is active.
+ * @returns {JSX.Element} Visual feedback banner, explanation view, and navigation actions.
+ */
 const QuizResultDisplay = ({
   result,
   question,

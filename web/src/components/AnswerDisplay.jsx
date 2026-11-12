@@ -1,4 +1,11 @@
 /**
+ * @file AnswerDisplay.jsx
+ * @description Displays the correct answer state across varied question formats including MCQ, fill-in-the-blanks, and math short answers.
+ * @architecture Presentation component consumed by quiz result views and administrative question previews.
+ * @agent_note Ensure answerType normalization accommodates legacy nested formats when adding new question variants.
+ */
+
+/**
  * FILE PURPOSE: AnswerDisplay — A versatile component for displaying the "Correct Answer" state.
  *
  * ROLE:
@@ -49,6 +56,12 @@ const SaMathFieldWrapper = styled.div`
 
 /* ─── Main Component ─── */
 
+/**
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {Object} props.question - The question entity containing options, type, and answer criteria.
+ * @returns {JSX.Element|null} The resolved correct answer presentation element or null if no question is provided.
+ */
 export default function AnswerDisplay({ question }) {
   if (!question) return null;
 

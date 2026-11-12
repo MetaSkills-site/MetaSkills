@@ -1,24 +1,8 @@
 /**
- * FILE PURPOSE: ModuleStartPage — The entry point for a specific learning module.
- *
- * ROLE:
- * Orchestrates the display of module-specific metadata (title, stats, progress)
- * before a user starts an attempt. It fetches fresh progress data and maps
- * it to the standard StartPage layout.
- *
- * DEPENDENCIES:
- * - TanStack Query: For efficient, cached fetching of module progress data.
- * - SessionContext: Provides user credentials for authenticated API calls.
- * - react-router-dom: Handles dynamic moduleId parameters and navigation.
- * - skeletons/ModuleStartSkeleton: High-fidelity loading state.
- * - common/StartPage: The shared presentation component for intro screens.
- *
- * EXPORTS:
- * - ModuleStartPage (default): The controller component for the start screen.
- *
- * INTERCONNECTIONS:
- * - Linked from ModuleList or Dashboard recent activity.
- * - Transitions to the Attempt/Quiz page on user confirmation.
+ * @file ModuleStartPage.jsx
+ * @description Module introduction and overview page displaying metadata, progress, and question statistics before starting an attempt.
+ * @architecture Mounted at `/module/:moduleId`, retrieves user module progress via TanStack Query and renders the shared StartPage presentation component.
+ * @agent_note Extracts `moduleId` from route params and requires authenticated SessionContext to query module progress and navigate to `/attempt/:moduleId`.
  */
 import { useContext, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
@@ -30,6 +14,11 @@ import ModuleStartSkeleton from "../components/skeletons/ModuleStartSkeleton.jsx
 import apiClient from "../services/api";
 import { API_ENDPOINTS } from "../api/requestMap";
 
+/**
+ * Module intro and launch screen component presenting module details, accuracy rates, and attempt controls.
+ * @component
+ * @returns {JSX.Element}
+ */
 function ModuleStartPage() {
   const { moduleId } = useParams();
   const { user } = useContext(SessionContext);

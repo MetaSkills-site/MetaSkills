@@ -1,3 +1,10 @@
+/**
+ * @file BulkImportPage.jsx
+ * @description Administrative bulk question import workflow enabling PDF parsing, multi-step validation, drafting, and batch uploading.
+ * @architecture Mounted within the admin routing tree, integrates PdfUploader, Slate editor components, and adminApiClient to post imported question batches.
+ * @agent_note Manages a multi-stage state machine (UPLOAD, PARSING, PREVIEW, IMPORTING, SUCCESS) with sessionStorage draft recovery and beforeunload listeners.
+ */
+
 import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -134,6 +141,11 @@ const PHASES = {
   SUCCESS: "SUCCESS",
 };
 
+/**
+ * Admin bulk import page component managing PDF ingestion, question previews, validation, and batch database creation.
+ * @component
+ * @returns {JSX.Element}
+ */
 export default function BulkImportPage() {
   const navigate = useNavigate();
   const [phase, setPhase] = useState(PHASES.UPLOAD);

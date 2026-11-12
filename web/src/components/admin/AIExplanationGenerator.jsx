@@ -1,4 +1,11 @@
 /**
+ * @file AIExplanationGenerator.jsx
+ * @description AI-powered explanation generator for question creation that analyzes questions and answers using LLMs.
+ * @architecture Admin view-layer integration component connecting Slate editor inputs to backend AI explanation endpoints.
+ * @agent_note Ensure Slate serialization helpers stay aligned with schema nodes (math, inline blanks, tables) when modifying.
+ */
+
+/**
  * FILE: AIExplanationGenerator.jsx
  * PURPOSE: AI-powered explanation generator for the question creator. It analyzes the question and correct answer to provide detailed step-by-step explanations.
  * DEPENDENCIES:
@@ -259,9 +266,13 @@ const serializeAnswer = (options) => {
  * Provides a Generate/Regenerate button that opens a custom prompt modal
  * and calls the backend AI explanation endpoint.
  *
- * @param {Array} question - Slate value array for the question content
- * @param {Object} options - Answer options from EditorContext
- * @param {Function} setExplanation - Setter for explanation Slate value
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {Array} props.question - Slate value array for the question content.
+ * @param {Object} props.options - Answer options from EditorContext.
+ * @param {Function} props.setExplanation - Setter for explanation Slate value.
+ * @param {Function} [props.setIsGenerating] - Optional callback indicating generation status.
+ * @returns {JSX.Element} AI explanation generator button and modal controls.
  */
 const AIExplanationGenerator = ({
   question,
@@ -322,19 +333,16 @@ const AIExplanationGenerator = ({
       const timeoutId = setTimeout(() => controller.abort(), 120000);
 
       const { getCsrfToken } = await import("../../services/api");
-      const response = await fetch(
-        API_ENDPOINTS.genaiExplanation.url,
-        {
-          method: API_ENDPOINTS.genaiExplanation.method || "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-            "x-xsrf-token": getCsrfToken() || "",
-          },
-          body: JSON.stringify(payload),
-          signal: controller.signal,
+      const response = await fetch(API_ENDPOINTS.genaiExplanation.url, {
+        method: API_ENDPOINTS.genaiExplanation.method || "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          "x-xsrf-token": getCsrfToken() || "",
         },
-      );
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+      });
 
       if (!response.ok) {
         let errMsg = `HTTP error! status: ${response.status}`;

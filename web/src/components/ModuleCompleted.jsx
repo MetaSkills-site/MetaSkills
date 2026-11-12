@@ -1,4 +1,11 @@
 /**
+ * @file ModuleCompleted.jsx
+ * @description Celebratory completion screen summarizing module performance, calculating carrot rewards, and triggering confetti.
+ * @architecture Module lifecycle completion view mounted when all questions in a module have been answered.
+ * @agent_note Queries module progress via TanStack Query to ensure accurate breakdown of question rewards and completion bonuses.
+ */
+
+/**
  * FILE PURPOSE: ModuleCompleted — The visual and logical climax of a learning module attempt.
  *
  * ROLE:
@@ -151,6 +158,12 @@ const CarrotValue = styled.span`
 
 /* ─── Main Component ─── */
 
+/**
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {string} [props.subject] - Academic subject identifier used for return navigation fallback.
+ * @returns {JSX.Element} The rendered module completion celebration card with reward breakdown.
+ */
 function ModuleCompleted({ subject }) {
   const navigate = useNavigate();
   const { moduleId } = useParams();

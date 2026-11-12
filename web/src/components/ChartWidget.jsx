@@ -1,4 +1,11 @@
 /**
+ * @file ChartWidget.jsx
+ * @description Standardized container wrapping Chart.js visualizations with titles, tooltips, and empty states.
+ * @architecture View layer presentation widget consumed by analytics dashboards and administrative report views.
+ * @agent_note Deep merges configuration options with system typography and tooltip defaults to maintain UI consistency.
+ */
+
+/**
  * FILE PURPOSE: ChartWidget — A standardized container for Chart.js visualizations.
  *
  * ROLE:
@@ -166,6 +173,23 @@ const defaultOptions = {
 
 /* ─── Main Component ─── */
 
+/**
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {string} [props.title] - Widget header title.
+ * @param {string} [props.subtitle] - Widget header explanatory subtitle.
+ * @param {string} [props.infoText] - Contextual explanation text shown inside an info tooltip.
+ * @param {string} [props.type="line"] - Chart.js chart type (e.g., 'line', 'bar', 'doughnut', 'radar', 'scatter', 'bubble').
+ * @param {Object} props.data - Chart.js datasets and labels configuration object.
+ * @param {Object} [props.options={}] - Custom Chart.js option overrides merged with defaults.
+ * @param {string} [props.height="300px"] - Height value applied to chart rendering canvas wrapper.
+ * @param {boolean} [props.isEmpty=false] - Whether data is insufficient or empty.
+ * @param {string} [props.emptyMessage="Not enough data to display."] - Text message displayed when isEmpty is true.
+ * @param {React.ReactNode} [props.headerAccessory=null] - Optional JSX element mounted in the header corner.
+ * @param {Object} [props.containerStyle={}] - Additional inline styles applied to root card container.
+ * @param {Object} [props.bodyStyle={}] - Additional inline styles applied to the chart body container.
+ * @returns {JSX.Element} The rendered chart card container.
+ */
 export default function ChartWidget({
   title,
   subtitle,

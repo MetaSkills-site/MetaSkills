@@ -1,20 +1,8 @@
 /**
- * FILE PURPOSE: Comprehensive AnalyticsPage dashboard for user performance tracking.
- * Visualizes attempt history, accuracy trends, and skill breakdown using various chart types.
- *
- * DEPENDENCIES:
- * - ChartWidget: Wrapper for Chart.js components with standardized styling and tooltips.
- * - @tanstack/react-query: Manages asynchronous data fetching, caching, and loading states.
- * - SessionContext: Provides user authentication for secure API requests.
- * - api.js: Centralized axios instance with baseURL and auto token injection.
- * - react-icons: Visual indicators for different stat categories.
- *
- * EXPORTS:
- * - AnalyticsPage (default): The main page component for the /analytics route.
- *
- * INTERCONNECT:
- * - Consumes multiple backend endpoints via apiClient (/analytics/daily, /analytics/speed-accuracy, etc.).
- * - Navigates to detailed ModuleHistoryPage view when a specific module card is clicked.
+ * @file AnalyticsPage.jsx
+ * @description User analytics dashboard displaying performance tracking, attempt history, accuracy trends, and skill breakdown metrics.
+ * @architecture Mounted at `/analytics` route, renders Nav layout with ChartWidget components, and fetches historical data via TanStack Query and apiClient.
+ * @agent_note Requires authenticated SessionContext and coordinates multiple chart endpoints with filter switching between all, modules, and marathons.
  */
 
 import { useState, useContext } from "react";
@@ -144,6 +132,11 @@ const formatTime = (seconds) => {
   return parts.join(" ");
 };
 
+/**
+ * User analytics dashboard page component rendering attempt history, statistics cards, and visual charts.
+ * @component
+ * @returns {JSX.Element}
+ */
 export default function AnalyticsPage() {
   const { user } = useContext(SessionContext);
   const navigate = useNavigate();

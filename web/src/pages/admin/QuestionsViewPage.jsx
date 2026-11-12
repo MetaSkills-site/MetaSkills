@@ -1,13 +1,8 @@
 /**
- * FILE: ViewQuestions.jsx
- * PURPOSE: Administrative view for managing questions within a specific module, including search, filter, edit, and delete functionalities.
- * DEPENDENCIES:
- *   - useQuery: TanStack Query hook for data synchronization.
- *   - quizService: API services for question and module operations.
- *   - ModuleContext: Provides the currently selected module context.
- *   - AdminUtils: Shared utility components like ExpandableQuestion and DifficultyBadge.
- * EXPORTS: ViewQuestions (Default export)
- * INTERCONNECTIONS: Directly linked from the module management page; interacts with EditQuestion and QuestionInfo modals.
+ * @file QuestionsViewPage.jsx
+ * @description Administrative question browser for a specific learning module with search, tag and difficulty filters, and question action modals.
+ * @architecture Mounted within the admin routing tree, consumes module state from ModuleContext and synchronizes questions via quizService and TanStack Query.
+ * @agent_note Redirects to `/admin/modules` if accessed without an active module in context, and initializes MathLive for math formula previews.
  */
 
 import { useState, useEffect, useMemo } from "react";
@@ -108,6 +103,11 @@ const OrderBadge = styled.span`
   margin-top: 8px;
 `;
 
+/**
+ * Admin module questions management page component supporting search, multi-filter attributes, and CRUD action dialogs.
+ * @component
+ * @returns {JSX.Element}
+ */
 export default function QuestionsViewPage() {
   const { module, setModule } = useModule();
 

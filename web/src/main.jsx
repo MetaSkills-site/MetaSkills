@@ -1,4 +1,11 @@
 /**
+ * @file main.jsx
+ * @description Application entry point that bootstraps the React DOM tree, sets up query caching, configures browser routing, and handles PWA service worker registration.
+ * @architecture Serves as the client-side root combining React Query, React Router, Google OAuth, Helmet SEO, and Session providers around the App component.
+ * @agent_note When modifying route trees or global contexts, preserve route protection wrappers (ProtectedRoute, ProtectedAdminRoute) and skeleton suspense fallbacks.
+ */
+
+/**
  * PURPOSE: Application bootstrap, router configuration, and root-level service providers.
  *
  * DEPENDENCIES:

@@ -1,4 +1,11 @@
 /**
+ * @file OptionsGrid.jsx
+ * @description Normalized option grid component rendering multiple-choice choices across disparate data formats.
+ * @architecture Common presentation layout organizing OptionCard instances within responsive CSS grid columns.
+ * @agent_note Normalizes raw arrays of strings, Slate objects, and key-value maps before rendering OptionCard elements.
+ */
+
+/**
  * FILE PURPOSE: A high-level layout component that normalizes multiple question formats
  * (Marathon vs. Modules) into a uniform options grid for MCQ questions.
  *
@@ -35,6 +42,21 @@ const GridContainer = styled.div`
   }
 `;
 
+/**
+ * OptionsGrid component for rendering multiple choice answer options.
+ *
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {Array|Object} props.options - Raw options array or mapping object.
+ * @param {string|number} [props.selectedAnswer] - Currently chosen option ID, key, or value.
+ * @param {string|number|Array} [props.correctAnswer] - Expected correct answer key(s) or value(s).
+ * @param {boolean} [props.isSubmitted] - Whether the question submission has completed.
+ * @param {Function} props.onSelect - Selection change handler receiving (optionKey, optionObject).
+ * @param {boolean} [props.readOnly] - Whether user interactions are prohibited.
+ * @param {string} [props.layout="grid"] - Layout style: 'grid' for 2-column or 'list' for 1-column.
+ * @param {Function} [props.checkIsCorrect] - Optional custom predicate (option, correctAnswer) => boolean.
+ * @returns {JSX.Element|null} Responsive grid of OptionCard components or null if options empty.
+ */
 const OptionsGrid = ({
   options,
   selectedAnswer,

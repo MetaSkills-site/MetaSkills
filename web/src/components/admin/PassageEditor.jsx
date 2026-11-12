@@ -1,4 +1,11 @@
 /**
+ * @file PassageEditor.jsx
+ * @description Passage editing form component supporting title and body inputs alongside AI-assisted topic drafting.
+ * @architecture Reusable editor component within admin passage modals, coordinating AIGenerationBar with structured form state.
+ * @agent_note AI generation bar is only displayed for new passages lacking an existing _id.
+ */
+
+/**
  * PassageEditor.jsx
  *
  * PURPOSE:
@@ -31,6 +38,18 @@ const Container = styled.div`
   width: 100%;
 `;
 
+/**
+ * PassageEditor component for authoring reading passage titles and content.
+ *
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {Object} props.initialData - Initial passage data containing title and text.
+ * @param {string} [props.initialData._id] - Unique identifier if editing an existing passage.
+ * @param {string} [props.initialData.title] - Initial passage title.
+ * @param {string|Object} [props.initialData.text] - Initial passage text or Slate document.
+ * @param {Function} [props.onUpdate] - Callback receiving updated passage data { title, text }.
+ * @returns {JSX.Element} Passage editor form.
+ */
 export default function PassageEditor({ initialData, onUpdate }) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");

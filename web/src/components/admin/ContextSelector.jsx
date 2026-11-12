@@ -1,4 +1,11 @@
 /**
+ * @file ContextSelector.jsx
+ * @description Context attachment selector allowing administrators to search, choose, or create reading passage contexts for questions.
+ * @architecture Admin form control integrated into question authoring workflows, communicating with passagesService and TanStack Query.
+ * @agent_note Invalidation of 'contextAttachments' query occurs upon creation of new contexts; ensure payload matches passage model.
+ */
+
+/**
  * ContextSelector.jsx
  *
  * PURPOSE:
@@ -117,6 +124,16 @@ const InputGroup = styled.div`
   }
 `;
 
+/**
+ * Context attachment selector component with search and inline creation dialog.
+ *
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {string} [props.selectedId] - Currently selected context attachment ID.
+ * @param {Function} props.onSelect - Callback invoked when a context is selected.
+ * @param {boolean} [props.hideLabel=false] - Whether to suppress the section title label.
+ * @returns {JSX.Element} Rendered context selection interface.
+ */
 export default function ContextSelector({
   selectedId,
   onSelect,

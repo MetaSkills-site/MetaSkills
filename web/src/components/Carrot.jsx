@@ -1,4 +1,11 @@
 /**
+ * @file Carrot.jsx
+ * @description Renders the gamification carrot currency icon with optional balance display and automatic fetching.
+ * @architecture Presentation and data widget embedded in headers, dashboards, and module completion screens.
+ * @agent_note Supports explicit count override or independent API fetching when count is omitted.
+ */
+
+/**
  * FILE PURPOSE: Carrot — Visual currency display component for gamification.
  *
  * ROLE:
@@ -19,6 +26,16 @@
 import { useState, useEffect } from "react";
 import { getCarrots } from "../services/userService";
 
+/**
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {string} [props.size="30px"] - Dimensions for SVG icon width and height.
+ * @param {Object} [props.style] - Additional inline styles for the SVG element.
+ * @param {number|Object} [props.count] - Optional external count value to display instead of fetching.
+ * @param {boolean} [props.showCount=false] - Flag indicating whether numeric balance label is rendered.
+ * @param {boolean} [props.autoFetch=true] - Flag indicating whether balance is fetched automatically when count is undefined.
+ * @returns {JSX.Element} The rendered carrot icon with optional currency badge.
+ */
 const Carrot = ({
   size = "30px",
   style,

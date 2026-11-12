@@ -1,4 +1,11 @@
 /**
+ * @file SurfaceCard.jsx
+ * @description Reusable elevated surface container component with configurable hover physics, borders, and shadows.
+ * @architecture Foundational layout primitive in the common components layer, providing CSS mixin SurfaceCardStyle.
+ * @agent_note Maps standard props to transient styled-components props ($interactive, $hoverLift) to prevent DOM warnings.
+ */
+
+/**
  * SurfaceCard.jsx
  *
  * PURPOSE:
@@ -68,6 +75,24 @@ const StyledSurfaceCard = styled.div`
  *
  * A flexible container component that uses React.forwardRef to allow parent components
  * to access the underlying DOM element. It maps standard props to transient styled-component props.
+ *
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {React.ReactNode} [props.children] - Card child content.
+ * @param {string} [props.className] - CSS class name.
+ * @param {Object} [props.style] - Inline CSS styles.
+ * @param {Function} [props.onClick] - Optional click handler.
+ * @param {string} [props.bg] - Background color override.
+ * @param {string} [props.radius] - Border radius override.
+ * @param {string} [props.padding] - Padding override.
+ * @param {string} [props.shadow] - Box shadow override.
+ * @param {string} [props.border] - Border styling override.
+ * @param {boolean} [props.interactive] - Whether hover elevation effects are active.
+ * @param {string} [props.hoverLift] - Vertical hover lift distance.
+ * @param {string} [props.hoverShadow] - Hover box shadow styling.
+ * @param {string} [props.hoverBorder] - Hover border color.
+ * @param {React.ElementType} [props.as] - Render element tag override.
+ * @returns {JSX.Element} Rendered surface card wrapper.
  */
 const SurfaceCard = forwardRef(
   (

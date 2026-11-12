@@ -60,7 +60,7 @@ describe("Robust Database Connection & Caching Suite", () => {
       await expect(connectDB("")).rejects.toThrow(DatabaseConnectionError);
       await expect(connectDB("   ")).rejects.toThrow(DatabaseConnectionError);
       await expect(connectDB(undefined)).rejects.toThrow(
-        "MongoDB URI is required. Provide a valid connection string or set MONGODB_URI."
+        "MongoDB URI is required. Provide a valid connection string or set MONGODB_URI.",
       );
 
       // Asserts 0 connection attempts were wasted
@@ -167,7 +167,7 @@ describe("Robust Database Connection & Caching Suite", () => {
           retries: 3,
           initialBackoffMs: 5,
           maxBackoffMs: 15,
-        })
+        }),
       ).rejects.toThrow(DatabaseConnectionError);
 
       _resetConnectionCacheForTesting();
@@ -177,9 +177,11 @@ describe("Robust Database Connection & Caching Suite", () => {
   describe("Security: Credential Masking", () => {
     it("should mask passwords in MongoDB connection strings", () => {
       const masked = maskMongoUri(
-        "mongodb://app_user:p%40ssw0rd123@cluster0.mongodb.net:27017/prod"
+        "mongodb://app_user:p%40ssw0rd123@cluster0.mongodb.net:27017/prod",
       );
-      expect(masked).toBe("mongodb://app_user:****@cluster0.mongodb.net:27017/prod");
+      expect(masked).toBe(
+        "mongodb://app_user:****@cluster0.mongodb.net:27017/prod",
+      );
       expect(masked).not.toContain("p%40ssw0rd123");
     });
 
@@ -189,14 +191,19 @@ describe("Robust Database Connection & Caching Suite", () => {
       });
 
       try {
-        await connectDB("mongodb://secretAdmin:verySecret@localhost:27017/test", {
-          retries: 1,
-          initialBackoffMs: 5,
-        });
+        await connectDB(
+          "mongodb://secretAdmin:verySecret@localhost:27017/test",
+          {
+            retries: 1,
+            initialBackoffMs: 5,
+          },
+        );
         throw new Error("Should have thrown");
       } catch (err) {
         expect(err).toBeInstanceOf(DatabaseConnectionError);
-        expect(err.sanitizedUri).toBe("mongodb://secretAdmin:****@localhost:27017/test");
+        expect(err.sanitizedUri).toBe(
+          "mongodb://secretAdmin:****@localhost:27017/test",
+        );
         expect(err.sanitizedUri).not.toContain("verySecret");
         expect(err.attempts).toBe(1);
       }

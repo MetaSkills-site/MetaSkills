@@ -1,4 +1,11 @@
 /**
+ * @file MathQuestion.jsx
+ * @description Specialized renderer for marathon math questions handling structured LaTeX/text token arrays and dynamic input delegates.
+ * @architecture Marathon question renderer delegating mathematical input capture to InputFactory and expressions to LaTeX viewers.
+ * @agent_note Uses QuestionDisplay memoization to prevent expensive LaTeX re-rendering cycles on keystroke updates.
+ */
+
+/**
  * FILE PURPOSE: Specialized renderer for mathematical questions within the Marathon module.
  *
  * DEPENDENCIES:
@@ -76,6 +83,16 @@ const QuestionDisplay = memo(({ question }) => {
 
 QuestionDisplay.displayName = "QuestionDisplay";
 
+/**
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {Object} props.questionData - Question configuration containing math/text token arrays, descriptions, and input options.
+ * @param {string} props.userAnswer - Current user input value for the math question.
+ * @param {boolean} props.submitted - Whether the answer has been submitted for evaluation.
+ * @param {Function} props.handleAnswerChange - Callback function updating user answer.
+ * @param {Function} [props.onKeyDown] - Optional keydown handler for enter-to-submit behavior.
+ * @returns {JSX.Element} The rendered math question display and input interface.
+ */
 const MathQuestion = ({
   questionData,
   userAnswer,

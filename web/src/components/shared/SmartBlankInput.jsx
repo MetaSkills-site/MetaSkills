@@ -1,4 +1,11 @@
 /**
+ * @file SmartBlankInput.jsx
+ * @description Intelligent fill-in-the-blank input field featuring keyboard-navigable autocomplete from a word bank.
+ * @architecture Shared input component used in passage and grammar quiz modules to accelerate student response input.
+ * @agent_note Autocomplete suggestions exclude exact matches and blur timeout is 200ms to allow mousedown selection.
+ */
+
+/**
  * FILE PURPOSE: SmartBlankInput — An enhanced text input with word-bank autocomplete.
  *
  * ROLE:
@@ -59,6 +66,20 @@ const InputWrapper = styled.span`
 
 /* ─── Main Component ─── */
 
+/**
+ * SmartBlankInput component with autocomplete suggestions.
+ *
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {string} props.value - Controlled input text value.
+ * @param {Function} props.onChange - Input value change handler.
+ * @param {boolean} [props.disabled=false] - Whether the input is disabled.
+ * @param {Array<string>} [props.wordBank=[]] - List of allowable vocabulary suggestions.
+ * @param {string} [props.status] - Visual validation status ('correct', 'incorrect', etc.).
+ * @param {string} [props.title=""] - Tooltip or title attribute for input.
+ * @param {string} [props.placeholder=""] - Input placeholder text.
+ * @returns {JSX.Element} Input wrapper containing text field and suggestion dropdown.
+ */
 export default function SmartBlankInput({
   value,
   onChange,

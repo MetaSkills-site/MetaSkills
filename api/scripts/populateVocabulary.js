@@ -1,3 +1,10 @@
+/**
+ * @file populateVocabulary.js
+ * @description Seeds the Vocabulary database with words and definitions fetched from external Datamuse and Dictionary APIs.
+ * @architecture Part of the administrative data seeding pipeline populating content for vocabulary practice and SRS quizzes.
+ * @agent_note Uses external network requests with a 50ms pacing delay to respect API rate limits and silently skips existing duplicate words.
+ */
+
 import mongoose from "mongoose";
 import "../config/env.js";
 import Vocabulary from "../models/Vocabulary.model.js";
@@ -6,6 +13,10 @@ const MONGODB_URI =
   process.env.MONGODB_URI || "mongodb://localhost:27017/metaskills";
 
 // Connect to MongoDB
+/**
+ * @desc Establishes a connection to MongoDB using the configured URI.
+ * @returns {Promise<void>} Resolves when connection succeeds or exits process on failure.
+ */
 const connectDB = async () => {
   try {
     await mongoose.connect(MONGODB_URI);
@@ -20,6 +31,11 @@ const connectDB = async () => {
 };
 
 // Fetch words from Datamuse API
+/**
+ * @desc Queries the Datamuse API to fetch candidate vocabulary words starting with a given letter.
+ * @param {string} letter - Single alphabet letter prefix to query.
+ * @returns {Promise<string[]>} List of fetched vocabulary words.
+ */
 const fetchWordsFromDatamuse = async (letter) => {
   const pattern = `${letter}??????*`;
   const url = `https://api.datamuse.com/words?sp=${pattern}&md=d&max=50`;
@@ -41,6 +57,11 @@ const fetchWordsFromDatamuse = async (letter) => {
 };
 
 // Fetch definition from Dictionary API
+/**
+ * @desc Fetches the primary definition of a word from the Free Dictionary API.
+ * @param {string} word - The vocabulary word to look up.
+ * @returns {Promise<string|null>} The first found definition string, or null if not found.
+ */
 const fetchDefinition = async (word) => {
   const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`;
 
@@ -72,6 +93,12 @@ const fetchDefinition = async (word) => {
 };
 
 // Store word-definition pair in database
+/**
+ * @desc Inserts a word and its definition into the Vocabulary collection.
+ * @param {string} word - Vocabulary word.
+ * @param {string} definition - Dictionary definition.
+ * @returns {Promise<boolean>} Resolves to true if saved, or false if duplicate or failed.
+ */
 const storeVocabulary = async (word, definition) => {
   try {
     await Vocabulary.create({ word, definition });
@@ -87,6 +114,10 @@ const storeVocabulary = async (word, definition) => {
 };
 
 // Main population function
+/**
+ * @desc Iterates through the alphabet to fetch words, query definitions, and insert new vocabulary records.
+ * @returns {Promise<void>} Resolves when all letters are processed.
+ */
 const populateVocabulary = async () => {
   console.log("\n🚀 Starting vocabulary population...\n");
 
@@ -150,6 +181,10 @@ const populateVocabulary = async () => {
 };
 
 // Run the script
+/**
+ * @desc Top-level script runner connecting to the database, invoking population, and disconnecting.
+ * @returns {Promise<void>} Resolves when the script terminates successfully.
+ */
 const run = async () => {
   await connectDB();
   await populateVocabulary();

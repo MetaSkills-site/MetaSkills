@@ -1,4 +1,11 @@
 /**
+ * @file ModuleCard.jsx
+ * @description Promotional call-to-action component offering direct entry points to primary English and Math learning tracks.
+ * @architecture Dashboard presentation card routing users to foundational subject module categories.
+ * @agent_note Renders themed SVG icons and typographic action links directing to `/modules/english` and `/modules/maths`.
+ */
+
+/**
  * FILE PURPOSE: ModuleCard — A prominent call-to-action card for primary subject categories.
  *
  * ROLE:
@@ -21,6 +28,10 @@ import { CurrentModule, PageLink } from "./ModuleCard.style";
 import { Font } from "../../styles/Font.style.js";
 import { Flex } from "../../styles/Flex.style.js";
 
+/**
+ * @component
+ * @returns {JSX.Element} The rendered learning module entry card with subject links.
+ */
 function ModuleCard() {
   return (
     <CurrentModule>

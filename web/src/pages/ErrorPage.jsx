@@ -1,22 +1,8 @@
 /**
- * FILE PURPOSE: ErrorPage — The global boundary for handling and reporting application errors.
- *
- * ROLE:
- * When a fatal JS error occurs (handled via react-router error boundaries), this
- * component captures the stack trace, allows the user to report it to the dev team
- * (with AI-driven analysis feedback), and provides clear recovery paths (Reload/Home).
- *
- * DEPENDENCIES:
- * - react-router-dom: useRouteError for capturing error metadata.
- * - react-hot-toast: For user feedback on reporting status.
- * - react-icons: Visual status indicators.
- * - styled-components: For full-screen error layout and interactive buttons.
- *
- * EXPORTS:
- * - ErrorPage (default): The functional component managing error state and reporting.
- *
- * INTERCONNECTIONS:
- * - Defined as the 'errorElement' in the primary router configuration.
+ * @file ErrorPage.jsx
+ * @description Global error boundary page displaying caught runtime errors with AI-assisted problem reporting and recovery options.
+ * @architecture Serves as the route error element in React Router, interfacing with apiClient to report errors and toast notifications for feedback.
+ * @agent_note Extracts error metadata via useRouteError and coordinates multi-phase feedback messages during async developer report submission.
  */
 import { useState, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
@@ -206,6 +192,11 @@ const PHASES = [
 
 /* ─── Main Component ─── */
 
+/**
+ * Global error fallback view capturing unhandled route exceptions and providing error reporting tools.
+ * @component
+ * @returns {JSX.Element}
+ */
 export default function ErrorPage() {
   const error = useRouteError();
   const navigate = useNavigate();

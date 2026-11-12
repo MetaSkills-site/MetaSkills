@@ -1,3 +1,10 @@
+/**
+ * @file eslint.config.js
+ * @description Configuration file for ESLint flat config setting up linting rules, environments, and plugins for the React frontend application.
+ * @architecture Defines static code analysis standards across browser and Node.js environments within the frontend build pipeline.
+ * @agent_note When modifying rules, ensure compatibility with ESLint flat config format and verify that Node-specific scripts remain in the node globals list.
+ */
+
 import js from "@eslint/js";
 import globals from "globals";
 import pluginReact from "eslint-plugin-react";

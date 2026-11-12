@@ -21,50 +21,70 @@ describe("User Controller", () => {
   beforeAll(() => {
     app = express();
     app.use(express.json());
-    
+
     // Setup routes
-    app.post("/api/users/logout", (req, res, next) => {
-      req.user = mockUser;
-      req.headers.authorization = "Bearer mock-token";
-      next();
-    }, userController.deleteSession);
+    app.post(
+      "/api/users/logout",
+      (req, res, next) => {
+        req.user = mockUser;
+        req.headers.authorization = "Bearer mock-token";
+        next();
+      },
+      userController.deleteSession,
+    );
 
     app.post("/api/users/google-auth", userController.googleAuth);
     app.post("/api/users/dev-login", userController.devLogin);
-    
-    app.post("/api/users/complete-profile", (req, res, next) => {
-      req.user = mockUser;
-      next();
-    }, userController.completeProfile);
-    
+
+    app.post(
+      "/api/users/complete-profile",
+      (req, res, next) => {
+        req.user = mockUser;
+        next();
+      },
+      userController.completeProfile,
+    );
+
     app.get("/api/users", userController.getAllUsers);
 
-    app.put("/api/users/profile", (req, res, next) => {
-      req.user = mockUser;
-      next();
-    }, userController.updateUser);
+    app.put(
+      "/api/users/profile",
+      (req, res, next) => {
+        req.user = mockUser;
+        next();
+      },
+      userController.updateUser,
+    );
 
-    app.get("/api/users/me", (req, res, next) => {
-      req.user = mockUser;
-      req.headers.authorization = "Bearer mock-token";
-      next();
-    }, userController.read);
+    app.get(
+      "/api/users/me",
+      (req, res, next) => {
+        req.user = mockUser;
+        req.headers.authorization = "Bearer mock-token";
+        next();
+      },
+      userController.read,
+    );
 
     app.delete("/api/users/:id", userController.deleteUser);
     app.put("/api/users/:id", userController.updateUserById);
     app.get("/api/users/:id", userController.getUser);
-    
-    app.get("/api/users/carrots/me", (req, res, next) => {
-      req.user = mockUser;
-      next();
-    }, userController.getCarrots);
+
+    app.get(
+      "/api/users/carrots/me",
+      (req, res, next) => {
+        req.user = mockUser;
+        next();
+      },
+      userController.getCarrots,
+    );
 
     app.use(errorHandler);
   });
 
   describe("Unit Tests", () => {
     let verifySpy;
-    
+
     beforeEach(() => {
       jest.clearAllMocks();
       verifySpy = jest.spyOn(OAuth2Client.prototype, "verifyIdToken");
@@ -87,12 +107,14 @@ describe("User Controller", () => {
         verifySpy.mockResolvedValue({
           getPayload: () => ({ email: "test@test.com", name: "Test User" }),
         });
-        jest.spyOn(User, "findOne").mockRejectedValue(new Error("Database failure"));
-        
+        jest
+          .spyOn(User, "findOne")
+          .mockRejectedValue(new Error("Database failure"));
+
         const res = await request(app)
           .post("/api/users/google-auth")
           .send({ credential: "mock-token" });
-        
+
         expect(res.status).toBe(401);
         expect(res.body.message).toMatch(/Google authentication failed/);
       });
@@ -100,30 +122,43 @@ describe("User Controller", () => {
 
     describe("POST /api/users/complete-profile", () => {
       it("should return 400 if grade is missing", async () => {
-        const res = await request(app).post("/api/users/complete-profile").send({});
+        const res = await request(app)
+          .post("/api/users/complete-profile")
+          .send({});
         expect(res.status).toBe(400);
         expect(res.body.message).toMatch(/Grade is required/);
       });
-      
+
       it("should return 500 if save throws error", async () => {
-        mockUser = { _id: new mongoose.Types.ObjectId(), save: jest.fn().mockRejectedValue(new Error("Save failed")) };
-        const res = await request(app).post("/api/users/complete-profile").send({ grade: 5 });
+        mockUser = {
+          _id: new mongoose.Types.ObjectId(),
+          save: jest.fn().mockRejectedValue(new Error("Save failed")),
+        };
+        const res = await request(app)
+          .post("/api/users/complete-profile")
+          .send({ grade: 5 });
         expect(res.status).toBe(500); // errorHandler should catch this
       });
     });
 
     describe("GET /api/users", () => {
       it("should return 400 if DB fails to count documents", async () => {
-        jest.spyOn(User, "countDocuments").mockRejectedValue(new Error("DB count error"));
+        jest
+          .spyOn(User, "countDocuments")
+          .mockRejectedValue(new Error("DB count error"));
         const res = await request(app).get("/api/users");
         expect(res.status).toBe(400);
       });
     });
-    
+
     describe("DELETE /api/users/:id", () => {
       it("should return 500 if DB fails during findById", async () => {
-        jest.spyOn(User, "findById").mockRejectedValue(new Error("Find failed"));
-        const res = await request(app).delete(`/api/users/${new mongoose.Types.ObjectId()}`);
+        jest
+          .spyOn(User, "findById")
+          .mockRejectedValue(new Error("Find failed"));
+        const res = await request(app).delete(
+          `/api/users/${new mongoose.Types.ObjectId()}`,
+        );
         expect(res.status).toBe(500);
       });
     });
@@ -131,12 +166,12 @@ describe("User Controller", () => {
 
   describe("Integration Tests", () => {
     let verifySpy;
-    
+
     beforeEach(async () => {
       await User.deleteMany({});
       await Session.deleteMany({});
       jest.clearAllMocks();
-      
+
       verifySpy = jest.spyOn(OAuth2Client.prototype, "verifyIdToken");
       process.env.VITE_GOOGLE_CLIENT_ID = "test-client-id";
       process.env.JWT_SECRET = "testsecret";
@@ -154,19 +189,23 @@ describe("User Controller", () => {
         const res = await request(app)
           .post("/api/users/google-auth")
           .send({ credential: "mock-token" });
-        
+
         expect(res.status).toBe(401);
         expect(res.body.message).toMatch(/missing required fields/);
       });
 
       it("should create a new user and return 201 if user does not exist", async () => {
         verifySpy.mockResolvedValue({
-          getPayload: () => ({ email: "new@test.com", name: "New User", picture: "pic.jpg" }),
+          getPayload: () => ({
+            email: "new@test.com",
+            name: "New User",
+            picture: "pic.jpg",
+          }),
         });
         const res = await request(app)
           .post("/api/users/google-auth")
           .send({ credential: "mock-token" });
-        
+
         expect(res.status).toBe(201);
         expect(res.body.message).toBe("Account created successfully");
 
@@ -184,13 +223,17 @@ describe("User Controller", () => {
         });
 
         verifySpy.mockResolvedValue({
-          getPayload: () => ({ email: "exist@test.com", name: "New Name", picture: "pic.jpg" }),
+          getPayload: () => ({
+            email: "exist@test.com",
+            name: "New Name",
+            picture: "pic.jpg",
+          }),
         });
 
         const res = await request(app)
           .post("/api/users/google-auth")
           .send({ credential: "mock-token" });
-        
+
         expect(res.status).toBe(200);
         expect(res.body.message).toBe("Logged in successfully");
 
@@ -226,7 +269,9 @@ describe("User Controller", () => {
         expect(res.body.user.email).toBe("e2e-test-user@metaskills.dev");
 
         // Verify the user was created in the DB
-        const user = await User.findOne({ email: "e2e-test-user@metaskills.dev" });
+        const user = await User.findOne({
+          email: "e2e-test-user@metaskills.dev",
+        });
         expect(user).toBeTruthy();
         expect(user.grade).toBe(5);
 
@@ -239,13 +284,18 @@ describe("User Controller", () => {
 
     describe("POST /api/users/complete-profile", () => {
       it("should update grade, return 200, and issue a new authToken cookie", async () => {
-        const user = await User.create({ fullname: "Test", email: "test@test.com" });
+        const user = await User.create({
+          fullname: "Test",
+          email: "test@test.com",
+        });
         mockUser = user;
-        
-        const res = await request(app).post("/api/users/complete-profile").send({ grade: 5 });
+
+        const res = await request(app)
+          .post("/api/users/complete-profile")
+          .send({ grade: 5 });
         expect(res.status).toBe(200);
         expect(res.body.message).toBe("Profile completed successfully");
-        
+
         const updatedUser = await User.findById(user._id);
         expect(updatedUser.grade).toBe(5);
 
@@ -271,16 +321,23 @@ describe("User Controller", () => {
 
     describe("PUT /api/users/profile", () => {
       it("should return 403 if trying to update restricted fields", async () => {
-        const res = await request(app).put("/api/users/profile").send({ carrots: { count: 100 } });
+        const res = await request(app)
+          .put("/api/users/profile")
+          .send({ carrots: { count: 100 } });
         expect(res.status).toBe(403);
         expect(res.body.message).toMatch(/can't alter these values/);
       });
 
       it("should update profile successfully", async () => {
-        const user = await User.create({ fullname: "Old", email: "old@test.com" });
+        const user = await User.create({
+          fullname: "Old",
+          email: "old@test.com",
+        });
         mockUser = user;
-        
-        const res = await request(app).put("/api/users/profile").send({ fullname: "New" });
+
+        const res = await request(app)
+          .put("/api/users/profile")
+          .send({ fullname: "New" });
         expect(res.status).toBe(200);
         expect(res.body.message).toBe("Profile updated successfully");
       });
@@ -288,16 +345,21 @@ describe("User Controller", () => {
 
     describe("DELETE /api/users/:id", () => {
       it("should return 404 if user not found", async () => {
-        const res = await request(app).delete(`/api/users/${new mongoose.Types.ObjectId()}`);
+        const res = await request(app).delete(
+          `/api/users/${new mongoose.Types.ObjectId()}`,
+        );
         expect(res.status).toBe(404);
       });
 
       it("should delete user and related data", async () => {
-        const user = await User.create({ fullname: "Delete Me", email: "del@test.com" });
+        const user = await User.create({
+          fullname: "Delete Me",
+          email: "del@test.com",
+        });
         const res = await request(app).delete(`/api/users/${user._id}`);
         expect(res.status).toBe(200);
         expect(res.body.message).toBe("User removed");
-        
+
         const checkUser = await User.findById(user._id);
         expect(checkUser).toBeNull();
       });

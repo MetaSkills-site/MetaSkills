@@ -1,19 +1,8 @@
 /**
- * FILE PURPOSE: Sub-menu for English-specific Marathon activities.
- * Provides navigation to different English practice modes: Grammar, Vocabulary, and History (Reading Comprehension).
- *
- * DEPENDENCIES:
- * - DashboardCard: Reusable UI component for navigational links.
- * - AdminHeader: Consistent page header with breadcrumb navigation.
- * - VocabularyMarathonMenu: Overlay menu for selecting specific vocabulary exercises.
- * - react-icons: Subject-appropriate icons (IoLibrary, FaBook, FaScroll).
- *
- * EXPORTS:
- * - MarathonEnglishPage (default): Component for the /marathon/english route.
- *
- * INTERCONNECT:
- * - Acts as an intermediate routing hub between the general Marathon selection and specialized exercise pages.
- * - Manages 'isVocabMenuOpen' state to toggle the vocabulary-specific sub-menu.
+ * @file MarathonEnglishPage.jsx
+ * @description Navigation sub-menu for English marathon modes including Grammar, Vocabulary, and Reading Comprehension activities.
+ * @architecture Mounted at `/marathon/english`, renders navigation cards with AdminHeader, and launches modal overlay menus for vocabulary exercises.
+ * @agent_note Manages local state for vocabulary overlay sub-menu toggling while routing to individual marathon exercise paths.
  */
 
 import styled from "styled-components";
@@ -54,6 +43,11 @@ const TitleHeader = styled.div`
   margin-bottom: 20px;
 `;
 
+/**
+ * English marathon portal page component providing access to grammar, vocabulary, and reading comprehension modes.
+ * @component
+ * @returns {JSX.Element}
+ */
 function MarathonEnglishPage() {
   const [isVocabMenuOpen, setIsVocabMenuOpen] = useState(false);
 

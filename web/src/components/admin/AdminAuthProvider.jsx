@@ -1,4 +1,11 @@
 /**
+ * @file AdminAuthProvider.jsx
+ * @description Context provider and hook for managing administrative authentication state, session validation, and JWT token persistence.
+ * @architecture Security and auth state layer wrapping administrative routes, integrating TanStack Query for session caching.
+ * @agent_note Modifying session validation or cookie-based check queries impacts route access control across the entire /admin subtree.
+ */
+
+/**
  * FILE: AdminAuthProvider.jsx
  * PURPOSE: Context provider for managing administrative authentication state, session validation, and JWT token persistence.
  * DEPENDENCIES:
@@ -19,6 +26,14 @@ import { checkAdminSession } from "../../services/adminService";
 // Create context for administrative authentication
 const AdminAuthContext = createContext(null);
 
+/**
+ * Context provider component for admin authentication state and actions.
+ *
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {React.ReactNode} props.children - Child elements requiring admin context.
+ * @returns {JSX.Element} Provider wrapping child elements with AdminAuthContext.
+ */
 export const AdminAuthProvider = ({ children }) => {
   const queryClient = useQueryClient();
 
@@ -101,7 +116,10 @@ export const AdminAuthProvider = ({ children }) => {
 };
 
 /**
- * useAdminAuth: Hook for accessing admin authentication state and actions.
+ * Hook for consuming administrative authentication state and actions.
+ *
+ * @function useAdminAuth
+ * @returns {Object} Context value containing adminUser, loading state, authenticated flag, and checkAuth callback.
  */
 export const useAdminAuth = () => {
   return useContext(AdminAuthContext);

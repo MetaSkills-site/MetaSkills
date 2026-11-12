@@ -123,7 +123,11 @@ describe("Quiz Controller - Responses", () => {
         const res = await request(app)
           .post("/api/submit")
           .set("Authorization", `Bearer ${userToken}`)
-          .send({ answer: "A", timeTaken: 10, moduleId: new mongoose.Types.ObjectId() });
+          .send({
+            answer: "A",
+            timeTaken: 10,
+            moduleId: new mongoose.Types.ObjectId(),
+          });
 
         expect(res.status).toBe(400);
         expect(res.body.message).toBe("Missing required fields");
@@ -463,7 +467,10 @@ describe("Quiz Controller - Responses", () => {
         // Both submissions should agree on correctness
         expect(second.body.data.isCorrect).toBe(first.body.data.isCorrect);
         // Only one response document should exist in DB
-        const count = await Responses.countDocuments({ userId, questionId: q._id });
+        const count = await Responses.countDocuments({
+          userId,
+          questionId: q._id,
+        });
         expect(count).toBe(1);
       });
 
@@ -550,7 +557,9 @@ describe("Quiz Controller - Responses", () => {
           .send({ subject: "english" });
 
         expect(res.status).toBe(200);
-        const freshModule = res.body.data.find((m) => m.name === "Fresh Module");
+        const freshModule = res.body.data.find(
+          (m) => m.name === "Fresh Module",
+        );
         expect(freshModule).toBeDefined();
         expect(freshModule.status).toBe("not_started");
         expect(freshModule.unlocked).toBe(true);

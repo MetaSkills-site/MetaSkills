@@ -1,4 +1,11 @@
 /**
+ * @file addSkillsToQuestions.js
+ * @description Analyzes question text across Slate representations and assigns granular pedagogical skills from an authoritative taxonomy.
+ * @architecture Part of the database maintenance and content tagging pipeline bridging raw question representations to curriculum analytics.
+ * @agent_note Defaults to dry-run mode unless --apply is passed, and respects existing skills unless overridden with --force.
+ */
+
+/**
  * addSkillsToQuestions.js
  *
  * Fetches every question from the database, displays its text content and
@@ -121,6 +128,10 @@ const SKILL_TAXONOMY = [
 /**
  * Recursively extract plain text from a Slate.js node tree.
  * Handles nested children arrays as Slate always uses.
+ *
+ * @desc Recursively extracts plain text from a Slate.js node tree or array of nodes.
+ * @param {Object|Array} node - Slate node or node array containing rich text children.
+ * @returns {string} Concatenated plain text representation.
  */
 function extractText(node) {
   if (!node) return "";
@@ -144,6 +155,10 @@ function extractText(node) {
 /**
  * Get all readable text from a question document.
  * Combines the question body, MCQ options, short-answer value, and explanation.
+ *
+ * @desc Extracts and normalizes readable plain text from question bodies, options, short answers, and explanations.
+ * @param {Object} q - Question document or object with Slate structures.
+ * @returns {string} Normalized lowercase text for skill matching.
  */
 function getQuestionText(q) {
   const parts = [];
@@ -743,6 +758,7 @@ const SKILL_RULES = [
  * Assign the best skill for a question by matching its full text against
  * SKILL_RULES in order.  Falls back to "Logical Reasoning" as a catch-all.
  *
+ * @desc Assigns the best matching skill for a question using keyword heuristics and frequency fallbacks.
  * @param {string} text - Full lowercase text of the question.
  * @param {string[]} usedSkillPool - Ordered list of skills already in DB (sorted by frequency desc).
  * @returns {string} - A skill string that exists in SKILL_TAXONOMY.
@@ -772,6 +788,10 @@ function assignSkill(text, usedSkillPool) {
 const DRY_RUN = !process.argv.includes("--apply");
 const FORCE = process.argv.includes("--force");
 
+/**
+ * @desc Fetches questions from MongoDB and maps corresponding skills using rule-based pattern matching.
+ * @returns {Promise<void>} Resolves when skill mapping script finishes execution.
+ */
 const run = async () => {
   await connectDB();
 

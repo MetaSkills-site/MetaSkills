@@ -1,3 +1,10 @@
+/**
+ * @file MCQQuestion.jsx
+ * @description Multiple-choice question renderer with support for audio pronunciation on target vocabulary words and passage highlights.
+ * @architecture Marathon presentation renderer coordinating instructions, text passages, and option grids.
+ * @agent_note Automatically extracts quoted words from instructions to wrap in AudioWord for interactive TTS pronunciation.
+ */
+
 import AudioWord from "../../AudioWord";
 import OptionsGrid from "./OptionsGrid";
 import HighlightedText from "../../shared/HighlightedText";
@@ -26,6 +33,16 @@ function parseQuotedWord(instruction) {
   return { before: match[1], word: match[2], after: match[3] };
 }
 
+/**
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {Object} props.questionData - Question configuration containing options, instructions, and passage text.
+ * @param {Array<string>} props.userAnswers - Currently selected option IDs or values.
+ * @param {boolean} props.submitted - Whether the question has been submitted for evaluation.
+ * @param {Function} props.handleAnswerChange - Callback triggered when an option is selected.
+ * @param {Array<string>} [props.correctAnswers] - Correct answer keys used to decorate post-submission states.
+ * @returns {JSX.Element} The rendered multiple choice question component.
+ */
 const MCQQuestion = ({
   questionData,
   userAnswers,

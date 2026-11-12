@@ -1,12 +1,8 @@
 /**
- * FILE: PassagesViewPage.jsx
- * PURPOSE: Main administrative dashboard for managing English Marathon content (Passages, Sentences, and Vocabulary).
- * DEPENDENCIES:
- *   - useInfiniteScroll: Custom hook for pagination.
- *   - passagesService: API service for CRUD operations on passages and vocabulary.
- *   - react-query: For data fetching and state management.
- * EXPORTS: PassagesViewPage (Default export)
- * INTERCONNECTIONS: Integrates with various sub-components for lists and modals to provide a unified management interface.
+ * @file PassagesViewPage.jsx
+ * @description Administrative dashboard for managing English marathon content including reading passages, sentence practice, and vocabulary entries.
+ * @architecture Mounted within the admin routing tree, consumes passagesService with TanStack Query infinite scrolling, and orchestrates modular list and modal views.
+ * @agent_note Manages multiple content tabs (passages, sentences, vocabulary) alongside modal dialogs for single and bulk content creation.
  */
 
 import { useState, useEffect, useCallback } from "react";
@@ -140,6 +136,11 @@ const DifficultyFilter = ({
   </FilterButton>
 );
 
+/**
+ * Admin passages management page component providing CRUD and bulk operations for reading passages, sentences, and vocabulary.
+ * @component
+ * @returns {JSX.Element}
+ */
 export default function PassagesViewPage() {
   const { adminUser: user } = useAdminAuth() || {};
   const navigate = useNavigate();

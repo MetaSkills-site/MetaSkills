@@ -1,4 +1,11 @@
 /**
+ * @file QuestionPreview.jsx
+ * @description Renders a live preview of question authoring state simulating student view and correct answer feedback.
+ * @architecture Administrative authoring preview container combining QuestionBlock and QuizResultDisplay components.
+ * @agent_note Maps draft EditorContext state across MCQ, Fill-in-the-Blank, and Short Answer question types.
+ */
+
+/**
  * FILE PURPOSE: QuestionPreview — Provides a high-fidelity visual preview of questions during creation.
  *
  * ROLE:
@@ -41,6 +48,10 @@ const PreviewContainer = styled.div`
 
 /* ─── Main Component ─── */
 
+/**
+ * @component
+ * @returns {JSX.Element} The rendered question authoring preview container with simulated quiz feedback.
+ */
 function QuestionPreview() {
   const { question, options, explanation, contextAttachment } =
     useContext(EditorContext);

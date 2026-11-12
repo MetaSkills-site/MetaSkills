@@ -1,3 +1,10 @@
+/**
+ * @file PassagesList.jsx
+ * @description Responsive list display for reading passages featuring difficulty badges, creation dates, and action controls.
+ * @architecture Admin presentation component rendering cards inside a ResponsiveGrid with infinite scroll intersection ref support.
+ * @agent_note The lastElementRef must be attached to the final item in the array to drive infinite pagination.
+ */
+
 import { IconButton } from "../AdminStyles";
 import styled from "styled-components";
 import { LuEye, LuPencil, LuTrash2 } from "react-icons/lu";
@@ -23,6 +30,20 @@ const AddedDate = styled.span`
   color: var(--text-muted, #888);
 `;
 
+/**
+ * PassagesList component displaying grid of passage cards with actions.
+ *
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {Array<Object>} props.passages - Array of passage objects.
+ * @param {boolean} props.loading - Loading state flag.
+ * @param {string} [props.searchQuery] - Active search query for empty state feedback.
+ * @param {Function} props.onView - Callback when clicking view passage.
+ * @param {Function} props.onEdit - Callback when clicking edit passage.
+ * @param {Function} props.onDelete - Callback when clicking delete passage.
+ * @param {React.Ref} [props.lastElementRef] - Intersection observer ref for infinite scrolling.
+ * @returns {JSX.Element} Grid list of passage cards or loading/empty state.
+ */
 const PassagesList = ({
   passages,
   loading,

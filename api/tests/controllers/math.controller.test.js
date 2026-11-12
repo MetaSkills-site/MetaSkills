@@ -19,11 +19,12 @@ jest.unstable_mockModule("../../services/math.service.js", () => ({
     verifyAnswer: jest.fn((token, response) => {
       if (token === "badToken") throw new Error("Invalid token");
       return { correct: response === "2" };
-    })
-  }
+    }),
+  },
 }));
 
-const { default: mathControllerModule } = await import("../../controllers/math.controller.js");
+const { default: mathControllerModule } =
+  await import("../../controllers/math.controller.js");
 
 describe("Math Controller", () => {
   let app;
@@ -42,7 +43,7 @@ describe("Math Controller", () => {
     app.get("/api/math/topics", mathControllerModule.getTopics);
     app.get("/api/math/question", mathControllerModule.getQuestion);
     app.post("/api/math/answer", mathControllerModule.checkAnswer);
-    
+
     app.use(errorHandler);
   });
 
@@ -82,7 +83,9 @@ describe("Math Controller", () => {
 
     describe("POST /api/math/answer", () => {
       it("should return 401 if unauthenticated", async () => {
-        const res = await request(app).post("/api/math/answer").send({ token: "a", response: "1" });
+        const res = await request(app)
+          .post("/api/math/answer")
+          .send({ token: "a", response: "1" });
         expect(res.status).toBe(401);
       });
 
@@ -103,12 +106,14 @@ describe("Math Controller", () => {
       });
 
       it("should check answer and NOT award carrots if incorrect (mock DB)", async () => {
-        const addCarrotsSpy = jest.spyOn(User, "addCarrots").mockResolvedValue(null);
+        const addCarrotsSpy = jest
+          .spyOn(User, "addCarrots")
+          .mockResolvedValue(null);
         const res = await request(app)
           .post("/api/math/answer")
           .set("Authorization", `Bearer ${userToken}`)
           .send({ token: "goodToken", response: "3" });
-        
+
         expect(res.status).toBe(200);
         expect(res.body.success).toBe(true);
         expect(res.body.data.correct).toBe(false);
@@ -117,12 +122,14 @@ describe("Math Controller", () => {
       });
 
       it("should check answer and award carrots if correct (mock DB)", async () => {
-        const addCarrotsSpy = jest.spyOn(User, "addCarrots").mockResolvedValue({ carrots: { count: 15 } });
+        const addCarrotsSpy = jest
+          .spyOn(User, "addCarrots")
+          .mockResolvedValue({ carrots: { count: 15 } });
         const res = await request(app)
           .post("/api/math/answer")
           .set("Authorization", `Bearer ${userToken}`)
           .send({ token: "goodToken", response: "2" });
-        
+
         expect(res.status).toBe(200);
         expect(res.body.success).toBe(true);
         expect(res.body.data.correct).toBe(true);
@@ -131,25 +138,31 @@ describe("Math Controller", () => {
       });
 
       it("should return 400 if user not found when awarding carrots (controller overrides 404 to 400 in catch block)", async () => {
-        const addCarrotsSpy = jest.spyOn(User, "addCarrots").mockResolvedValue(null);
+        const addCarrotsSpy = jest
+          .spyOn(User, "addCarrots")
+          .mockResolvedValue(null);
         const res = await request(app)
           .post("/api/math/answer")
           .set("Authorization", `Bearer ${userToken}`)
           .send({ token: "goodToken", response: "2" });
-        
+
         // Note: The controller manually sets res.status(404) but then throws an Error which is caught by the try-catch block setting it to 400.
         expect(res.status).toBe(400);
-        expect(res.body.message).toBe("Could not award carrots: User not found");
+        expect(res.body.message).toBe(
+          "Could not award carrots: User not found",
+        );
         expect(addCarrotsSpy).toHaveBeenCalled();
       });
 
       it("should return 400 if DB operation throws an error (controller catches and returns 400)", async () => {
-        const addCarrotsSpy = jest.spyOn(User, "addCarrots").mockRejectedValue(new Error("DB Connection Error"));
+        const addCarrotsSpy = jest
+          .spyOn(User, "addCarrots")
+          .mockRejectedValue(new Error("DB Connection Error"));
         const res = await request(app)
           .post("/api/math/answer")
           .set("Authorization", `Bearer ${userToken}`)
           .send({ token: "goodToken", response: "2" });
-        
+
         expect(res.status).toBe(400);
         expect(res.body.message).toBe("DB Connection Error");
         expect(addCarrotsSpy).toHaveBeenCalled();
@@ -181,7 +194,7 @@ describe("Math Controller", () => {
           .post("/api/math/answer")
           .set("Authorization", `Bearer ${userToken}`)
           .send({ token: "goodToken", response: "3" });
-        
+
         expect(res.status).toBe(200);
         expect(res.body.success).toBe(true);
         expect(res.body.data.correct).toBe(false);
@@ -193,7 +206,7 @@ describe("Math Controller", () => {
           .post("/api/math/answer")
           .set("Authorization", `Bearer ${userToken}`)
           .send({ token: "goodToken", response: "2" });
-        
+
         expect(res.status).toBe(200);
         expect(res.body.success).toBe(true);
         expect(res.body.data.correct).toBe(true);

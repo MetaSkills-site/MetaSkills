@@ -1,4 +1,11 @@
 /**
+ * @file App.jsx
+ * @description Root application component that serves as the primary layout wrapper for routing and global UI overlays.
+ * @architecture Acts as the top-level route element in React Router hierarchy, hosting global notifications and consent banner while rendering nested routes via Outlet.
+ * @agent_note Be mindful when adding global providers or UI elements here, as they will mount and persist across all routes.
+ */
+
+/**
  * PURPOSE: Root application component that serves as the primary layout wrapper.
  *
  * DEPENDENCIES:
@@ -20,6 +27,9 @@ import ConsentBanner from "./components/common/ConsentBanner";
 /**
  * App component: Main container for the application UI.
  * It provides the global toast notification context and a main container for routed content.
+ *
+ * @component
+ * @returns {JSX.Element} Root application element containing toaster, outlet, and consent banner.
  */
 function App() {
   return (

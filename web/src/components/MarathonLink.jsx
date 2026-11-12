@@ -1,4 +1,11 @@
 /**
+ * @file MarathonLink.jsx
+ * @description Renders a stylized call-to-action link directing users to the high-intensity Marathon mode.
+ * @architecture UI navigation banner integrated into user dashboard header and welcome areas.
+ * @agent_note Provides responsive styling with hover animations and routes to /marathon via react-router Link.
+ */
+
+/**
  * FILE PURPOSE: MarathonLink — A primary call-to-action (CTA) link for the Marathon mode.
  *
  * ROLE:
@@ -53,6 +60,10 @@ const LinkContainer = styled(Link)`
 
 /* ─── Main Component ─── */
 
+/**
+ * @component
+ * @returns {JSX.Element} The rendered call-to-action link block for entering Marathon mode.
+ */
 function MarathonLink() {
   return (
     <LinkContainer to="/marathon">

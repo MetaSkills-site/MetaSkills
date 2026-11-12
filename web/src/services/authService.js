@@ -1,4 +1,11 @@
 /**
+ * @file authService.js
+ * @description Authentication and user profile service handling current profile retrieval and server-side session termination.
+ * @architecture Client authentication interface coordinating with backend user endpoints and consumed by SessionProvider.
+ * @agent_note Token header injection is handled automatically by apiClient interceptors and cookies.
+ */
+
+/**
  * FILE PURPOSE: Interface for user authentication and profile management services.
  * Handles user profile retrieval and session termination.
  *
@@ -19,7 +26,6 @@ import apiClient from "./api";
 /**
  * Fetches the complete profile information for the currently authenticated user.
  *
- * @param {string} token - JWT authentication token.
  * @returns {Promise<Object>} User profile data object.
  */
 export async function getProfile() {
@@ -30,7 +36,6 @@ export async function getProfile() {
 /**
  * Terminates the server-side session for a given user.
  *
- * @param {string} token - JWT authentication token.
  * @param {string} userId - The unique identifier of the user to logout.
  * @returns {Promise<Object>} Response confirmation of session deletion.
  */

@@ -1,24 +1,8 @@
 /**
- * ModulesQuestionsViewPage.jsx
- *
- * PURPOSE:
- * A primary navigation hub for content management in the admin section. It provides
- * quick access to module management, question browsing, and context attachment management.
- *
- * DEPENDENCIES:
- * - react-icons: For visual identifiers on dashboard cards.
- * - styled-components: For page layout and container styling.
- * - AdminHeader: Shared header for admin pages.
- * - DashboardCard: Reusable card component for navigation links.
- *
- * EXPORTS:
- * - ModulesQuestionsViewPage (default): The landing page component.
- *
- * INTERCONNECTIONS:
- * - Links to:
- *   - /admin/modules: Module management.
- *   - /admin/all-questions: Global question database.
- *   - /admin/context-attachments: Shared context management.
+ * @file ModulesQuestionsViewPage.jsx
+ * @description Administrative navigation hub for content management including learning modules, question catalogs, and context attachments.
+ * @architecture Mounted within the admin routing tree, rendering DashboardCard links with AdminHeader navigation.
+ * @agent_note Serves as a portal linking to `/admin/modules`, `/admin/all-questions`, and `/admin/context-attachments`.
  */
 
 import styled from "styled-components";
@@ -40,6 +24,11 @@ const Container = styled.div`
   flex-wrap: wrap;
 `;
 
+/**
+ * Admin content management landing page component routing administrators to modules, questions, and context attachments.
+ * @component
+ * @returns {JSX.Element}
+ */
 export default function ModulesQuestionsViewPage() {
   return (
     <Wrapper>

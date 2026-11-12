@@ -1,4 +1,11 @@
 /**
+ * @file DashboardLayout.jsx
+ * @description Primary dashboard layout organizing greeting headers, marathon action links, active learning modules, and performance cards.
+ * @architecture Serves as the authenticated learner home layout, composing navigation, user summaries, and progress cards into a responsive grid.
+ * @agent_note Maintain the responsive breakpoint styles and subcomponent orchestration when updating dashboard sections or introducing new dashboard widgets.
+ */
+
+/**
  * FILE PURPOSE: Main user dashboard layout.
  * Acts as the post-login landing page, aggregating greeting, quick-access links, and module progress modules.
  *
@@ -82,7 +89,10 @@ const ModuleAndPerformanceWrapper = styled.div`
 `;
 
 /**
- * Dashboard: Orchestrates the display of the navbar and primary dashboard content.
+ * Dashboard layout component that coordinates navigation bar, user greetings, marathon links, and summary cards.
+ *
+ * @component
+ * @returns {JSX.Element} Responsive dashboard screen layout for authenticated users.
  */
 function DashboardLayout() {
   return (

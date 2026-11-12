@@ -1,9 +1,20 @@
+/**
+ * @file createAdmin.js
+ * @description CLI utility for provisioning new administrator accounts with designated email addresses and names.
+ * @architecture Part of the administrative tooling and user management tier interacting directly with the Admin collection.
+ * @agent_note Expects command-line arguments for email and optional full name, exiting with code 1 if required parameters are missing.
+ */
+
 import dotenv from "dotenv";
 import Admin from "../models/admin.model.js";
 import connectDB from "../config/database.js";
 
 dotenv.config();
 
+/**
+ * @desc Validates CLI arguments, connects to MongoDB, and registers a new Admin document if not already existing.
+ * @returns {Promise<void>} Resolves when the admin record is verified or created.
+ */
 const createAdmin = async () => {
   await connectDB();
 

@@ -1,4 +1,11 @@
 /**
+ * @file Tag.jsx
+ * @description Reusable chip component for displaying labels, skills, and categories with optional deletion.
+ * @architecture Common UI atom used across tags inputs, question cards, and filter badges.
+ * @agent_note Stop propagation on close icon click to prevent activating parent container onClick handlers.
+ */
+
+/**
  * FILE PURPOSE: A reusable chip/tag component for displaying categories, skills, or labels.
  * Supports active states, click events, and deletion.
  *
@@ -45,6 +52,18 @@ const CloseIcon = styled(IoClose)`
   font-size: 16px;
 `;
 
+/**
+ * Tag chip component displaying text with active and dismissible states.
+ *
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {string} props.label - Text content displayed inside the tag.
+ * @param {boolean} [props.active=false] - Whether the tag is highlighted.
+ * @param {Function} [props.onDelete] - Callback invoked when clicking the remove icon.
+ * @param {Function} [props.onClick] - Optional click handler for selecting the tag.
+ * @param {Object} [props.style] - Inline styles.
+ * @returns {JSX.Element} Rendered chip element.
+ */
 export default function Tag({
   label,
   active = false,

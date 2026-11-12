@@ -1,20 +1,8 @@
 /**
- * FILE PURPOSE: Dynamic topic selector for the Math MarathonPage.
- * Handles hierarchical navigation through math categories (e.g., Arithmetic -> Simple Arithmetic) and specific sum types.
- *
- * DEPENDENCIES:
- * - SessionContext: Provides user token for secure topic fetching.
- * - axios: Fetches hierarchical topic data based on the 'path' search param.
- * - DashboardCard: UI component for topic/category display.
- * - AdminHeader: Standardized header with back-navigation.
- *
- * EXPORTS:
- * - MathMarathonPage (default): Topic discovery and navigation page for Math.
- *
- * INTERCONNECT:
- * - Synchronizes with browser URL search parameters to manage navigation state ('?path=...').
- * - Implements 'Auto-start' logic: if a category contains only one specific question type, it redirects directly to the attempt page.
- * - Bridges the gap between subject selection and specific math problem attempts.
+ * @file MathMarathonPage.jsx
+ * @description Dynamic hierarchical topic and category navigator for mathematics marathon practice exercises.
+ * @architecture Mounted at `/marathon/math`, uses AdminHeader and DashboardCards, fetching math topics via apiClient based on URL query params.
+ * @agent_note Reads and updates the `path` URL search parameter for breadcrumb hierarchy and auto-navigates to attempt pages when leaf categories contain a single sum.
  */
 
 import { useState, useEffect, useContext, useCallback } from "react";
@@ -58,6 +46,11 @@ const TitleHeader = styled.div`
   margin-bottom: 20px;
 `;
 
+/**
+ * Hierarchical math category and topic browser component supporting deep-linked navigation and automatic exercise launching.
+ * @component
+ * @returns {JSX.Element}
+ */
 function MathMarathonPage() {
   const { user } = useContext(SessionContext);
   const navigate = useNavigate();

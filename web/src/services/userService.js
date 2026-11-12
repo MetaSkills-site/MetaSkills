@@ -1,4 +1,11 @@
 /**
+ * @file userService.js
+ * @description User-specific account and gamification data service managing achievement metrics such as carrots.
+ * @architecture Client-side user domain service coordinating with user endpoints via apiClient for gamification and progress displays.
+ * @agent_note Token header injection is managed automatically by apiClient; ensure return schema matches backend carrots field.
+ */
+
+/**
  * FILE PURPOSE: Service for managing user-specific metrics and data.
  * Currently focuses on fetching user achievement data (e.g., carrots).
  *
@@ -17,7 +24,6 @@ import apiClient from "./api";
 /**
  * Fetches the current carrot count (achievement metric) for the authenticated user.
  *
- * @param {string} token - JWT authentication token.
  * @returns {Promise<Object>} Response containing carrot data.
  */
 export async function getCarrots() {

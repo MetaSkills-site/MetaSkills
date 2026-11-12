@@ -1,4 +1,11 @@
 /**
+ * @file questionValidation.js
+ * @description Multi-step question authoring validator checking question prompts, blanks, options, and explanations, plus option sanitization.
+ * @architecture Validation and sanitization layer utilized by admin question wizards (QuestionEntryPage, EditQuestion) prior to submission.
+ * @agent_note Traverses nested Slate nodes to enforce that all inline blanks have assigned answers and triggers toast error notifications on failure.
+ */
+
+/**
  * FILE PURPOSE: Logic for validating the multi-step question creation process
  * (Question -> Answer -> Explanation).
  *
@@ -18,6 +25,12 @@
 import toast from "react-hot-toast";
 import { extractBlanks, isEmptySlate } from "./slateUtils";
 
+/**
+ * Validates the question prompt step by checking for empty content and unassigned blanks.
+ *
+ * @param {Array} question - Slate node tree array representing the question prompt.
+ * @returns {{isValid: boolean, error?: string}} Validation result.
+ */
 export const validateQuestionStep = (question) => {
   // question is expected to be the Slate array now
   if (isEmptySlate(question)) {
@@ -66,6 +79,11 @@ export const validateQuestionStep = (question) => {
 /**
  * Validates the Answer configuration step.
  * Ensures that either a Short Answer (SA), multiple choices (MCQ), or Fill-in-the-blanks are correctly defined.
+ *
+ * @param {Array} question - Slate question AST used to extract blank nodes.
+ * @param {Object} options - Current answer options state.
+ * @param {Function} [setOptions] - State updater function to synchronize auto-detected blanks.
+ * @returns {{isValid: boolean, error?: string, newOptions?: Object}} Validation result and optional synced options.
  */
 export const validateAnswerStep = (question, options, setOptions) => {
   // Extract ground truth from question content to sync with answer layer
@@ -152,6 +170,12 @@ export const validateAnswerStep = (question, options, setOptions) => {
   return { isValid: true };
 };
 
+/**
+ * Validates the explanation step ensuring explanation content is provided.
+ *
+ * @param {Array} explanation - Slate node array for solution explanation.
+ * @returns {{isValid: boolean, error?: string}} Validation outcome.
+ */
 export const validateExplanationStep = (explanation) => {
   // explanation is expected to be Slate array (or object with slate?)
   // We'll update contexts to use just slate array for explanation too.
@@ -161,6 +185,17 @@ export const validateExplanationStep = (explanation) => {
   return { isValid: true };
 };
 
+/**
+ * Aggregator function validating an individual wizard step and displaying toast errors on failure.
+ *
+ * @param {number|string} step - Step index (0, 1, 2) or step key ('question', 'answer', 'explanation').
+ * @param {Object} context - Step context.
+ * @param {Array} context.question - Question Slate AST.
+ * @param {Object} context.options - Current options state.
+ * @param {Array} context.explanation - Explanation Slate AST.
+ * @param {Function} [context.setOptions] - Options updater callback.
+ * @returns {boolean} True if the step passes validation.
+ */
 export const validateStep = (
   step,
   { question, options, explanation, setOptions },
@@ -187,6 +222,13 @@ export const validateStep = (
   return result.isValid;
 };
 
+/**
+ * Normalizes and sanitizes question option structures prior to backend submission.
+ *
+ * @param {string} answerType - Question answer format ('MCQ', 'SA', 'fillInTheBlanks').
+ * @param {Object} currentOptions - Raw options object from authoring form.
+ * @returns {Object} Sanitized options payload conforming to backend schema.
+ */
 export const sanitizeQuestionOptions = (answerType, currentOptions) => {
   // Clone to avoid mutation of top-level properties
   // However, for MCQ transformation we create a new structure

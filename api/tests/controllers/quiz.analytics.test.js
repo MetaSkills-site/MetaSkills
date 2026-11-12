@@ -9,11 +9,12 @@ import generateToken from "../../utils/genToken.js";
 
 jest.unstable_mockModule("../../services/math.service.js", () => ({
   default: {
-    verifyAnswer: jest.fn().mockReturnValue({ correct: true, accuracy: 100 })
-  }
+    verifyAnswer: jest.fn().mockReturnValue({ correct: true, accuracy: 100 }),
+  },
 }));
 
-const { default: quizController } = await import("../../controllers/quiz.controller.js");
+const { default: quizController } =
+  await import("../../controllers/quiz.controller.js");
 
 const userId = new mongoose.Types.ObjectId();
 const adminId = new mongoose.Types.ObjectId();
@@ -40,13 +41,16 @@ describe("Quiz Controller - Analytics & Misc", () => {
     app.get("/api/history", quizController.getMyHistory);
     app.get("/api/analytics/daily", quizController.getDailyAnalytics);
     app.get("/api/analytics/marathons", quizController.getMarathonAnalytics);
-    app.get("/api/analytics/speed-accuracy", quizController.getSpeedAccuracyAnalytics);
+    app.get(
+      "/api/analytics/speed-accuracy",
+      quizController.getSpeedAccuracyAnalytics,
+    );
     app.get("/api/analytics/formats", quizController.getFormatAnalytics);
     app.get("/api/analytics/difficulty", quizController.getDifficultyAnalytics);
     app.get("/api/analytics/skills", quizController.getSkillsAnalytics);
     app.get("/api/admin/users/:userId/history", quizController.getUserHistory);
     app.post("/api/response", quizController.saveMarathonResponse);
-    
+
     app.use(errorHandler);
   });
 
@@ -64,7 +68,7 @@ describe("Quiz Controller - Analytics & Misc", () => {
       const res = await request(app)
         .get("/api/analytics/daily")
         .set("Authorization", `Bearer ${userToken}`);
-      
+
       expect(res.status).toBe(500);
       expect(res.body.success).toBe(false);
       expect(res.body.message).toBe("DB Connection Error");
@@ -76,7 +80,7 @@ describe("Quiz Controller - Analytics & Misc", () => {
         .set("Authorization", `Bearer ${userToken}`)
         .send({ type: "marathon", userId: userId.toString(), timeTaken: -10 }); // Missing token
 
-      expect(res.status).toBe(400); 
+      expect(res.status).toBe(400);
     });
   });
 
@@ -146,32 +150,48 @@ describe("Quiz Controller - Analytics & Misc", () => {
       // Generate a valid question token
       const mockQuestionToken = jwt.sign(
         { answerHashes: ["mockHash123"] },
-        process.env.JWT_SECRET || "testsecret"
+        process.env.JWT_SECRET || "testsecret",
       );
 
       const res = await request(app)
         .post("/api/response")
         .set("Authorization", `Bearer ${userToken}`)
-        .send({ type: "marathon", userId: userId.toString(), token: mockQuestionToken, timeTaken: 10, response: "test" });
+        .send({
+          type: "marathon",
+          userId: userId.toString(),
+          token: mockQuestionToken,
+          timeTaken: 10,
+          response: "test",
+        });
       expect(res.status).toBe(200);
     });
 
     it("should evaluate math marathon response using mathService", async () => {
       const mockQuestionToken = jwt.sign(
         { type: "math" },
-        process.env.JWT_SECRET || "testsecret"
+        process.env.JWT_SECRET || "testsecret",
       );
 
       const res = await request(app)
         .post("/api/response")
         .set("Authorization", `Bearer ${userToken}`)
-        .send({ type: "marathon", userId: userId.toString(), token: mockQuestionToken, timeTaken: 10, response: "1/2" });
-      
+        .send({
+          type: "marathon",
+          userId: userId.toString(),
+          token: mockQuestionToken,
+          timeTaken: 10,
+          response: "1/2",
+        });
+
       expect(res.status).toBe(200);
       expect(res.body.data.accuracy).toBe(100);
 
-      const { default: mathService } = await import("../../services/math.service.js");
-      expect(mathService.verifyAnswer).toHaveBeenCalledWith(mockQuestionToken, "1/2");
+      const { default: mathService } =
+        await import("../../services/math.service.js");
+      expect(mathService.verifyAnswer).toHaveBeenCalledWith(
+        mockQuestionToken,
+        "1/2",
+      );
     });
   });
 });

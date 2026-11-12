@@ -1,4 +1,11 @@
 /**
+ * @file AdminItemCard.jsx
+ * @description Unified, flexible card component standardizing item presentation across admin views with slot-based layouts.
+ * @architecture Reusable presentation component in the admin UI layer, encapsulating card elevation, layout direction, and action slots.
+ * @agent_note Check flex direction and action alignment props when using within lists or grids to avoid overflow.
+ */
+
+/**
  * AdminItemCard.jsx
  *
  * PURPOSE:
@@ -111,6 +118,7 @@ const ActionsContainer = styled.div`
 /**
  * Unified Admin Item Card Component
  *
+ * @component
  * @param {Object} props
  * @param {React.ReactNode} [props.icon] - Icon or avatar to display on the left
  * @param {React.ReactNode} [props.title] - Main title of the card
@@ -124,6 +132,7 @@ const ActionsContainer = styled.div`
  * @param {string} [props.direction] - Layout direction ("row" or "column")
  * @param {string} [props.alignActions] - Alignment for actions in column mode
  * @param {boolean} [props.fullWidth] - Whether the card should take 100% width
+ * @returns {JSX.Element} Card component container.
  */
 const AdminItemCard = forwardRef(
   (

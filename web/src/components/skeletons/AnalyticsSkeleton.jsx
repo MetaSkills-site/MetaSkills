@@ -1,4 +1,11 @@
 /**
+ * @file AnalyticsSkeleton.jsx
+ * @description Loading skeleton placeholder replicating the multi-chart and history list layout of AnalyticsPage.
+ * @architecture View-layer Suspense fallback component rendering responsive grid placeholders and persistent navigation.
+ * @agent_note Matches the dual-chart and strength/weakness layout of AnalyticsPage to prevent cumulative layout shift.
+ */
+
+/**
  * FILE PURPOSE: AnalyticsSkeleton — Suspense fallback for the /analytics routes.
  *
  * ROLE:
@@ -51,6 +58,12 @@ const DualChartGrid = styled.div`
 
 /* ─── Main Component ─── */
 
+/**
+ * AnalyticsSkeleton Suspense fallback component.
+ *
+ * @component
+ * @returns {JSX.Element} Full page skeleton placeholder for analytics routes.
+ */
 export default function AnalyticsSkeleton() {
   return (
     <>

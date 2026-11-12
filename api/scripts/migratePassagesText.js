@@ -1,6 +1,17 @@
+/**
+ * @file migratePassagesText.js
+ * @description Converts legacy Slate JSON rich text structures in Passages into simplified plain text strings.
+ * @architecture Part of the database maintenance script layer standardizing passage content formats for simplified querying and presentation.
+ * @agent_note Exported as an asynchronous runnable function and does not automatically connect to or disconnect from MongoDB.
+ */
+
 import Passages from "../models/Passages.model.js";
 
-// Helper to extract text from Slate JSON nodes
+/**
+ * @desc Recursively traverses Slate JSON node trees to extract and concatenate text leaves into a plain text string.
+ * @param {Array<Object>} nodes - Array of Slate JSON nodes.
+ * @returns {string} Concatenated plain text from all child nodes.
+ */
 const extractText = (nodes) => {
   if (!nodes) return "";
   return nodes
@@ -12,6 +23,10 @@ const extractText = (nodes) => {
     .join(" ");
 };
 
+/**
+ * @desc Finds passage documents with object or array text formats and updates them to plain text strings.
+ * @returns {Promise<{success: boolean, updatedCount: number, errors: number}>} Migration execution outcome and counts.
+ */
 export const run = async () => {
   console.log(
     "Starting migration: Convert Slate JSON to Plain Text for Passages...",

@@ -1,3 +1,10 @@
+/**
+ * @file migrateVocab.js
+ * @description Initializes default Elo ratings to 1200 for Users and Vocabulary documents lacking SRS rating fields.
+ * @architecture Part of the database migration layer establishing baseline Elo ratings for the vocabulary spaced repetition system.
+ * @agent_note Modifies both User (vocabRating) and Vocabulary (rating) collections idempotently based on field existence.
+ */
+
 import mongoose from "mongoose";
 import "../config/env.js";
 import User from "../models/user.model.js";
@@ -14,6 +21,10 @@ const LINE = "═".repeat(66);
  * - Adds `rating: 1200` to all Vocabulary items missing this field.
  */
 
+/**
+ * @desc Connects to MongoDB and performs bulk updates to initialize missing vocabRating on Users and rating on Vocabulary items.
+ * @returns {Promise<void>} Resolves when Elo rating backfills complete and connection closes.
+ */
 const migrate = async () => {
   try {
     if (!process.env.MONGODB_URI) {

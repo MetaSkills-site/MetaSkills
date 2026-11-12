@@ -36,8 +36,11 @@ beforeAll(() => {
   app.post("/api/modules/getById", quizController.getModuleById);
   app.put("/api/modules/update", quizController.updateModule);
   app.delete("/api/modules/delete", quizController.deleteModule);
-  app.delete("/api/modules/deleteCascade", quizController.deleteModuleAndQuestions);
-  
+  app.delete(
+    "/api/modules/deleteCascade",
+    quizController.deleteModuleAndQuestions,
+  );
+
   app.use(errorHandler);
 });
 
@@ -58,13 +61,13 @@ describe("Unit Tests", () => {
 
     it("should return 500 if DB operation throws an error", async () => {
       jest.spyOn(Module, "create").mockRejectedValue(new Error("DB Error"));
-      
+
       const payload = {
         name: "Basic Grammar",
         subject: "english",
         grades: [4, 5],
       };
-      
+
       const res = await request(app)
         .post("/api/modules")
         .set("Authorization", `Bearer ${adminToken}`)
@@ -79,7 +82,7 @@ describe("Unit Tests", () => {
     it("should handle error when DB fails", async () => {
       jest.spyOn(Module, "find").mockImplementation(() => {
         return {
-          sort: jest.fn().mockRejectedValue(new Error("DB Error"))
+          sort: jest.fn().mockRejectedValue(new Error("DB Error")),
         };
       });
 
@@ -95,7 +98,7 @@ describe("Unit Tests", () => {
   describe("POST /api/modules/getById", () => {
     it("should handle error when DB fails", async () => {
       jest.spyOn(Module, "findById").mockReturnValue({
-        populate: jest.fn().mockRejectedValue(new Error("DB Error"))
+        populate: jest.fn().mockRejectedValue(new Error("DB Error")),
       });
 
       const res = await request(app)
@@ -109,7 +112,9 @@ describe("Unit Tests", () => {
 
   describe("PUT /api/modules/update", () => {
     it("should handle error when DB fails", async () => {
-      jest.spyOn(Module, "findByIdAndUpdate").mockRejectedValue(new Error("DB Error"));
+      jest
+        .spyOn(Module, "findByIdAndUpdate")
+        .mockRejectedValue(new Error("DB Error"));
 
       const res = await request(app)
         .put("/api/modules/update")
@@ -122,7 +127,9 @@ describe("Unit Tests", () => {
 
   describe("DELETE /api/modules/delete", () => {
     it("should handle error when DB fails", async () => {
-      jest.spyOn(Module, "findByIdAndDelete").mockRejectedValue(new Error("DB Error"));
+      jest
+        .spyOn(Module, "findByIdAndDelete")
+        .mockRejectedValue(new Error("DB Error"));
 
       const res = await request(app)
         .delete("/api/modules/delete")
@@ -132,10 +139,12 @@ describe("Unit Tests", () => {
       expect(res.status).toBe(400);
     });
   });
-  
+
   describe("DELETE /api/modules/deleteCascade", () => {
     it("should handle error when DB fails", async () => {
-      jest.spyOn(Module, "findByIdAndDelete").mockRejectedValue(new Error("DB Error"));
+      jest
+        .spyOn(Module, "findByIdAndDelete")
+        .mockRejectedValue(new Error("DB Error"));
 
       const res = await request(app)
         .delete("/api/modules/deleteCascade")
@@ -254,14 +263,16 @@ describe("Integration Tests", () => {
         timeTaken: 10,
         responses: [],
       });
-      
+
       const res = await request(app)
         .delete("/api/modules/delete")
         .set("Authorization", `Bearer ${adminToken}`)
         .send({ id: m._id });
 
       expect(res.status).toBe(200);
-      const responsesCount = await Responses.countDocuments({ moduleId: m._id });
+      const responsesCount = await Responses.countDocuments({
+        moduleId: m._id,
+      });
       expect(responsesCount).toBe(0);
     });
   });
@@ -300,12 +311,14 @@ describe("Integration Tests", () => {
       expect(res.status).toBe(200);
       const checkModule = await Module.findById(m._id);
       expect(checkModule).toBeNull();
-      
+
       const checkQuestion = await Question.findById(q._id);
       expect(checkQuestion).not.toBeNull();
       expect(checkQuestion.active).toBe(false);
 
-      const responsesCount = await Responses.countDocuments({ moduleId: m._id });
+      const responsesCount = await Responses.countDocuments({
+        moduleId: m._id,
+      });
       expect(responsesCount).toBe(0);
     });
   });

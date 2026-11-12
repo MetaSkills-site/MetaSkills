@@ -1,4 +1,11 @@
 /**
+ * @file TokenQuestionRenderer.jsx
+ * @description Decodes JWT-encapsulated dynamic math questions, renders interactive math problems, and manages submission transitions.
+ * @architecture Marathon presentation component decoding ephemeral question payloads and delegating interactions to MathQuestion.
+ * @agent_note Unpacks JWT tokens using memoized jwtDecode and supports sequential problem chains via nextStepToken responses.
+ */
+
+/**
  * FILE PURPOSE: Decode — Decodes and renders math questions encapsulated in JWT tokens.
  *
  * ROLE:
@@ -69,6 +76,18 @@ const CorrectAnswerText = styled.div`
 
 /* ─── Main Component ─── */
 
+/**
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {string} props.children - JWT string encoding math question payload and metadata.
+ * @param {Function} [props.onNext] - Callback to advance to the next question.
+ * @param {Function} [props.getTimeTaken] - Function returning elapsed time in seconds.
+ * @param {boolean} [props.isMarathon=false] - Flag indicating whether component is running in Marathon mode.
+ * @param {Function} [props.onNextStep] - Callback receiving nextStepToken for multi-stage math problems.
+ * @param {Function} [props.onDecode] - Callback receiving decoded question payload data.
+ * @param {Function} [props.onResult] - Callback receiving question submission outcome.
+ * @returns {JSX.Element} The rendered token-decoded math question and response interface.
+ */
 function TokenQuestionRenderer(props) {
   const { children: token, onNext, getTimeTaken } = props;
   const { updateUser } = useContext(SessionContext);

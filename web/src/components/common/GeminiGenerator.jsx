@@ -1,4 +1,11 @@
 /**
+ * @file GeminiGenerator.jsx
+ * @description Action button initiating AI content generation streams with visual loading feedback and error handling.
+ * @architecture Common interactive utility component interfacing directly with SSE streaming endpoints for GenAI assistance.
+ * @agent_note Expects an SSE response stream parsing lines for chunk or completed event states; handles abort and CSRF tokens.
+ */
+
+/**
  * FILE PURPOSE: A button component that triggers AI content generation via the Gemini API.
  * It handles real-time streaming of responses and provides visual feedback during generation.
  *
@@ -106,6 +113,22 @@ const GenerateButton = styled.button`
   }
 `;
 
+/**
+ * GeminiGenerator button component for streaming AI generations.
+ *
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {string} props.apiMode - Generation mode identifier (e.g., 'passage', 'vocab', 'sentences').
+ * @param {Object} props.params - Generation parameters and prompts.
+ * @param {Function} [props.onStream] - Callback receiving streamed text chunks.
+ * @param {Function} [props.onComplete] - Callback receiving fully assembled generated output.
+ * @param {Function} [props.onError] - Callback invoked when an error occurs.
+ * @param {Function} [props.onStart] - Callback invoked prior to request initiation.
+ * @param {boolean} [props.disabled=false] - Whether button interaction is disabled.
+ * @param {string} [props.buttonText="Generate with AI"] - Button label text.
+ * @param {Object} [props.style={}] - Inline styling overrides.
+ * @returns {JSX.Element} Interactive generator trigger button.
+ */
 const GeminiGenerator = ({
   apiMode,
   params,
@@ -135,21 +158,18 @@ const GeminiGenerator = ({
     try {
       // 1. Establish connection to streaming endpoint
       const { getCsrfToken } = await import("../../services/api");
-      const response = await fetch(
-        API_ENDPOINTS.genaiStream.url,
-        {
-          method: API_ENDPOINTS.genaiStream.method,
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-            "x-xsrf-token": getCsrfToken() || "",
-          },
-          body: JSON.stringify({
-            apiMode,
-            params,
-          }),
+      const response = await fetch(API_ENDPOINTS.genaiStream.url, {
+        method: API_ENDPOINTS.genaiStream.method,
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          "x-xsrf-token": getCsrfToken() || "",
         },
-      );
+        body: JSON.stringify({
+          apiMode,
+          params,
+        }),
+      });
 
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}));

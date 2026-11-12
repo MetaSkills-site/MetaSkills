@@ -1,4 +1,11 @@
 /**
+ * @file adminService.js
+ * @description Administrative API service client handling backups, error telemetry, active sessions, notifications, analytics, scripts, and user moderation.
+ * @architecture Encapsulates admin endpoint calls via adminApiClient, managing multi-endpoint telemetry aggregation and admin privileged operations.
+ * @agent_note Requires administrative JWT bearer tokens configured in adminApiClient; handle Promise.allSettled error shapes when modifying analytics methods.
+ */
+
+/**
  * FILE PURPOSE: Centralized service for all administrative API interactions.
  * Handles high-level management tasks including backups, error reporting, session tracking,
  * notifications, and global analytics.
@@ -25,6 +32,11 @@ import adminApiClient from "./adminApi";
 
 // ─── Admin Auth ──────────────────────────────────────────────────────────────
 
+/**
+ * Checks if the current admin session is valid.
+ *
+ * @returns {Promise<Object>} Admin session status and user data.
+ */
 export async function checkAdminSession() {
   const res = await adminApiClient.get("/api/admin/check", {});
   return res.data;
@@ -32,26 +44,53 @@ export async function checkAdminSession() {
 
 // ─── Backup / Drive files ────────────────────────────────────────────────────
 
+/**
+ * Fetches the list of database backup files.
+ *
+ * @returns {Promise<Object>} List of backup files.
+ */
 export async function getBackupFiles() {
   const res = await adminApiClient.get("/api/backup/list", {});
   return res.data;
 }
 
+/**
+ * Triggers a manual cloud drive backup.
+ *
+ * @returns {Promise<Object>} Result of the backup operation.
+ */
 export async function triggerBackup() {
   const res = await adminApiClient.post("/api/backup/drive", {});
   return res.data;
 }
 
+/**
+ * Deletes a specific backup file by its ID.
+ *
+ * @param {string} fileId - ID of the backup file to delete.
+ * @returns {Promise<Object>} Deletion result confirmation.
+ */
 export async function deleteBackupFile(fileId) {
   const res = await adminApiClient.delete(`/api/backup/${fileId}`, {});
   return res.data;
 }
 
+/**
+ * Retrieves the raw content of a specific backup file.
+ *
+ * @param {string} fileId - ID of the backup file.
+ * @returns {Promise<Object>} File content and metadata.
+ */
 export async function getBackupFileContent(fileId) {
   const res = await adminApiClient.get(`/api/backup/${fileId}/content`, {});
   return res.data;
 }
 
+/**
+ * Clears all existing backup files.
+ *
+ * @returns {Promise<Object>} Confirmation of backup clearance.
+ */
 export async function clearAllBackups() {
   const res = await adminApiClient.delete("/api/backup/", {});
   return res.data;
@@ -59,26 +98,53 @@ export async function clearAllBackups() {
 
 // ─── Error Reports ────────────────────────────────────────────────────────────
 
+/**
+ * Fetches the status and count of unresolved/pending error reports.
+ *
+ * @returns {Promise<Object>} Pending error report status.
+ */
 export async function getErrorPendingStatus() {
   const res = await adminApiClient.get("/api/errors/pending-status", {});
   return res.data;
 }
 
+/**
+ * Retrieves all submitted error reports.
+ *
+ * @returns {Promise<Object>} List of error reports.
+ */
 export async function getErrorReports() {
   const res = await adminApiClient.get("/api/errors", {});
   return res.data;
 }
 
+/**
+ * Fetches a single error report by its ID.
+ *
+ * @param {string} reportId - Unique identifier of the error report.
+ * @returns {Promise<Object>} Detailed error report data.
+ */
 export async function getErrorReportById(reportId) {
   const res = await adminApiClient.get(`/api/errors/${reportId}`, {});
   return res.data;
 }
 
+/**
+ * Deletes a single error report.
+ *
+ * @param {string} reportId - ID of the report to delete.
+ * @returns {Promise<Object>} Result of report deletion.
+ */
 export async function deleteErrorReport(reportId) {
   const res = await adminApiClient.delete(`/api/errors/${reportId}`, {});
   return res.data;
 }
 
+/**
+ * Permanently deletes all error reports.
+ *
+ * @returns {Promise<Object>} Result of bulk deletion.
+ */
 export async function deleteAllErrorReports() {
   const res = await adminApiClient.delete("/api/errors", {
     params: { confirm: true },
@@ -88,6 +154,12 @@ export async function deleteAllErrorReports() {
 
 // ─── Sessions ────────────────────────────────────────────────────────────────
 
+/**
+ * Fetches active sessions with optional filtering parameters.
+ *
+ * @param {Object} [params] - Query parameters for pagination or user filtering.
+ * @returns {Promise<Object>} List of active user sessions.
+ */
 export async function getSessions(params) {
   const res = await adminApiClient.get("/api/admin/sessions", {
     params,
@@ -95,6 +167,12 @@ export async function getSessions(params) {
   return res.data;
 }
 
+/**
+ * Terminates an active session by its ID.
+ *
+ * @param {string} sessionId - ID of the session to terminate.
+ * @returns {Promise<Object>} Confirmation of termination.
+ */
 export async function deleteSession(sessionId) {
   const res = await adminApiClient.delete("/api/admin/sessions", {
     data: { sessionId },
@@ -102,6 +180,11 @@ export async function deleteSession(sessionId) {
   return res.data;
 }
 
+/**
+ * Terminates all active sessions across all users.
+ *
+ * @returns {Promise<Object>} Confirmation of global session termination.
+ */
 export async function deleteAllSessions() {
   const res = await adminApiClient.delete("/api/admin/sessions/all", {});
   return res.data;
@@ -109,6 +192,12 @@ export async function deleteAllSessions() {
 
 // ─── Notifications ────────────────────────────────────────────────────────────
 
+/**
+ * Retrieves system notifications.
+ *
+ * @param {Object} [params] - Query parameters for notification retrieval.
+ * @returns {Promise<Object>} List of notifications.
+ */
 export async function getNotifications(params) {
   const res = await adminApiClient.get("/api/admin/notifications", {
     params,
@@ -116,11 +205,23 @@ export async function getNotifications(params) {
   return res.data;
 }
 
+/**
+ * Creates and broadcasts a new system notification.
+ *
+ * @param {Object} body - Notification payload data.
+ * @returns {Promise<Object>} The created notification object.
+ */
 export async function createNotification(body) {
   const res = await adminApiClient.post("/api/admin/notifications", body, {});
   return res.data;
 }
 
+/**
+ * Deletes a system notification by ID.
+ *
+ * @param {string} notificationId - ID of the notification to remove.
+ * @returns {Promise<Object>} Result of notification deletion.
+ */
 export async function deleteNotification(notificationId) {
   const res = await adminApiClient.delete("/api/admin/notifications", {
     data: { notificationId, clearSeen: false },
@@ -135,6 +236,8 @@ export async function deleteNotification(notificationId) {
 /**
  * Fetches all available admin metrics in parallel.
  * Maps individual endpoint results back into a structured array.
+ *
+ * @returns {Promise<Array<Object|null>>} Aggregated analytics array with null fallbacks for failed metrics.
  */
 export async function getAdminAnalytics() {
   const base = "/api/admin/analytics";
@@ -163,6 +266,8 @@ export async function getAdminAnalytics() {
 /**
  * getDashboardAnalytics — fetches specifically targeted endpoints for the Admin Analytics page.
  * Uses Promise.allSettled to provide a robust experience where partial data is better than none.
+ *
+ * @returns {Promise<{globalStats: Object|null, engagementTrends: Array, misfitQuestions: Array, challengingModules: Array, formatStats: Array, gradeStats: Array, speedStats: Array, vocabStats: Object|null, hasErrors: boolean}>} Dashboard analytics metrics and error flag.
  */
 export async function getDashboardAnalytics() {
   const base = "/api/admin/analytics";
@@ -217,6 +322,12 @@ export async function getDashboardAnalytics() {
 
 // ─── Users / User management ──────────────────────────────────────────────────
 
+/**
+ * Fetches users with pagination and filter parameters.
+ *
+ * @param {Object} [params] - Query parameters for pagination or filtering.
+ * @returns {Promise<Object>} Paginated users list response.
+ */
 export async function getUsers(params) {
   const res = await adminApiClient.get("/api/users", {
     params,
@@ -224,16 +335,35 @@ export async function getUsers(params) {
   return res.data;
 }
 
+/**
+ * Fetches a single user by ID.
+ *
+ * @param {string} userId - User identifier.
+ * @returns {Promise<Object>} User details.
+ */
 export async function getUserById(userId) {
   const res = await adminApiClient.get(`/api/users/${userId}`, {});
   return res.data;
 }
 
+/**
+ * Updates a user profile or settings.
+ *
+ * @param {string} userId - User identifier.
+ * @param {Object} data - Update payload.
+ * @returns {Promise<Object>} Updated user record.
+ */
 export async function updateUser(userId, data) {
   const res = await adminApiClient.put(`/api/users/${userId}`, data, {});
   return res.data;
 }
 
+/**
+ * Deletes a user by ID.
+ *
+ * @param {string} userId - User identifier to delete.
+ * @returns {Promise<Object>} Deletion result confirmation.
+ */
 export async function deleteUser(userId) {
   const res = await adminApiClient.delete(`/api/users/${userId}`, {});
   return res.data;
@@ -243,6 +373,12 @@ export async function deleteUser(userId) {
 // Fetches both user info and quiz history in **parallel** — fixes the sequential
 // waterfall bug found in UserHistory.jsx (audit bug #7).
 
+/**
+ * Fetches user profile information and quiz attempt history concurrently.
+ *
+ * @param {string} userId - User identifier.
+ * @returns {Promise<{userInfo: Object, history: Object}>} Combined user profile and history.
+ */
 export async function getUserHistoryAndInfo(userId) {
   const [userRes, historyRes] = await Promise.all([
     adminApiClient.get(`/api/users/${userId}`),
@@ -253,11 +389,22 @@ export async function getUserHistoryAndInfo(userId) {
 
 // ─── Admin Scripts ────────────────────────────────────────────────────────────
 
+/**
+ * Retrieves the catalog of available admin maintenance scripts.
+ *
+ * @returns {Promise<Object>} Available scripts metadata.
+ */
 export async function getScripts() {
   const res = await adminApiClient.get("/api/admin/scripts", {});
   return res.data;
 }
 
+/**
+ * Executes a specific administrative maintenance script by key.
+ *
+ * @param {string} scriptKey - Identifier of the script to execute.
+ * @returns {Promise<Object>} Script execution output and status.
+ */
 export async function runScript(scriptKey) {
   const res = await adminApiClient.post("/api/admin/scripts/run", {
     scriptKey,
@@ -265,6 +412,12 @@ export async function runScript(scriptKey) {
   return res.data;
 }
 
+/**
+ * Deletes an individual quiz attempt response record.
+ *
+ * @param {string} responseId - Identifier of the response record to delete.
+ * @returns {Promise<Object>} Deletion result confirmation.
+ */
 export async function deleteQuizResponse(responseId) {
   const res = await adminApiClient.delete(
     `/api/quiz/admin/responses/${responseId}`,

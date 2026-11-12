@@ -1,4 +1,11 @@
 /**
+ * @file adminUtils.jsx
+ * @description UI utility components for admin views, providing media skeleton fallbacks, Slate rich text rendering, collapsible questions, and difficulty badges.
+ * @architecture Shared component layer consumed by admin views (e.g., ViewPassages, ViewQuestions) for consistent data formatting and rich presentation.
+ * @agent_note When modifying DifficultyBadge thresholds or ExpandableQuestion height, verify mobile responsiveness and keyboard accessibility.
+ */
+
+/**
  * FILE: AdminUtils.jsx
  * PURPOSE: Atomic utility components for administrative content views, including image rendering, HTML display, and difficulty badges.
  * DEPENDENCIES:
@@ -37,6 +44,12 @@ const ContentWrapper = styled.div`
 
 /**
  * CustomImage component handles lazy loading of images with a skeleton screen fallback.
+ *
+ * @component
+ * @param {Object} props - Image component properties.
+ * @param {string} props.src - Image source URL.
+ * @param {string} [props.alt] - Accessible alternate text.
+ * @returns {JSX.Element} Image wrapped in loader container with fallback handling.
  */
 export const CustomImage = ({ src, alt, ...props }) => {
   const [loading, setLoading] = useState(true);
@@ -82,6 +95,12 @@ export const CustomImage = ({ src, alt, ...props }) => {
 
 /**
  * HtmlContent component renders Slate-based rich text using the SlateRenderer.
+ *
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {Array|string|Object} props.html - Slate document AST or formatted text.
+ * @param {Object} [props.style] - Optional CSS properties to apply to wrapper.
+ * @returns {JSX.Element} Rendered rich-text content wrapper.
  */
 export const HtmlContent = ({ html, style }) => {
   return (
@@ -140,6 +159,11 @@ const ExpandableWrapper = styled.div`
 
 /**
  * ExpandableQuestion component allows long content to be truncated and expanded on click.
+ *
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {Array|string|Object} props.html - Content payload to render and truncate.
+ * @returns {JSX.Element} Expandable container with collapsible overlay.
  */
 export const ExpandableQuestion = ({ html }) => {
   const [expanded, setExpanded] = useState(false);
@@ -196,6 +220,11 @@ const Badge = styled.span`
 
 /**
  * DifficultyBadge component maps numeric difficulty scores to labeled color-coded pills.
+ *
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {number|null} props.difficulty - Difficulty score index (0-100).
+ * @returns {JSX.Element|null} Styled difficulty badge pill or null if no score provided.
  */
 export const DifficultyBadge = ({ difficulty }) => {
   if (difficulty === undefined || difficulty === null) return null;

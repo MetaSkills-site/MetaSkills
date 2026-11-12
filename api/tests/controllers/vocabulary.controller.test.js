@@ -15,16 +15,17 @@ const adminToken = generateToken({ id: adminId, role: "admin" });
 
 // Mock idempotencyGuard
 jest.unstable_mockModule("../../middlewares/idempotency.js", () => ({
-  default: (req, res, next) => next()
+  default: (req, res, next) => next(),
 }));
 
 jest.unstable_mockModule("../../middlewares/authMiddleware.js", () => ({
   protect: (req, res, next) => next(),
   protectAdmin: (req, res, next) => next(),
-  protectUserOrAdmin: (req, res, next) => next()
+  protectUserOrAdmin: (req, res, next) => next(),
 }));
 
-const { default: vocabRoutes } = await import("../../routes/vocabulary.routes.js");
+const { default: vocabRoutes } =
+  await import("../../routes/vocabulary.routes.js");
 
 describe("Vocabulary Controller", () => {
   let app;
@@ -87,7 +88,9 @@ describe("Vocabulary Controller", () => {
       });
 
       it("should return 500 when DB throws during creation", async () => {
-        jest.spyOn(Vocabulary, "create").mockRejectedValue(new Error("DB Error"));
+        jest
+          .spyOn(Vocabulary, "create")
+          .mockRejectedValue(new Error("DB Error"));
         const res = await request(app)
           .post("/api/vocabulary")
           .set("Authorization", `Bearer ${adminToken}`)
@@ -99,7 +102,9 @@ describe("Vocabulary Controller", () => {
 
     describe("GET /api/vocabulary", () => {
       it("should return 500 when DB aggregate throws", async () => {
-        jest.spyOn(Vocabulary, "aggregate").mockRejectedValue(new Error("DB Error"));
+        jest
+          .spyOn(Vocabulary, "aggregate")
+          .mockRejectedValue(new Error("DB Error"));
         const res = await request(app)
           .get("/api/vocabulary")
           .set("Authorization", `Bearer ${adminToken}`);
@@ -119,7 +124,9 @@ describe("Vocabulary Controller", () => {
       });
 
       it("should return 500 when DB throws during findById", async () => {
-        jest.spyOn(Vocabulary, "findById").mockRejectedValue(new Error("DB Error"));
+        jest
+          .spyOn(Vocabulary, "findById")
+          .mockRejectedValue(new Error("DB Error"));
         const res = await request(app)
           .get(`/api/vocabulary/${new mongoose.Types.ObjectId()}`)
           .set("Authorization", `Bearer ${adminToken}`);
@@ -159,7 +166,7 @@ describe("Vocabulary Controller", () => {
       it("should return 200 with partial success when insertMany has duplicate key errors", async () => {
         jest.spyOn(Vocabulary, "insertMany").mockRejectedValue({
           writeErrors: [{ errmsg: "duplicate key error" }],
-          insertedDocs: [{ word: "A", definition: "B" }]
+          insertedDocs: [{ word: "A", definition: "B" }],
         });
         const res = await request(app)
           .post("/api/vocabulary/bulk")
@@ -172,7 +179,9 @@ describe("Vocabulary Controller", () => {
       });
 
       it("should return 500 when insertMany throws a non-duplicate error", async () => {
-        jest.spyOn(Vocabulary, "insertMany").mockRejectedValue(new Error("Unexpected DB Error"));
+        jest
+          .spyOn(Vocabulary, "insertMany")
+          .mockRejectedValue(new Error("Unexpected DB Error"));
         const res = await request(app)
           .post("/api/vocabulary/bulk")
           .set("Authorization", `Bearer ${adminToken}`)
@@ -208,7 +217,9 @@ describe("Vocabulary Controller", () => {
       });
 
       it("should return 500 when DB throws during update findById", async () => {
-        jest.spyOn(Vocabulary, "findById").mockRejectedValue(new Error("DB Error"));
+        jest
+          .spyOn(Vocabulary, "findById")
+          .mockRejectedValue(new Error("DB Error"));
         const res = await request(app)
           .put(`/api/vocabulary/${new mongoose.Types.ObjectId()}`)
           .set("Authorization", `Bearer ${adminToken}`)
@@ -229,7 +240,9 @@ describe("Vocabulary Controller", () => {
       });
 
       it("should return 500 when DB throws during findById on delete", async () => {
-        jest.spyOn(Vocabulary, "findById").mockRejectedValue(new Error("DB Error"));
+        jest
+          .spyOn(Vocabulary, "findById")
+          .mockRejectedValue(new Error("DB Error"));
         const res = await request(app)
           .delete(`/api/vocabulary/${new mongoose.Types.ObjectId()}`)
           .set("Authorization", `Bearer ${adminToken}`);
@@ -266,7 +279,10 @@ describe("Vocabulary Controller", () => {
         const res = await request(app)
           .post("/api/vocabulary/verify")
           .set("Authorization", `Bearer ${userToken}`)
-          .send({ userId: userId.toString(), vocabId: new mongoose.Types.ObjectId() });
+          .send({
+            userId: userId.toString(),
+            vocabId: new mongoose.Types.ObjectId(),
+          });
 
         expect(res.status).toBe(400);
       });
@@ -314,7 +330,10 @@ describe("Vocabulary Controller", () => {
       });
 
       it("POST /api/vocabulary — should reject duplicate word (unique schema constraint)", async () => {
-        await Vocabulary.create({ word: "Echo", definition: "A sound that repeats" });
+        await Vocabulary.create({
+          word: "Echo",
+          definition: "A sound that repeats",
+        });
 
         const res = await request(app)
           .post("/api/vocabulary")
@@ -325,7 +344,10 @@ describe("Vocabulary Controller", () => {
       });
 
       it("GET /api/vocabulary — should return paginated vocabulary list with metadata", async () => {
-        await Vocabulary.create({ word: "Brisk", definition: "Active and energetic" });
+        await Vocabulary.create({
+          word: "Brisk",
+          definition: "Active and energetic",
+        });
 
         const res = await request(app)
           .get("/api/vocabulary")
@@ -354,7 +376,10 @@ describe("Vocabulary Controller", () => {
       });
 
       it("GET /api/vocabulary/:id — should return a vocabulary item by ID", async () => {
-        const v = await Vocabulary.create({ word: "Eager", definition: "Keenly wanting to do something" });
+        const v = await Vocabulary.create({
+          word: "Eager",
+          definition: "Keenly wanting to do something",
+        });
 
         const res = await request(app)
           .get(`/api/vocabulary/${v._id}`)
@@ -369,7 +394,9 @@ describe("Vocabulary Controller", () => {
         const res = await request(app)
           .post("/api/vocabulary/bulk")
           .set("Authorization", `Bearer ${adminToken}`)
-          .send({ text: "Candid - Truthful and straightforward\nDaunt - Make someone feel intimidated" });
+          .send({
+            text: "Candid - Truthful and straightforward\nDaunt - Make someone feel intimidated",
+          });
 
         expect(res.status).toBe(201);
         expect(res.body.success).toBe(true);
@@ -385,7 +412,9 @@ describe("Vocabulary Controller", () => {
         const res = await request(app)
           .post("/api/vocabulary/bulk")
           .set("Authorization", `Bearer ${adminToken}`)
-          .send({ text: "Fervent - Passionate\nGlean - To gather information" });
+          .send({
+            text: "Fervent - Passionate\nGlean - To gather information",
+          });
 
         expect(res.status).toBe(200);
         expect(res.body.success).toBe(true);
@@ -393,7 +422,10 @@ describe("Vocabulary Controller", () => {
       });
 
       it("PUT /api/vocabulary/:id — should update an existing vocabulary word", async () => {
-        const v = await Vocabulary.create({ word: "Eager", definition: "Wanting to do something" });
+        const v = await Vocabulary.create({
+          word: "Eager",
+          definition: "Wanting to do something",
+        });
 
         const res = await request(app)
           .put(`/api/vocabulary/${v._id}`)
@@ -409,7 +441,10 @@ describe("Vocabulary Controller", () => {
       });
 
       it("DELETE /api/vocabulary/:id — should delete vocab and cascade VocabProgress records", async () => {
-        const v = await Vocabulary.create({ word: "Fervent", definition: "Passionate" });
+        const v = await Vocabulary.create({
+          word: "Fervent",
+          definition: "Passionate",
+        });
         await VocabProgress.create({
           user: userId,
           word: v._id,
@@ -453,7 +488,10 @@ describe("Vocabulary Controller", () => {
       });
 
       it("GET /api/vocabulary/quiz — should prioritise a DUE review word over a new word", async () => {
-        const v = await Vocabulary.create({ word: "Serene", definition: "Calm and peaceful" });
+        const v = await Vocabulary.create({
+          word: "Serene",
+          definition: "Calm and peaceful",
+        });
         await Vocabulary.insertMany([
           { word: "Brisk", definition: "Active and energetic" },
           { word: "Candid", definition: "Truthful" },
@@ -476,7 +514,10 @@ describe("Vocabulary Controller", () => {
       });
 
       it("POST /api/vocabulary/verify — should record correct answer, advance SRS box, and award carrots", async () => {
-        const v = await Vocabulary.create({ word: "Correct", definition: "Is Correct" });
+        const v = await Vocabulary.create({
+          word: "Correct",
+          definition: "Is Correct",
+        });
 
         const res = await request(app)
           .post("/api/vocabulary/verify")
@@ -494,12 +535,18 @@ describe("Vocabulary Controller", () => {
         expect(res.body.data.srs.box).toBe(1);
         expect(res.body.data.carrotsAwarded).toBeGreaterThan(0);
 
-        const progress = await VocabProgress.findOne({ user: userId, word: v._id });
+        const progress = await VocabProgress.findOne({
+          user: userId,
+          word: v._id,
+        });
         expect(progress.box).toBe(1);
       });
 
       it("POST /api/vocabulary/verify — should reset SRS box to 0 on wrong answer", async () => {
-        const v = await Vocabulary.create({ word: "Tricky", definition: "Hard to deal with" });
+        const v = await Vocabulary.create({
+          word: "Tricky",
+          definition: "Hard to deal with",
+        });
 
         await VocabProgress.create({
           user: userId,
@@ -523,7 +570,10 @@ describe("Vocabulary Controller", () => {
         expect(res.body.data.srs.box).toBe(0);
         expect(res.body.data.carrotsAwarded).toBe(0);
 
-        const progress = await VocabProgress.findOne({ user: userId, word: v._id });
+        const progress = await VocabProgress.findOne({
+          user: userId,
+          word: v._id,
+        });
         expect(progress.box).toBe(0);
       });
     });

@@ -1,4 +1,11 @@
 /**
+ * @file HighlightedText.jsx
+ * @description Text parser component that highlights text matching the {{target}} pattern using custom styled spans.
+ * @architecture Shared presentation utility in the question rendering pipeline for grammar and tense emphasis.
+ * @agent_note Relies on regex splitting delimiters ({{...}}); ensure HighlightComponent forwards children properly.
+ */
+
+/**
  * FILE PURPOSE: HighlightedText — A utility for rendering text with embedded highlighting markers.
  *
  * ROLE:
@@ -29,6 +36,16 @@ const HighlightSpan = styled.span`
   color: #333;
 `;
 
+/**
+ * HighlightedText parser component.
+ *
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {string} props.text - Source text containing optional {{highlight}} tokens.
+ * @param {React.ComponentType} [props.HighlightComponent=HighlightSpan] - Styled component used for highlighted spans.
+ * @param {string} [props.className] - CSS class name for root span.
+ * @returns {JSX.Element|null} Span element with highlighted segments or null if text is empty.
+ */
 export default function HighlightedText({
   text,
   HighlightComponent = HighlightSpan,

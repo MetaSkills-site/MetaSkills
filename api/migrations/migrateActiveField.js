@@ -1,9 +1,20 @@
+/**
+ * @file migrateActiveField.js
+ * @description Backfills missing active flags and Elo ratings on Questions, default types on Notifications, and creation timestamps on Sessions.
+ * @architecture Part of the database migration layer executing direct Mongoose collection updates during system schema upgrades.
+ * @agent_note Ensure MONGODB_URI is configured and note that this script directly invokes process.exit upon completion.
+ */
+
 import mongoose from "mongoose";
 import "../config/env.js";
 import Question from "../models/Questions.model.js";
 import Notification from "../models/Notification.model.js";
 import Session from "../models/session.model.js";
 
+/**
+ * @desc Connects to MongoDB and performs bulk field backfills across Question, Notification, and Session collections.
+ * @returns {Promise<void>} Resolves when migration queries complete and the process terminates.
+ */
 const migrate = async () => {
   try {
     if (!process.env.MONGODB_URI) {

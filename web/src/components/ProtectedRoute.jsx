@@ -1,4 +1,11 @@
 /**
+ * @file ProtectedRoute.jsx
+ * @description Route guard enforcing user authentication, session token validity, and academic grade profile completion.
+ * @architecture Client-side routing layer guard protecting private application routes and nested layouts.
+ * @agent_note Displays SplashPage during session loading and redirects incomplete profiles to `/auth/complete-profile`.
+ */
+
+/**
  * FILE PURPOSE: ProtectedRoute — A structural component for enforcing authentication and profile completion.
  *
  * ROLE:
@@ -24,6 +31,12 @@ import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { SessionContext } from "../context/SessionProvider";
 import SplashPage from "../pages/SplashPage";
 
+/**
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {React.ReactNode} [props.children] - Child elements to render when authentication and profile checks pass.
+ * @returns {JSX.Element} The rendered child routes/Outlet or navigation redirect element.
+ */
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useContext(SessionContext);
   const location = useLocation();

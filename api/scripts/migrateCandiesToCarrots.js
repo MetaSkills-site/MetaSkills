@@ -1,6 +1,17 @@
+/**
+ * @file migrateCandiesToCarrots.js
+ * @description Migrates legacy user rewards from the deprecated 'candies' integer attribute to the 'carrots' field.
+ * @architecture Part of the database maintenance script layer reconciling gamification terminology across historical user documents.
+ * @agent_note Uses native MongoDB collection operations to bypass Mongoose schema filtering when reading and updating undeclared fields.
+ */
+
 import mongoose from "mongoose";
 import "../config/env.js";
 
+/**
+ * @desc Queries the raw users collection for documents containing the candies field and copies the values to carrots.
+ * @returns {Promise<void>} Resolves when all matching user records are migrated and process terminates.
+ */
 const migrateCandiesToCarrots = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI);

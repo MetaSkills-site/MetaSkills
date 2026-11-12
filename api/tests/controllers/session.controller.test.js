@@ -144,9 +144,7 @@ describe("Session Controller", () => {
 
       it("should return 500 when session.deleteOne rejects", async () => {
         const mockSession = {
-          deleteOne: jest
-            .fn()
-            .mockRejectedValue(new Error("deleteOne failed")),
+          deleteOne: jest.fn().mockRejectedValue(new Error("deleteOne failed")),
         };
         jest.spyOn(Session, "findById").mockResolvedValue(mockSession);
 

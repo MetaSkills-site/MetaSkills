@@ -1,4 +1,11 @@
 /**
+ * @file feedbackStyles.js
+ * @description Theme tokens and utility functions for calculating visual state styling (correct, incorrect, partial, selected) across quiz options and input fields.
+ * @architecture UI presentation utility layer consumed by OptionCard, QuestionBlock, and Marathon quiz components for consistent answer feedback styling.
+ * @agent_note Supports both boolean and percentage-based accuracy scoring; neutral mode is available for word-token selectors.
+ */
+
+/**
  * FILE PURPOSE: Centralized utility for defining and retrieving visual feedback styles.
  * Manages color schemes and CSS properties for different answer states (correct, incorrect, partial, etc.).
  *

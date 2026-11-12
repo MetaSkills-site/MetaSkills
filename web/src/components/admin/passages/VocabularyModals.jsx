@@ -1,3 +1,10 @@
+/**
+ * @file VocabularyModals.jsx
+ * @description Modal dialogs collection for inspecting, editing, bulk-creating, and deleting vocabulary terms.
+ * @architecture Admin dialog feature component coordinating Radix UI CommonDialog and AIGenerationBar for vocab workflows.
+ * @agent_note Bulk creation expects "word - definition" per line; verify formatting regex if changing prompts.
+ */
+
 import styled from "styled-components";
 import CommonDialog from "../../common/CommonDialog";
 import {
@@ -38,6 +45,30 @@ const TextArea = styled.textarea`
   }
 `;
 
+/**
+ * VocabularyModals component rendering dialogs for vocabulary management.
+ *
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {Object} [props.user] - Admin user session object.
+ * @param {boolean} props.viewModalOpen - View modal visibility state.
+ * @param {Function} props.setViewModalOpen - View modal visibility updater.
+ * @param {Object} [props.selectedVocab] - Currently selected vocabulary item.
+ * @param {boolean} props.editModalOpen - Edit modal visibility state.
+ * @param {Function} props.setEditModalOpen - Edit modal visibility updater.
+ * @param {Object} [props.editVocabForm] - Form data for vocabulary editing.
+ * @param {Function} props.setEditVocabForm - Edit form data updater.
+ * @param {boolean} props.deleteModalOpen - Delete modal visibility state.
+ * @param {Function} props.setDeleteModalOpen - Delete modal visibility updater.
+ * @param {boolean} props.bulkModalOpen - Bulk creation modal visibility state.
+ * @param {Function} props.setBulkModalOpen - Bulk creation modal visibility updater.
+ * @param {string} props.bulkText - Text input for bulk vocabulary entry.
+ * @param {Function} props.setBulkText - Bulk text input updater.
+ * @param {Function} props.onUpdate - Callback invoked to save vocabulary updates.
+ * @param {Function} props.onDelete - Callback invoked to delete vocabulary item.
+ * @param {Function} props.onBulkCreate - Callback invoked to create bulk vocabulary.
+ * @returns {JSX.Element} Modal dialogs for vocabulary operations.
+ */
 const VocabularyModals = ({
   user,
   viewModalOpen,

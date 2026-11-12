@@ -1,26 +1,8 @@
 /**
- * TrashQuestions.jsx
- *
- * PURPOSE:
- * Admin component for managing soft-deleted questions. Allows administrators to view
- * questions currently in the 'trash', with the ability to either restore them back to
- * the active question pool or delete them permanently.
- *
- * DEPENDENCIES:
- * - react, styled-components: Standard React libraries for UI and styling.
- * - @tanstack/react-query: For data fetching, mutations, and cache management.
- * - react-icons: For UI visual cues (eye, trash, rotate, etc.).
- * - react-hot-toast: For user feedback via toast notifications.
- * - mathlive: For rendering mathematical content in preview.
- * - Various local styles, components, and quizService methods for API interaction.
- *
- * EXPORTS:
- * - TrashQuestions (default): The main functional component for the trash management page.
- *
- * INTERCONNECTIONS:
- * - Accessed from the main Admin dashboard.
- * - Interacts with quizService for backend data manipulation.
- * - Utilizes CommonDialog for confirmation workflows.
+ * @file TrashQuestionsPage.jsx
+ * @description Administrative trash management page for inspecting soft-deleted questions, restoring them, or executing permanent deletions.
+ * @architecture Mounted within the admin routing tree, integrates with quizService and TanStack Query mutations to manage soft-deleted question entities.
+ * @agent_note Implements a safety barrier countdown for permanent deletion modals and initializes MathLive custom elements for LaTeX math rendering.
  */
 
 import { IconButton } from "../../components/admin/AdminStyles";
@@ -67,6 +49,11 @@ const QuestionCard = styled.div`
   margin-bottom: 20px;
 `;
 
+/**
+ * Admin trash questions page component providing soft-deleted question inspection, restoration, and permanent removal.
+ * @component
+ * @returns {JSX.Element}
+ */
 export default function TrashQuestionsPage() {
   // Retrieve administrative authentication token from local storage
 

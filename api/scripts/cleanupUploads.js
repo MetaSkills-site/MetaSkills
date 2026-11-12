@@ -1,3 +1,10 @@
+/**
+ * @file cleanupUploads.js
+ * @description Scans Google Cloud Storage for unconfirmed temporary upload files exceeding TTL and deletes them.
+ * @architecture Part of the storage lifecycle maintenance layer interfacing with Google Cloud Storage to purge stale uncommitted blobs.
+ * @agent_note Relies on GCS_BUCKET_NAME environment variable and can be executed as a CLI script or imported as a module function.
+ */
+
 import { listPendingFiles, deleteFiles } from "../utils/storage.js";
 import dotenv from "dotenv";
 
@@ -8,6 +15,10 @@ if (!process.env.GCS_BUCKET_NAME) {
 
 const CLEANUP_TTL_MS = 60 * 60 * 1000; // 1 hour
 
+/**
+ * @desc Lists and removes orphaned files in Google Cloud Storage older than the configured TTL threshold.
+ * @returns {Promise<void>} Resolves when orphaned file deletion is completed.
+ */
 const cleanup = async () => {
   console.log("----------------------------------------");
   console.log("[Cleanup] Starting orphaned uploads cleanup job...");

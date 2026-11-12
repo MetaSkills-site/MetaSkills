@@ -11,7 +11,7 @@ import Responses from "../models/Responses.model.js";
 // We'll need to mock the req/res objects for expressAsyncHandler
 const mockReqRes = (body = {}, params = {}, query = {}, user = null) => {
   const req = { body, params, query, user };
-  
+
   let resolvePromise, rejectPromise;
   const promise = new Promise((resolve, reject) => {
     resolvePromise = resolve;
@@ -20,10 +20,16 @@ const mockReqRes = (body = {}, params = {}, query = {}, user = null) => {
 
   const res = {
     status: jest.fn().mockReturnThis(),
-    json: jest.fn((data) => { resolvePromise(data); return res; }),
-    send: jest.fn((data) => { resolvePromise(data); return res; }),
+    json: jest.fn((data) => {
+      resolvePromise(data);
+      return res;
+    }),
+    send: jest.fn((data) => {
+      resolvePromise(data);
+      return res;
+    }),
   };
-  
+
   const next = jest.fn((err) => {
     if (err) rejectPromise(err);
     else resolvePromise();
@@ -80,8 +86,10 @@ describe("Architecture Audit Fixes", () => {
       q.modules = [mod._id];
       await q.save();
 
-      const { req, res, next, promise } = mockReqRes({ id: mod._id.toString() });
-      
+      const { req, res, next, promise } = mockReqRes({
+        id: mod._id.toString(),
+      });
+
       // Call deleteModule
       quizController.deleteModule(req, res, next);
       await promise;
@@ -108,7 +116,7 @@ describe("Architecture Audit Fixes", () => {
       await q.save();
 
       const { req, res, next, promise } = mockReqRes({ id: q._id.toString() });
-      
+
       // Call deleteQuestionPermanently
       quizController.deleteQuestionPermanently(req, res, next);
       await promise;
@@ -133,8 +141,11 @@ describe("Architecture Audit Fixes", () => {
         contextAttachmentId: ctx._id,
       });
 
-      const { req, res, next, promise } = mockReqRes({}, { id: ctx._id.toString() });
-      
+      const { req, res, next, promise } = mockReqRes(
+        {},
+        { id: ctx._id.toString() },
+      );
+
       // Call deleteContext
       contextAttachmentsController.deleteContext(req, res, next);
       await promise;
@@ -152,16 +163,23 @@ describe("Architecture Audit Fixes", () => {
         box: 0,
       });
 
-      const { req, res, next, promise } = mockReqRes({
-        wordId: vocab._id.toString(),
-        isCorrect: true,
-        accuracy: 100,
-        timeTaken: 5000,
-      }, {}, {}, user);
+      const { req, res, next, promise } = mockReqRes(
+        {
+          wordId: vocab._id.toString(),
+          isCorrect: true,
+          accuracy: 100,
+          timeTaken: 5000,
+        },
+        {},
+        {},
+        user,
+      );
 
       // Mock Responses.create to throw an error
       const originalCreate = Responses.create.bind(Responses);
-      Responses.create = jest.fn().mockRejectedValue(new Error("Database failure simulation"));
+      Responses.create = jest
+        .fn()
+        .mockRejectedValue(new Error("Database failure simulation"));
 
       try {
         verifyVocabularyResponse(req, res, next);
@@ -176,7 +194,7 @@ describe("Architecture Audit Fixes", () => {
 
       // Carrots should remain at 10 (not increased by GAMIFICATION.VOCABULARY_MARATHON_AWARD)
       expect(updatedUser.carrots.count).toBe(10);
-      
+
       // Box should remain 0
       expect(updatedVp.box).toBe(0);
 

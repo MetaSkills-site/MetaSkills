@@ -1,20 +1,8 @@
 /**
- * FILE PURPOSE: Interactive vocabulary practice module using Generative AI.
- * Prompt users to write original sentences for specific vocabulary words and provides real-time AI evaluation.
- *
- * DEPENDENCIES:
- * - MarathonLayout: Standardized container for marathon-style exercises with timers and exit controls.
- * - Spell: Visual utility to highlight the target word.
- * - ReportErrorModal: Bug/Content reporting utility.
- * - framer-motion: Used for smooth transitions between word loading, evaluation, and result display.
- * - api.js: Service for fetching random vocabulary and submitting sentences to the AI endpoint.
- *
- * EXPORTS:
- * - MarathonSentencePracticePage (default): Component for the /marathon/english/sentence-practice route.
- *
- * INTERCONNECT:
- * - Uses Server-Sent Events (SSE) style streaming for AI evaluation statuses ("Connecting", "Analyzing", etc.).
- * - Integrates with the carrot awarding system on successful high-accuracy submissions.
+ * @file MarathonSentencePracticePage.jsx
+ * @description Interactive vocabulary sentence-writing practice page evaluated by Generative AI with real-time feedback.
+ * @architecture Mounted at `/marathon/english/sentence-practice`, uses MarathonLayout with animated transitions and connects to AI sentence evaluation endpoints via apiClient.
+ * @agent_note Relies on SessionContext for user carrots/state updates and handles word character/count constraints alongside AI streaming status messages.
  */
 
 import { useState, useEffect, useContext, useCallback, useRef } from "react";
@@ -219,6 +207,11 @@ const NextWordButton = styled(ActionButton)`
   gap: 8px;
 `;
 
+/**
+ * Interactive sentence-writing practice component featuring real-time AI evaluation, timers, and reward feedback.
+ * @component
+ * @returns {JSX.Element}
+ */
 export default function MarathonSentencePracticePage() {
   const navigate = useNavigate();
   const { user, updateUser } = useContext(SessionContext);
@@ -334,23 +327,20 @@ export default function MarathonSentencePracticePage() {
       timeoutId = setTimeout(() => controller.abort(), 90000);
 
       const { getCsrfToken } = await import("../services/api");
-      const response = await fetch(
-        API_ENDPOINTS.genaiSentenceEvaluate.url,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-            "x-xsrf-token": getCsrfToken() || "",
-          },
-          body: JSON.stringify({
-            word: wordData.word,
-            sentence: sentence.trim(),
-            timeTaken: elapsedTime,
-          }),
-          signal: controller.signal,
+      const response = await fetch(API_ENDPOINTS.genaiSentenceEvaluate.url, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          "x-xsrf-token": getCsrfToken() || "",
         },
-      );
+        body: JSON.stringify({
+          word: wordData.word,
+          sentence: sentence.trim(),
+          timeTaken: elapsedTime,
+        }),
+        signal: controller.signal,
+      });
 
       if (!response.ok) {
         let errMsg = `HTTP error! status: ${response.status}`;

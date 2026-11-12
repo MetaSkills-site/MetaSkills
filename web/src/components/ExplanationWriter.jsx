@@ -1,4 +1,11 @@
 /**
+ * @file ExplanationWriter.jsx
+ * @description Rich-text solution explanation editor integrated with AI explanation generation for administrative workflows.
+ * @architecture Editor component connecting administrative question authoring contexts with AI generation services.
+ * @agent_note Updates EditorContext state directly while disabling input during AI stream/generation cycles.
+ */
+
+/**
  * FILE PURPOSE: ExplanationWriter — A specialized rich-text editor for question explanations.
  *
  * ROLE:
@@ -22,6 +29,12 @@ import { useContext, useState } from "react";
 import { EditorContext } from "../context/EditorContext";
 import AIExplanationGenerator from "./admin/AIExplanationGenerator";
 
+/**
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {boolean} [props.compact=false] - Whether to render a compact variant of the rich-text editor.
+ * @returns {JSX.Element} The explanation authoring panel with integrated AI generator.
+ */
 function ExplanationWriter({ compact = false }) {
   const { explanation, setExplanation, question, options } =
     useContext(EditorContext);

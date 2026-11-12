@@ -1,11 +1,24 @@
+/**
+ * @file InputFactory.jsx
+ * @description Factory component selecting the appropriate marathon input renderer based on declarative backend question configuration.
+ * @architecture Marathon subsystem input resolver routing question schemas to specialized mathematical or multi-field input controls.
+ * @agent_note Inspect questionData.inputConfig type; fall back to generic single-field DynamicInput when configuration is missing.
+ */
+
 // eslint-disable-next-line
 import React from "react";
 import PolynomialInput from "./PolynomialInput";
 import DynamicInput from "./DynamicInput";
 
 /**
- * InputFactory - Selects input component based on backend configuration.
- * Falls back to legacy logic only where explicitly necessary, but prefers inputConfig.
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {Object} props.questionData - Question configuration containing inputConfig schema and metadata.
+ * @param {string|number} props.value - Current value of the input field.
+ * @param {Function} props.onChange - Handler called when the input value updates.
+ * @param {boolean} [props.disabled=false] - Whether the input is disabled.
+ * @param {Function} [props.onKeyDown] - Optional keydown handler for navigation or submission.
+ * @returns {JSX.Element} The resolved input component for the question.
  */
 function InputFactory({ questionData, value, onChange, disabled, onKeyDown }) {
   const { inputConfig } = questionData;

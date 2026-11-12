@@ -1,4 +1,11 @@
 /**
+ * @file MarathonQuiz.jsx
+ * @description Orchestrates the non-math Marathon quiz lifecycle including question fetching, format routing, and answer verification.
+ * @architecture Marathon module controller managing question state, elapsed time tracking, and result submissions.
+ * @agent_note Routes question formats to GrammarQuestion, MCQQuestion, or PassageQuestion and syncs awarded carrots with SessionContext.
+ */
+
+/**
  * FILE PURPOSE: MarathonQuiz — The primary controller for the non-math Marathon learning modes.
  *
  * ROLE:
@@ -37,6 +44,12 @@ import useQuizSubmit from "../hooks/useQuizSubmit";
 import MarathonStatusScreen from "./Marathon/MarathonStatusScreen";
 import ReportErrorModal from "./common/ReportErrorModal";
 
+/**
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {"history"|"grammar"|"vocabulary"|string} [props.subCategory="history"] - The active marathon subcategory or domain.
+ * @returns {JSX.Element} The rendered marathon quiz view or status/splash screen.
+ */
 export default function MarathonQuiz({ subCategory = "history" }) {
   const { user, updateUser } = useContext(SessionContext);
   const navigate = useNavigate();

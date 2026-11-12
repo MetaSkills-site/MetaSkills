@@ -115,63 +115,62 @@ function PerformanceOverviewCard() {
       <div style={{ width: "100%", padding: "10px 20px" }}>
         {subjects.map((sub) => (
           <SubjectRow key={sub.key}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "8px",
+              }}
+            >
               <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginBottom: "8px",
-                }}
+                style={{ display: "flex", alignItems: "center", gap: "10px" }}
               >
-                <div
-                  style={{ display: "flex", alignItems: "center", gap: "10px" }}
+                {sub.icon}
+                <Font
+                  $name="quicksand"
+                  $weight="600"
+                  $size="16px"
+                  $color="#555"
                 >
-                  {sub.icon}
-                  <Font
-                    $name="quicksand"
-                    $weight="600"
-                    $size="16px"
-                    $color="#555"
-                  >
-                    {sub.label}
-                  </Font>
-                </div>
-                {/* Show percentage or loading skeleton */}
-                {loading ? (
-                  <SkeletonText $width="30px" $height="16px" />
-                ) : (
-                  <StatsVal>{performance?.[sub.key]?.progress || 0}%</StatsVal>
-                )}
-              </div>
-
-              {/* Show progress bar or loading skeleton */}
-              {loading ? (
-                <div
-                  style={{
-                    height: "10px",
-                    width: "100%",
-                    background: "#eee",
-                    borderRadius: "5px",
-                    marginBottom: "8px",
-                  }}
-                ></div>
-              ) : (
-                <Progress
-                  progress={performance?.[sub.key]?.progress || 0}
-                  className="custom-progress"
-                  gradient={sub.gradient}
-                />
-              )}
-
-              <div style={{ textAlign: "right", marginTop: "4px" }}>
-                <Font $name="quicksand" $size="12px" $color="#888">
-                  Accuracy:{" "}
-                  {loading ? "..." : performance?.[sub.key]?.accuracy || 0}%
+                  {sub.label}
                 </Font>
               </div>
-            </SubjectRow>
-          ))
-        }
+              {/* Show percentage or loading skeleton */}
+              {loading ? (
+                <SkeletonText $width="30px" $height="16px" />
+              ) : (
+                <StatsVal>{performance?.[sub.key]?.progress || 0}%</StatsVal>
+              )}
+            </div>
+
+            {/* Show progress bar or loading skeleton */}
+            {loading ? (
+              <div
+                style={{
+                  height: "10px",
+                  width: "100%",
+                  background: "#eee",
+                  borderRadius: "5px",
+                  marginBottom: "8px",
+                }}
+              ></div>
+            ) : (
+              <Progress
+                progress={performance?.[sub.key]?.progress || 0}
+                className="custom-progress"
+                gradient={sub.gradient}
+              />
+            )}
+
+            <div style={{ textAlign: "right", marginTop: "4px" }}>
+              <Font $name="quicksand" $size="12px" $color="#888">
+                Accuracy:{" "}
+                {loading ? "..." : performance?.[sub.key]?.accuracy || 0}%
+              </Font>
+            </div>
+          </SubjectRow>
+        ))}
       </div>
     </PerformanceCard>
   );

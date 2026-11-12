@@ -1,4 +1,11 @@
 /**
+ * @file Confetti.jsx
+ * @description Visual celebration overlay component rendering full-screen confetti on milestones or achievements.
+ * @architecture Common view overlay component bridging react-confetti canvas rendering with responsive window dimensions.
+ * @agent_note Non-interactive pointer-events overlay; cleans up state automatically via onConfettiComplete.
+ */
+
+/**
  * FILE PURPOSE: A visual celebration component that triggers a full-screen confetti effect.
  *
  * DEPENDENCIES:
@@ -30,6 +37,15 @@ const ConfettiWrapper = styled.div`
   pointer-events: none;
 `;
 
+/**
+ * Confetti celebration overlay component.
+ *
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {boolean} props.trigger - Boolean flag that activates the confetti burst.
+ * @param {Object} [props.config={}] - Optional configuration overrides passed to ReactConfetti.
+ * @returns {JSX.Element|null} Fixed confetti canvas overlay or null when idle.
+ */
 const Confetti = ({ trigger, config = {} }) => {
   // Access window dimensions for proper scaling of the confetti canvas
   const { width, height } = useWindowSize();

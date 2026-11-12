@@ -1,4 +1,11 @@
 /**
+ * @file answerValidation.js
+ * @description Answer normalization and evaluation engine supporting case/punctuation-insensitive matching, multi-select penalties, and multi-blank percentage scoring.
+ * @architecture Validation utility layer bridging question renderers (Marathon, QuizPanel) and client-side scoring logic against expected solution sets.
+ * @agent_note Multi-select answers use penalty deduction: percentage = max(0, round((correct - incorrect) / total * 100)).
+ */
+
+/**
  * FILE PURPOSE: Centralized engine for validating user-submitted answers against ground truth.
  * Handles normalization, multi-blank grading, and partial scoring for various question types.
  *

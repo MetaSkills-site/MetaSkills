@@ -10,12 +10,15 @@ jest.unstable_mockModule("../../middlewares/authMiddleware.js", () => ({
   protectAdmin: (req, res, next) => {
     req.user = { _id: userId, role: "admin" };
     next();
-  }
+  },
 }));
 
-const migrationController = (await import("../../controllers/migration.controller.js")).default;
+const migrationController = (
+  await import("../../controllers/migration.controller.js")
+).default;
 const { default: Question } = await import("../../models/Questions.model.js");
-const { default: Notification } = await import("../../models/Notification.model.js");
+const { default: Notification } =
+  await import("../../models/Notification.model.js");
 const { default: Session } = await import("../../models/session.model.js");
 
 describe("Migration Controller", () => {
@@ -26,8 +29,12 @@ describe("Migration Controller", () => {
     app.use(express.json());
 
     const auth = await import("../../middlewares/authMiddleware.js");
-    app.get("/api/admin/migrate", auth.protectAdmin, migrationController.runMigration);
-    
+    app.get(
+      "/api/admin/migrate",
+      auth.protectAdmin,
+      migrationController.runMigration,
+    );
+
     app.use(errorHandler);
   });
 
@@ -39,15 +46,21 @@ describe("Migration Controller", () => {
     describe("GET /api/admin/migrate", () => {
       it("should handle collection update errors gracefully", async () => {
         // Mock one updateMany to fail
-        const QuestionSpy = jest.spyOn(Question, "updateMany").mockResolvedValue({ modifiedCount: 1 });
-        const NotificationSpy = jest.spyOn(Notification, "updateMany").mockRejectedValue(new Error("DB Error"));
-        const SessionSpy = jest.spyOn(Session, "updateMany").mockResolvedValue({ modifiedCount: 1 });
+        const QuestionSpy = jest
+          .spyOn(Question, "updateMany")
+          .mockResolvedValue({ modifiedCount: 1 });
+        const NotificationSpy = jest
+          .spyOn(Notification, "updateMany")
+          .mockRejectedValue(new Error("DB Error"));
+        const SessionSpy = jest
+          .spyOn(Session, "updateMany")
+          .mockResolvedValue({ modifiedCount: 1 });
 
         const res = await request(app).get("/api/admin/migrate");
         expect(res.status).toBe(200); // Route itself doesn't fail, it catches collection errors
         expect(res.body.success).toBe(true);
         expect(res.body.results.notificationsError).toMatch(/DB Error/);
-        
+
         QuestionSpy.mockRestore();
         NotificationSpy.mockRestore();
         SessionSpy.mockRestore();
@@ -55,12 +68,14 @@ describe("Migration Controller", () => {
 
       it("should return 500 if migration fails entirely", async () => {
         // If Question fails, it throws to the route handler
-        const QuestionSpy = jest.spyOn(Question, "updateMany").mockRejectedValue(new Error("Fatal DB Error"));
+        const QuestionSpy = jest
+          .spyOn(Question, "updateMany")
+          .mockRejectedValue(new Error("Fatal DB Error"));
 
         const res = await request(app).get("/api/admin/migrate");
         expect(res.status).toBe(500);
         expect(res.body.message).toMatch(/Fatal DB Error/);
-        
+
         QuestionSpy.mockRestore();
       });
     });
@@ -105,12 +120,16 @@ describe("Migration Controller", () => {
         expect(res.body.success).toBe(true);
         expect(res.body.results.questionsActive).toBe(1);
         expect(res.body.results.questionsRating).toBe(1);
-        
-        const q = await mongoose.connection.collection("questions").findOne({ text: "Q1" });
+
+        const q = await mongoose.connection
+          .collection("questions")
+          .findOne({ text: "Q1" });
         expect(q.active).toBe(true);
         expect(q.rating).toBe(1200);
 
-        const s = await mongoose.connection.collection("sessions").findOne({ deviceId: "dev1" });
+        const s = await mongoose.connection
+          .collection("sessions")
+          .findOne({ deviceId: "dev1" });
         expect(s.createdAt).toBeDefined();
       });
     });

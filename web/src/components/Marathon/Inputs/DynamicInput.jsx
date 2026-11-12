@@ -1,3 +1,10 @@
+/**
+ * @file DynamicInput.jsx
+ * @description Renders configurable multi-field input layouts for marathon questions with escaped delimiter serialization.
+ * @architecture Marathon input layer component translating declarative question field configurations into interactive inputs.
+ * @agent_note Handles separator escaping and unescaping to correctly serialize multiple sub-inputs into a single question answer string.
+ */
+
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { BaseMarathonInput, InputContainer } from "../MarathonStyles";
@@ -63,6 +70,19 @@ const DynamicInputField = styled(BaseMarathonInput)`
 
 import MathInput from "./MathInput";
 
+/**
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {Object} props.config - Input layout and field configuration schema.
+ * @param {string} [props.config.layout="default"] - Layout style strategy ('default', 'row', 'fraction', 'grid').
+ * @param {Array<Object>} [props.config.fields=[]] - Field definitions including labels, placeholders, and types.
+ * @param {string} [props.config.separator=","] - Delimiter used to serialize multiple field values.
+ * @param {string|number} props.value - Serialized string representing current input values.
+ * @param {Function} props.onChange - Callback invoked with the new serialized value string.
+ * @param {boolean} [props.disabled=false] - Whether inputs are disabled.
+ * @param {Function} [props.onKeyDown] - Keyboard event handler, triggered on Enter or custom key events.
+ * @returns {JSX.Element} The rendered multi-field dynamic input group.
+ */
 const DynamicInput = ({ config, value, onChange, disabled, onKeyDown }) => {
   // config structure: { type, layout, fields: [{ label, placeholder, type }], separator }
   const { layout = "default", fields = [], separator = "," } = config || {};

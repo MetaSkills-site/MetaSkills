@@ -10,7 +10,7 @@ jest.unstable_mockModule("../../middlewares/authMiddleware.js", () => ({
   protectAdmin: (req, res, next) => {
     req.user = { _id: userId, role: "admin" };
     next();
-  }
+  },
 }));
 
 const mockUpload = jest.fn();
@@ -24,10 +24,12 @@ jest.unstable_mockModule("../../config/googledriveupload.js", () => ({
   listDriveFiles: mockList,
   deleteDriveFile: mockDelete,
   emptyDriveFolder: mockEmpty,
-  getDriveFileContent: mockGetContent
+  getDriveFileContent: mockGetContent,
 }));
 
-const backupController = (await import("../../controllers/backup.controller.js")).default;
+const backupController = (
+  await import("../../controllers/backup.controller.js")
+).default;
 const { default: Question } = await import("../../models/Questions.model.js");
 const { default: Module } = await import("../../models/Module.model.js");
 
@@ -41,10 +43,22 @@ describe("Backup Controller", () => {
     const auth = await import("../../middlewares/authMiddleware.js");
     app.post("/api/backup", auth.protectAdmin, backupController.backupToDrive);
     app.get("/api/backup", auth.protectAdmin, backupController.getBackupFiles);
-    app.delete("/api/backup/empty", auth.protectAdmin, backupController.emptyBackupDrive);
-    app.delete("/api/backup/:fileId", auth.protectAdmin, backupController.deleteBackupFile);
-    app.get("/api/backup/:fileId/content", auth.protectAdmin, backupController.getBackupFileContent);
-    
+    app.delete(
+      "/api/backup/empty",
+      auth.protectAdmin,
+      backupController.emptyBackupDrive,
+    );
+    app.delete(
+      "/api/backup/:fileId",
+      auth.protectAdmin,
+      backupController.deleteBackupFile,
+    );
+    app.get(
+      "/api/backup/:fileId/content",
+      auth.protectAdmin,
+      backupController.getBackupFileContent,
+    );
+
     app.use(errorHandler);
   });
 
@@ -59,16 +73,18 @@ describe("Backup Controller", () => {
 
     describe("POST /api/backup", () => {
       it("should return 500 on database fetch failure", async () => {
-        jest.spyOn(Module, 'find').mockRejectedValue(new Error("Database error"));
-        
+        jest
+          .spyOn(Module, "find")
+          .mockRejectedValue(new Error("Database error"));
+
         const res = await request(app).post("/api/backup");
         expect(res.status).toBe(500);
         expect(res.body.message).toMatch(/Database error/);
       });
 
       it("should return 500 on upload failure", async () => {
-        jest.spyOn(Module, 'find').mockResolvedValue([]);
-        jest.spyOn(Question, 'find').mockResolvedValue([]);
+        jest.spyOn(Module, "find").mockResolvedValue([]);
+        jest.spyOn(Question, "find").mockResolvedValue([]);
         mockUpload.mockRejectedValue(new Error("Drive error"));
 
         const res = await request(app).post("/api/backup");
@@ -171,13 +187,17 @@ describe("Backup Controller", () => {
     describe("POST /api/backup", () => {
       it("should successfully create and upload backup with real db data", async () => {
         mockUpload.mockResolvedValue("mock_file_id");
-        await Module.create({ name: "M1", subject: "english", status: "published" });
+        await Module.create({
+          name: "M1",
+          subject: "english",
+          status: "published",
+        });
 
         const res = await request(app).post("/api/backup");
         expect(res.status).toBe(200);
         expect(res.body.success).toBe(true);
         expect(res.body.fileId).toBe("mock_file_id");
-        
+
         expect(mockUpload).toHaveBeenCalledTimes(1);
       });
     });

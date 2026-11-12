@@ -1,4 +1,11 @@
 /**
+ * @file StartPage.jsx
+ * @description Standardized landing overview page for learning modules and quizzes displaying stats, progress, and launch actions.
+ * @architecture Reusable presentation screen across module and marathon user flows, styling progress bars and stats.
+ * @agent_note Accepts theme tokens (gradient, primary, secondary) to restyle header accents and action buttons dynamically.
+ */
+
+/**
  * FILE PURPOSE: A standardized landing/start page component for various quiz modules.
  * It displays the title, statistics, overall progress, and a prominent start button.
  *
@@ -155,6 +162,22 @@ const ChevronIcon = styled(HiChevronRight)`
 
 // --- Main Component ---
 
+/**
+ * StartPage component providing a hero introduction for quiz modules.
+ *
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {string} props.title - Title heading of the module or marathon.
+ * @param {string} [props.subtitle] - Explanatory subtitle text.
+ * @param {Array<{label: string, value: string|number, color?: string}>} [props.stats=[]] - Overview metrics.
+ * @param {number|null} [props.progress=null] - Module completion percentage (0-100).
+ * @param {Function} props.onStart - Callback executed when user starts the quiz.
+ * @param {Function} props.onBack - Callback executed when navigating back.
+ * @param {string} [props.startLabel="Start"] - Label on the main start button.
+ * @param {Object} [props.theme={}] - Visual color theme tokens.
+ * @param {boolean} [props.loading=false] - Whether to show the SplashPage loading screen.
+ * @returns {JSX.Element} Configured landing start view or splash loader.
+ */
 const StartPage = ({
   title,
   subtitle,

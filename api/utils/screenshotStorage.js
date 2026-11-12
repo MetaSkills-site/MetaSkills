@@ -15,7 +15,8 @@ const __dirname = path.dirname(__filename);
 const getStorageOptions = () => {
   const options = {};
   if (process.env.GOOGLE_CLOUD_PROJECT || process.env.GCP_PROJECT) {
-    options.projectId = process.env.GOOGLE_CLOUD_PROJECT || process.env.GCP_PROJECT;
+    options.projectId =
+      process.env.GOOGLE_CLOUD_PROJECT || process.env.GCP_PROJECT;
   }
   if (process.env.GCS_CREDENTIALS) {
     try {

@@ -1,4 +1,11 @@
 /**
+ * @file SlateRenderer.jsx
+ * @description Recursively renders Slate rich-text JSON content trees into formatted HTML and interactive MathLive components.
+ * @architecture Rich-text view layer rendering engine converting structured document ASTs into React component hierarchies.
+ * @agent_note Supports JSON strings, legacy HTML fallbacks, and injectable customRenderers for domain-specific element overrides.
+ */
+
+/**
  * FILE PURPOSE: SlateRenderer — The primary recursive renderer for Slate JSON content.
  *
  * ROLE:
@@ -90,6 +97,13 @@ const MathFieldRenderer = ({ latex, inline }) => {
 
 /* ─── Main Component ─── */
 
+/**
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {Array<Object>|Object|string} props.slate - Slate node hierarchy, JSON string, or legacy HTML string.
+ * @param {Object<string, Function>} [props.customRenderers={}] - Map of custom node type render callbacks.
+ * @returns {JSX.Element|null} The recursively rendered rich text elements or null if content is absent.
+ */
 const SlateRenderer = ({ slate, customRenderers = {} }) => {
   /**
    * CONTENT NORMALIZATION LOGIC

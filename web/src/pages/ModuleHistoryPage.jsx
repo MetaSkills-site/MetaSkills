@@ -1,20 +1,8 @@
 /**
- * FILE PURPOSE: Detailed review and result page for a specific completed educational module.
- * Visualizes a breakdown of correctness, carrots earned, and provides a question-by-question review with feedback.
- *
- * DEPENDENCIES:
- * - SessionContext: (Implied via child components) Providing auth context for review operations.
- * - QuestionBlock: Renders the question slate in read-only mode for review.
- * - ChartWidget: Displays a doughnut chart of correct vs incorrect vs unattempted questions.
- * - HomeIcon: Navigational component for returning to the Analytics dashboard.
- * - react-router-dom: useLocation to access module data passed via state.
- *
- * EXPORTS:
- * - ModuleHistoryPage (default): Detailed result review view.
- *
- * INTERCONNECT:
- * - Receives 'module' data object via 'location.state' from the Analytics page.
- * - Redirects to /analytics if accessed directly without the necessary state.
+ * @file ModuleHistoryPage.jsx
+ * @description Detailed review and outcome inspection page for a completed learning module session.
+ * @architecture Mounted at `/module-history`, rendered with Nav and ChartWidget, displaying question breakdowns via QuestionBlock.
+ * @agent_note Requires module session state passed via `location.state.module` and automatically redirects back to `/analytics` if state is missing.
  */
 
 import { useLocation, Navigate } from "react-router-dom";
@@ -124,6 +112,11 @@ const formatTime = (seconds) => {
   return parts.join(" ");
 };
 
+/**
+ * Module history review page component displaying attempt statistics, donut charts, and read-only question reviews.
+ * @component
+ * @returns {JSX.Element}
+ */
 export default function ModuleHistoryPage() {
   const location = useLocation();
   const module = location.state?.module;

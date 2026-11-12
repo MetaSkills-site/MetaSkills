@@ -104,7 +104,9 @@ function setupConnectionListeners(logger) {
  */
 export async function connectDB(uri, optionsOrRetries = 3) {
   const options =
-    typeof optionsOrRetries === "number" ? { retries: optionsOrRetries } : optionsOrRetries || {};
+    typeof optionsOrRetries === "number"
+      ? { retries: optionsOrRetries }
+      : optionsOrRetries || {};
 
   const targetUri = uri || process.env.MONGODB_URI || process.env.MONGO_URI;
 
@@ -112,7 +114,7 @@ export async function connectDB(uri, optionsOrRetries = 3) {
   if (!targetUri || typeof targetUri !== "string" || targetUri.trim() === "") {
     throw new DatabaseConnectionError(
       "MongoDB URI is required. Provide a valid connection string or set MONGODB_URI.",
-      { attempts: 0, uri: "" }
+      { attempts: 0, uri: "" },
     );
   }
 
@@ -163,22 +165,30 @@ export async function connectDB(uri, optionsOrRetries = 3) {
         // Auto IPv4 fallback detection
         if (
           !forceIPv4 &&
-          (err?.message?.includes("ETIMEDOUT") || err?.message?.includes("ENETUNREACH"))
+          (err?.message?.includes("ETIMEDOUT") ||
+            err?.message?.includes("ENETUNREACH"))
         ) {
-          logger.warn?.("[MongoDB] IPv6 connection failure detected. Switching to IPv4 fallback...");
+          logger.warn?.(
+            "[MongoDB] IPv6 connection failure detected. Switching to IPv4 fallback...",
+          );
           forceIPv4 = true;
         }
 
         if (attempt < retries) {
-          const expDelay = Math.min(initialBackoffMs * 2 ** (attempt - 1), maxBackoffMs);
-          const delay = useJitter ? Math.floor(Math.random() * expDelay) + 50 : expDelay;
+          const expDelay = Math.min(
+            initialBackoffMs * 2 ** (attempt - 1),
+            maxBackoffMs,
+          );
+          const delay = useJitter
+            ? Math.floor(Math.random() * expDelay) + 50
+            : expDelay;
           logger.warn?.(
-            `[MongoDB] Attempt ${attempt}/${retries} failed: ${err?.message || String(err)}. Retrying in ${delay}ms...`
+            `[MongoDB] Attempt ${attempt}/${retries} failed: ${err?.message || String(err)}. Retrying in ${delay}ms...`,
           );
           await new Promise((r) => setTimeout(r, delay));
         } else {
           logger.error?.(
-            `[MongoDB] Connection failed after ${retries} attempts: ${err?.message || String(err)}`
+            `[MongoDB] Connection failed after ${retries} attempts: ${err?.message || String(err)}`,
           );
         }
       }
@@ -187,7 +197,7 @@ export async function connectDB(uri, optionsOrRetries = 3) {
     cache.promise = null;
     throw new DatabaseConnectionError(
       `Failed to connect to MongoDB after ${retries} attempts. Cause: ${lastError?.message || String(lastError)}`,
-      { cause: lastError, attempts: retries, uri: maskMongoUri(targetUri) }
+      { cause: lastError, attempts: retries, uri: maskMongoUri(targetUri) },
     );
   })();
 
@@ -218,7 +228,12 @@ export async function disconnectDB() {
 
 export async function checkDatabaseHealth() {
   const state = mongoose.connection.readyState;
-  const statusNames = ["disconnected", "connected", "connecting", "disconnecting"];
+  const statusNames = [
+    "disconnected",
+    "connected",
+    "connecting",
+    "disconnecting",
+  ];
   const status = statusNames[state] || "unknown";
 
   if (state !== 1 || !mongoose.connection.db) {
@@ -228,7 +243,12 @@ export async function checkDatabaseHealth() {
   try {
     const start = Date.now();
     await mongoose.connection.db.admin().ping();
-    return { ok: true, readyState: state, status, pingLatencyMs: Date.now() - start };
+    return {
+      ok: true,
+      readyState: state,
+      status,
+      pingLatencyMs: Date.now() - start,
+    };
   } catch (err) {
     return { ok: false, readyState: state, status, error: err.message };
   }
