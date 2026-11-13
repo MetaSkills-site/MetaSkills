@@ -191,8 +191,8 @@ importers:
         specifier: ^1.4.0
         version: 1.4.0
       axios:
-        specifier: ^1.13.6
-        version: 1.21.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
+        specifier: ^1.21.1
+        version: 1.21.1(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
       bcrypt:
         specifier: ^6.0.0
         version: 6.0.0
@@ -212,8 +212,8 @@ importers:
         specifier: ^1.2.0
         version: 1.2.0
       express-rate-limit:
-        specifier: ^8.2.1
-        version: 8.7.3(express@5.3.0(supports-color@8.1.1))(supports-color@8.1.1)
+        specifier: ^8.7.4
+        version: 8.7.4(express@5.3.0(supports-color@8.1.1))(supports-color@8.1.1)
       google-auth-library:
         specifier: ^10.5.0
         version: 10.9.1(supports-color@8.1.1)
@@ -288,8 +288,8 @@ importers:
         specifier: ^1.2.8
         version: 1.4.1(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@react-oauth/google':
-        specifier: ^0.12.1
-        version: 0.12.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^0.13.5
+        version: 0.13.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tanstack/react-query':
         specifier: ^5.90.21
         version: 5.107.1(@types/react@19.3.0)(react@18.3.1)
@@ -306,8 +306,8 @@ importers:
         specifier: ^2.1.0
         version: 2.1.0(react@18.3.1)
       axios:
-        specifier: ^1.10.0
-        version: 1.21.0(debug@4.4.3(supports-color@5.5.0))(supports-color@5.5.0)
+        specifier: ^1.21.1
+        version: 1.21.1(debug@4.4.3(supports-color@5.5.0))(supports-color@5.5.0)
       bson-objectid:
         specifier: ^2.0.4
         version: 2.0.4
@@ -336,8 +336,8 @@ importers:
         specifier: '>=0.18.2'
         version: 0.18.10
       mathlive:
-        specifier: ^0.110.0
-        version: 0.110.0
+        specifier: ^0.111.4
+        version: 0.111.4
       pdfjs-dist:
         specifier: ^6.5.438
         version: 6.5.438
@@ -384,17 +384,17 @@ importers:
         specifier: ^6.0.0
         version: 6.0.0(supports-color@5.5.0)
       slate:
-        specifier: ^0.117.2
-        version: 0.117.2
+        specifier: ^0.147.4
+        version: 0.147.4
       slate-dom:
-        specifier: ^0.117.2
-        version: 0.117.4(slate@0.117.2)
+        specifier: ^0.147.3
+        version: 0.147.3(slate@0.147.4)
       slate-history:
-        specifier: ^0.113.1
-        version: 0.113.1(slate@0.117.2)
+        specifier: ^0.144.0
+        version: 0.144.0(slate@0.147.4)
       slate-react:
-        specifier: ^0.117.4
-        version: 0.117.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(slate-dom@0.117.4(slate@0.117.2))(slate@0.117.2)
+        specifier: ^0.147.5
+        version: 0.147.5(@types/react@19.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(slate-dom@0.147.3(slate@0.147.4))(slate@0.147.4)
       styled-components:
         specifier: ^6.1.19
         version: 6.6.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -402,8 +402,8 @@ importers:
         specifier: ^7.0.0
         version: 7.0.0
       three:
-        specifier: ^0.183.0
-        version: 0.183.2
+        specifier: ^0.187.0
+        version: 0.187.0
     devDependencies:
       '@eslint/js':
         specifier: ^9.27.0
@@ -418,8 +418,8 @@ importers:
         specifier: ^19.1.2
         version: 19.3.0(@types/react@19.3.0)
       '@types/three':
-        specifier: ^0.183.1
-        version: 0.183.1
+        specifier: ^0.187.0
+        version: 0.187.0
       '@vitejs/plugin-react':
         specifier: ^4.4.1
         version: 4.7.0(supports-color@5.5.0)(vite@6.4.5(@types/node@24.19.2))
@@ -455,9 +455,6 @@ importers:
         version: 6.4.5(@types/node@24.19.2)
 
 packages:
-
-  '@arnog/colors@0.5.0':
-    resolution: {integrity: sha512-NB7yqrO7qvInsqJdqz6C6mDU+2oiKmbBbk3czMS0E7KkGxLRy538tEHCsB5TKqmaxxXpi6/U120TnGl8NsDePg==}
 
   '@babel/code-frame@7.29.7':
     resolution: {integrity: sha512-Aup7aUOfpbAUg2ROOJN6Iw5f9DMBlzu0mIkm/malLQFN/YQgO48wCj0Kxa3sEHJvPVFg7siR+qRInwXd2qhQKw==}
@@ -680,10 +677,6 @@ packages:
 
   '@bcoe/v8-coverage@0.2.3':
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
-
-  '@cortex-js/compute-engine@0.58.0':
-    resolution: {integrity: sha512-N0+vXjVZfKwJS7ZIGvq41mojI55m5TrdDXveAXzNjzjZ9iNiNrdEzXL2EmrcP+9GCWCwTonrEeZWAIG78f3INg==}
-    engines: {node: '>=21.7.3', npm: '>=10.5.0'}
 
   '@corvu/utils@0.4.2':
     resolution: {integrity: sha512-Ox2kYyxy7NoXdKWdHeDEjZxClwzO4SKM8plAaVwmAJPxHMqA0rLOoAsa+hBDwRLpctf+ZRnAd/ykguuJidnaTA==}
@@ -2010,8 +2003,8 @@ packages:
   '@radix-ui/rect@1.1.3':
     resolution: {integrity: sha512-JtyZR+mqgBibTo8xea3B6ZRmzZiM/YeVBtUkas6zMuXjAlfIFIW2FgqeM9eLyvEaYX66vr6DJMK+4U6LV0KhNw==}
 
-  '@react-oauth/google@0.12.2':
-    resolution: {integrity: sha512-d1GVm2uD4E44EJft2RbKtp8Z1fp/gK8Lb6KHgs3pHlM0PxCXGLaq8LLYQYENnN4xPWO1gkL4apBtlPKzpLvZwg==}
+  '@react-oauth/google@0.13.5':
+    resolution: {integrity: sha512-xQWri2s/3nNekZJ4uuov2aAfQYu83bN3864KcFqw2pK1nNbFurQIjPFDXhWaKH3IjYJ2r/9yyIIpsn5lMqrheQ==}
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
@@ -2369,8 +2362,8 @@ packages:
   '@types/stylis@4.2.7':
     resolution: {integrity: sha512-VgDNokpBoKF+wrdvhAAfS55OMQpL6QRglwTwNC3kIgBrzZxA4WsFj+2eLfEA/uMUDzBcEhYmjSbwQakn/i3ajA==}
 
-  '@types/three@0.183.1':
-    resolution: {integrity: sha512-f2Pu5Hrepfgavttdye3PsH5RWyY/AvdZQwIVhrc4uNtvF7nOWJacQKcoVJn0S4f0yYbmAE6AR+ve7xDcuYtMGw==}
+  '@types/three@0.187.0':
+    resolution: {integrity: sha512-v+vKNarUtk4n2QRZ4+CN5ygMM0ARUjXjIQl0R/unMUfmStFeVqGbgqarbrpoGTXRZoulSH16ePrVJVxPJEbMUA==}
 
   '@types/tough-cookie@4.0.5':
     resolution: {integrity: sha512-/Ad8+nIOV7Rl++6f1BdKxFSMgmoqEoYbHRpPcx3JEfv8VRsQe9Z4mCXeJBzxs7mbHY/XOZZuXlRNfhpVPbs6ZA==}
@@ -2578,9 +2571,6 @@ packages:
     peerDependencies:
       vite: ^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0
 
-  '@webgpu/types@0.1.74':
-    resolution: {integrity: sha512-lgiI4hbuLcI9unnm2cL/tvCaQU45dp0xcLWJh5uB/9MBGvIA4F8XIk7nSiBeg+K4xWGYwgZKn80LmERI5CxoTA==}
-
   '@xobotyi/scrollbar-width@1.9.5':
     resolution: {integrity: sha512-N8tkAACJx2ww8vFMneJmaAgmjAG1tnVBZJRLRcx061tmsLRZHSEZSLuGWnwPtunsSLvSqXQ2wfp7Mgqg1I+2dQ==}
 
@@ -2700,9 +2690,6 @@ packages:
   available-typed-arrays@1.0.7:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
     engines: {node: '>= 0.4'}
-
-  axios@1.21.0:
-    resolution: {integrity: sha512-YCzXMB53Q9PZBsh7yN7wtapit4WepwcHS2fP8QhGsBxSz5YtgYobV7GGlWlAJi+RxfU77GQTQi2DSLUma42EYA==}
 
   axios@1.21.1:
     resolution: {integrity: sha512-6eI5Q/Y4u/Um9dDlsRoq5pY2rxnUTv+L4PpLitnbk/i4jb3MxLZ5CsN5Ih3IysbeRYK4pR+P7qfMsOQl9fwwFQ==}
@@ -2971,10 +2958,6 @@ packages:
 
   commondir@1.0.1:
     resolution: {integrity: sha512-W9pAhw0ja1Edb5GVdIF1mjZw/ASI0AlShXM83UUGe2DVr5TdAPEA1OA8m/g8zWp9x6On7gqufY+FatDbC3MDQg==}
-
-  complex-esm@2.1.1-esm1:
-    resolution: {integrity: sha512-IShBEWHILB9s7MnfyevqNGxV0A1cfcSnewL/4uPFiSxkcQL4Mm3FxJ0pXMtCXuWLjYz3lRRyk6OfkeDZcjD6nw==}
-    engines: {node: '>=16.14.2', npm: '>=8.5.0'}
 
   complex.js@2.4.3:
     resolution: {integrity: sha512-UrQVSUur14tNX6tiP4y8T4w4FeJAX3bi2cIv0pu/DTLFNxoq7z2Yh83Vfzztj6Px3X/lubqQ9IrPp7Bpn6p4MQ==}
@@ -3401,8 +3384,8 @@ packages:
   express-async-handler@1.2.0:
     resolution: {integrity: sha512-rCSVtPXRmQSW8rmik/AIb2P0op6l7r1fMW538yyvTMltCO4xQEWMmobfrIxN2V1/mVrgxB8Az3reYF6yUZw37w==}
 
-  express-rate-limit@8.7.3:
-    resolution: {integrity: sha512-zPLqDI2f0gV2WmGnacLf9XSSqn4VldRyP5LCzOwx0BKH40mO6+2PCFkoSsRO2jePx87/Kf6NUF6P2QOTKXHbQA==}
+  express-rate-limit@8.7.4:
+    resolution: {integrity: sha512-LKBXzX700wz3zAGNNmVnjRI5mEbYkLv7UbMI4+9Xa+JPcg2UZh6AgY/2CZh9RrJjFM5ttC/N1lD+KzyFoZITCw==}
     engines: {node: '>= 16'}
     peerDependencies:
       express: '>= 4.11'
@@ -3841,9 +3824,6 @@ packages:
   ignore@5.3.2:
     resolution: {integrity: sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==}
     engines: {node: '>= 4'}
-
-  immer@10.2.0:
-    resolution: {integrity: sha512-d/+XTN3zfODyjr89gM3mPq1WNX2B8pYsu7eORitdwyA2sBubnTl3laYlBk4sXY5FUa5qTZGBDPJICVbvqzjlbw==}
 
   import-fresh@3.3.1:
     resolution: {integrity: sha512-TR3KfrTZTYLPB6jUjfx6MF9WcWrHL9su5TObK4ZkYgBdWKPOFoSoQIdEuTuR82pmtxH2spWG9h6etwfr1pLBqQ==}
@@ -4347,8 +4327,8 @@ packages:
     engines: {node: '>= 18'}
     hasBin: true
 
-  mathlive@0.110.0:
-    resolution: {integrity: sha512-UOpJsQ6h1eeN0xZULGTl1MwUB/lZLCDuzKeHvKEh7Zra8U/rtgDNrssj5PZdJtBTIV48AfEhtv6rv47AeMOxJA==}
+  mathlive@0.111.4:
+    resolution: {integrity: sha512-1E5EOQnUHWn+KfEXaDTmuyxRWZrZw4WlQFyZLzJmjKEPdaX4WAnFqVfZb36mhulykcIl7/W7gKkTmutP2/9wjQ==}
 
   mdast-util-from-markdown@2.1.0:
     resolution: {integrity: sha512-KRLgmPaP2H1ul2bpoJkOS+9pAcDAAj9Nu1mqLnh8NLeJG5tlvj42TH80PIGBpROWlRXLk0lDrWNuZCFy/tsB4A==}
@@ -4394,8 +4374,8 @@ packages:
   merge-stream@2.0.0:
     resolution: {integrity: sha512-abv/qOcuPfk3URPfDzmZU1LKmuw8kT+0nIHvKrKgFrwifol/doWcdA4ZqsWQ8ENrFKkd67Mfpo/LovbIUsbt3w==}
 
-  meshoptimizer@1.0.1:
-    resolution: {integrity: sha512-Vix+QlA1YYT3FwmBBZ+49cE5y/b+pRrcXKqGpS5ouh33d3lSp2PoTpCw19E0cKDFWalembrHnIaZetf27a+W2g==}
+  meshoptimizer@1.1.1:
+    resolution: {integrity: sha512-oRFNWJRDA/WTrVj7NWvqa5HqE1t9MYDj2VaWirQCzCCrAd2GHrqR/sQezCxiWATPNlKTcRaPRHPJwIRoPBAp5g==}
 
   methods@1.1.2:
     resolution: {integrity: sha512-iclAHeNqNm68zFtnZ0e+1L2yUIdvzNoauKU4WBA3VvH/vPFieF7qfRlwUZU+DA9P9bPXIS90ulxoUoCH23sV2w==}
@@ -5293,26 +5273,33 @@ packages:
     resolution: {integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==}
     engines: {node: '>=8'}
 
-  slate-dom@0.117.4:
-    resolution: {integrity: sha512-eu5MMpphkCnr22R6hgFoQt/tEaHBjSdSy7uJjPOm++hCxstoLefp04EY50A4rXBovjkYoAncb9j8QoijZd0ENA==}
+  slate-dom@0.147.3:
+    resolution: {integrity: sha512-dG5m3NSXh2hs5dY7DT7HHetsOFEbJbcJG+rHXvgrEFMEkUiGd0RxFIPVekGg8B+5rX9h4l7ct603QCGKc9R/Ig==}
     peerDependencies:
-      slate: '>=0.99.0'
+      slate: '>=0.121.0'
 
-  slate-history@0.113.1:
-    resolution: {integrity: sha512-J9NSJ+UG2GxoW0lw5mloaKcN0JI0x2IA5M5FxyGiInpn+QEutxT1WK7S/JneZCMFJBoHs1uu7S7e6pxQjubHmQ==}
+  slate-history@0.144.0:
+    resolution: {integrity: sha512-+ZTjXWyXTSxvzkCC4UW0xd6PTlsP8ZUPEkJXTt9M1SK2HjDisBrgQZbFFk8XxbpLaWZaL5DZIG3/WGPPj3muNg==}
     peerDependencies:
-      slate: '>=0.65.3'
+      slate: '>=0.114.3'
 
-  slate-react@0.117.4:
-    resolution: {integrity: sha512-9ckilyUzQS1VHJnstIpgInhcWnTDgv2Cd7m1HOQVl3zasChoapPSMftzT/wl/48grZaZYZIi4xVuzGTcFRUWFg==}
+  slate-react@0.147.5:
+    resolution: {integrity: sha512-XTMz12tMWOi/hRs8PtH9FFEndPt5ZGiPmWcRLmcXACngPo8qtufiBwd7PYG0xRhYo0AsR0g5Ps9NtnBIq8s6lg==}
     peerDependencies:
+      '@types/lodash': ^4.14.0
+      '@types/react': '>=18.0.0'
       react: '>=18.2.0'
       react-dom: '>=18.2.0'
-      slate: '>=0.114.0'
-      slate-dom: '>=0.116.0'
+      slate: '>=0.121.0'
+      slate-dom: '>=0.141.0'
+    peerDependenciesMeta:
+      '@types/lodash':
+        optional: true
+      '@types/react':
+        optional: true
 
-  slate@0.117.2:
-    resolution: {integrity: sha512-vHfMHrb8WJ6TFfl7yLXT+UlTzdbUQHpAfdGV0tJfECvbRMAOwAKkjgtAMI8FBmJ1t6BKUgX3ybXk3Y2JxQ2R1w==}
+  slate@0.147.4:
+    resolution: {integrity: sha512-AaoMVtj+6AUhMAvMubk9OZn7cdA5MsZLWbt+jx5RvHimd3lDRhQhKVgLy6uegwT2lEYB8lDKqWGcN6vU8W2V9w==}
 
   solid-js@1.9.18:
     resolution: {integrity: sha512-CHGO5YFk6Y9m/1YSxVtKnXfrW7JD3Tmof8HmR4z6TmCPsS8efo8LnzIR8CQh3cUvffqYm6DWyBFfk8dQw1CNQQ==}
@@ -5538,8 +5525,8 @@ packages:
   text-table@0.2.0:
     resolution: {integrity: sha512-N+8UisAXDGk8PFXP4HAzVR9nbfmVJ3zYLAWiTIoqC5v5isinhr+r5uaO8+7r3BMfuNIufIsA7RdpVgacC2cSpw==}
 
-  three@0.183.2:
-    resolution: {integrity: sha512-di3BsL2FEQ1PA7Hcvn4fyJOlxRRgFYBpMTcyOgkwJIaDOdJMebEFPA+t98EvjuljDx4hNulAGwF6KIjtwI5jgQ==}
+  three@0.187.0:
+    resolution: {integrity: sha512-Qiu7R+Cmh8CstZsY1uJOSWnVlfo7ZtNLV7mF8Jltk3LB3AtDu9cRZlcnRKkAk8Y4z6KKw35z7Y7Urd7jWY8etA==}
 
   throttle-debounce@3.0.1:
     resolution: {integrity: sha512-dTEWWNu6JmeVXY0ZYoPuH5cRIwc0MeGbJwah9KUNYSJwommQpCzTySTpEe8Gs1J23aeWEuAobe4Ag7EHVt/LOg==}
@@ -5550,9 +5537,6 @@ packages:
 
   tiny-invariant@1.3.1:
     resolution: {integrity: sha512-AD5ih2NlSssTCwsMznbvwMZpJ1cbhkGd2uueNxzv2jDlEeZdU04JQfRnggJQ8DrcVBGjAsCKwFBbDlVNtEMlzw==}
-
-  tiny-warning@1.0.3:
-    resolution: {integrity: sha512-lBN9zLN/oAf68o3zNXYrdCt1kP8WsiGW8Oo2ka41b2IM5JL/S1CTyX1rW0mb/zSuJun0ZUrDxx4sqvYS2FWzPA==}
 
   tinyglobby@0.2.17:
     resolution: {integrity: sha512-wXR/dYpcqKmfWpEdZjiKJOwCNFndD0DMnrW/cYjVGttEkBfVgcLFHoNrlj47mjOVic9yyNu65alsgF4NQyTa2g==}
@@ -5891,8 +5875,6 @@ packages:
 
 snapshots:
 
-  '@arnog/colors@0.5.0': {}
-
   '@babel/code-frame@7.29.7':
     dependencies:
       '@babel/helper-validator-identifier': 7.29.7
@@ -6190,12 +6172,6 @@ snapshots:
       '@babel/helper-validator-identifier': 8.0.6
 
   '@bcoe/v8-coverage@0.2.3': {}
-
-  '@cortex-js/compute-engine@0.58.0':
-    dependencies:
-      '@arnog/colors': 0.5.0
-      complex-esm: 2.1.1-esm1
-      decimal.js: 10.6.0
 
   '@corvu/utils@0.4.2(solid-js@1.9.18)':
     dependencies:
@@ -7623,7 +7599,7 @@ snapshots:
 
   '@radix-ui/rect@1.1.3': {}
 
-  '@react-oauth/google@0.12.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@react-oauth/google@0.13.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
@@ -7933,15 +7909,14 @@ snapshots:
 
   '@types/stylis@4.2.7': {}
 
-  '@types/three@0.183.1':
+  '@types/three@0.187.0':
     dependencies:
       '@dimforge/rapier3d-compat': 0.12.0
       '@tweenjs/tween.js': 23.1.3
       '@types/stats.js': 0.17.4
       '@types/webxr': 0.5.24
-      '@webgpu/types': 0.1.74
       fflate: 0.8.3
-      meshoptimizer: 1.0.1
+      meshoptimizer: 1.1.1
 
   '@types/tough-cookie@4.0.5': {}
 
@@ -8054,8 +8029,6 @@ snapshots:
       vite: 6.4.5(@types/node@24.19.2)
     transitivePeerDependencies:
       - supports-color
-
-  '@webgpu/types@0.1.74': {}
 
   '@xobotyi/scrollbar-width@1.9.5': {}
 
@@ -8205,21 +8178,11 @@ snapshots:
     dependencies:
       possible-typed-array-names: 1.1.0
 
-  axios@1.21.0(debug@4.4.3(supports-color@5.5.0))(supports-color@5.5.0):
+  axios@1.21.1(debug@4.4.3(supports-color@5.5.0))(supports-color@5.5.0):
     dependencies:
       follow-redirects: 1.16.3(debug@4.4.3(supports-color@5.5.0))
       form-data: 4.0.6
       https-proxy-agent: 5.0.1(supports-color@5.5.0)
-      proxy-from-env: 2.1.0
-    transitivePeerDependencies:
-      - debug
-      - supports-color
-
-  axios@1.21.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1):
-    dependencies:
-      follow-redirects: 1.16.3(debug@4.4.3(supports-color@8.1.1))
-      form-data: 4.0.6
-      https-proxy-agent: 5.0.1(supports-color@8.1.1)
       proxy-from-env: 2.1.0
     transitivePeerDependencies:
       - debug
@@ -8496,8 +8459,6 @@ snapshots:
   commander@15.1.0: {}
 
   commondir@1.0.1: {}
-
-  complex-esm@2.1.1-esm1: {}
 
   complex.js@2.4.3: {}
 
@@ -9118,7 +9079,7 @@ snapshots:
 
   express-async-handler@1.2.0: {}
 
-  express-rate-limit@8.7.3(express@5.3.0(supports-color@8.1.1))(supports-color@8.1.1):
+  express-rate-limit@8.7.4(express@5.3.0(supports-color@8.1.1))(supports-color@8.1.1):
     dependencies:
       debug: 4.4.3(supports-color@8.1.1)
       express: 5.3.0(supports-color@8.1.1)
@@ -9718,8 +9679,6 @@ snapshots:
   ignore-by-default@1.0.1: {}
 
   ignore@5.3.2: {}
-
-  immer@10.2.0: {}
 
   import-fresh@3.3.1:
     dependencies:
@@ -10405,9 +10364,7 @@ snapshots:
       tiny-emitter: 2.1.0
       typed-function: 4.2.2
 
-  mathlive@0.110.0:
-    dependencies:
-      '@cortex-js/compute-engine': 0.58.0
+  mathlive@0.111.4: {}
 
   mdast-util-from-markdown@2.1.0(supports-color@5.5.0):
     dependencies:
@@ -10522,7 +10479,7 @@ snapshots:
 
   merge-stream@2.0.0: {}
 
-  meshoptimizer@1.0.1: {}
+  meshoptimizer@1.1.1: {}
 
   methods@1.1.2: {}
 
@@ -11634,7 +11591,7 @@ snapshots:
 
   slash@3.0.0: {}
 
-  slate-dom@0.117.4(slate@0.117.2):
+  slate-dom@0.147.3(slate@0.147.4):
     dependencies:
       '@juggle/resize-observer': 3.4.0
       direction: 1.0.4
@@ -11642,15 +11599,14 @@ snapshots:
       is-plain-object: 5.1.0
       lodash: 4.18.1
       scroll-into-view-if-needed: 3.1.0
-      slate: 0.117.2
+      slate: 0.147.4
       tiny-invariant: 1.3.1
 
-  slate-history@0.113.1(slate@0.117.2):
+  slate-history@0.144.0(slate@0.147.4):
     dependencies:
-      is-plain-object: 5.1.0
-      slate: 0.117.2
+      slate: 0.147.4
 
-  slate-react@0.117.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(slate-dom@0.117.4(slate@0.117.2))(slate@0.117.2):
+  slate-react@0.147.5(@types/react@19.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(slate-dom@0.147.3(slate@0.147.4))(slate@0.147.4):
     dependencies:
       '@juggle/resize-observer': 3.4.0
       direction: 1.0.4
@@ -11659,14 +11615,13 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       scroll-into-view-if-needed: 3.1.0
-      slate: 0.117.2
-      slate-dom: 0.117.4(slate@0.117.2)
+      slate: 0.147.4
+      slate-dom: 0.147.3(slate@0.147.4)
       tiny-invariant: 1.3.1
+    optionalDependencies:
+      '@types/react': 19.3.0
 
-  slate@0.117.2:
-    dependencies:
-      immer: 10.2.0
-      tiny-warning: 1.0.3
+  slate@0.147.4: {}
 
   solid-js@1.9.18:
     dependencies:
@@ -11964,15 +11919,13 @@ snapshots:
 
   text-table@0.2.0: {}
 
-  three@0.183.2: {}
+  three@0.187.0: {}
 
   throttle-debounce@3.0.1: {}
 
   tiny-emitter@2.1.0: {}
 
   tiny-invariant@1.3.1: {}
-
-  tiny-warning@1.0.3: {}
 
   tinyglobby@0.2.17:
     dependencies:
