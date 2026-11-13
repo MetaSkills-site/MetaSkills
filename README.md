@@ -378,11 +378,6 @@ Student ability and question complexity are modeled on a shared continuous Elo s
   Classified into intuitive bands: **Easy** ($\le 35$), **Medium** ($36 - 60$), **Hard** ($61 - 80$), and **Very Hard** ($> 80$).
 
 ---
-
-### 🎮 Pedagogical Feature Matrix & Quest Log
-
-- [x] **🎓
-
 ## 🚀 Quick Start
 
 ### Prerequisites
