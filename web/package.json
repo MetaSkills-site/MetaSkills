@@ -65,7 +65,7 @@
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "@types/three": "^0.183.1",
-    "@vitejs/plugin-react": "^4.4.1",
+    "@vitejs/plugin-react": "^6.3.0",
     "babel-plugin-styled-components": "^2.1.4",
     "concurrently": "^9.1.2",
     "eslint": "^9.27.0",
