@@ -23,6 +23,7 @@
 import { Outlet } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import ConsentBanner from "./components/common/ConsentBanner";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 /**
  * App component: Main container for the application UI.
@@ -50,6 +51,7 @@ function App() {
         <Outlet />
       </main>
       <ConsentBanner />
+      <SpeedInsights />
     </>
   );
 }
