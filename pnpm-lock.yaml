@@ -230,8 +230,8 @@ importers:
         specifier: ^8.16.1
         version: 8.24.8(supports-color@8.1.1)
       openai:
-        specifier: ^6.29.0
-        version: 6.49.0(ws@8.22.2)
+        specifier: ^7.54.0
+        version: 7.54.0(google-auth-library@10.9.1(supports-color@8.1.1))(ws@8.22.2)
     devDependencies:
       '@eslint/js':
         specifier: ^9.14.0
@@ -4725,13 +4725,16 @@ packages:
     resolution: {integrity: sha512-uxyNYDsCh5YIJ780G7hC5OHjVUr9reHsbZNMM80L9tZlTpb3hUzb36KXgW4ZUGtJKQnGA3xegmWg1BxhWV0jJA==}
     hasBin: true
 
-  openai@6.49.0:
-    resolution: {integrity: sha512-aYCc0C6L864eR6WSYIwQGyXriw/nIyZx0ObvhzOEVuk0zoBDpynjSbrionWI7q65B5H8jJX0DXR9snEzM6bfPg==}
+  openai@7.54.0:
+    resolution: {integrity: sha512-1fKNSPuyR4xIhivt69u6eW9bDZ2hzzNa9PAnQ1rYhr9DWqjrl6OUIKMBmKWT3vCT0XoGkjdP/I0nXZmRYRsazw==}
+    engines: {node: '>=22.0.0'}
     peerDependencies:
       '@aws-sdk/credential-provider-node': '>=3.972.0 <4'
       '@smithy/hash-node': '>=4.3.0 <5'
       '@smithy/signature-v4': '>=5.4.0 <6'
-      ws: ^8.18.0
+      google-auth-library: '>=9.15.1 <12'
+      undici: '>=5 <9'
+      ws: ^8.21.0
       zod: ^3.25 || ^4.0
     peerDependenciesMeta:
       '@aws-sdk/credential-provider-node':
@@ -4739,6 +4742,10 @@ packages:
       '@smithy/hash-node':
         optional: true
       '@smithy/signature-v4':
+        optional: true
+      google-auth-library:
+        optional: true
+      undici:
         optional: true
       ws:
         optional: true
@@ -10932,8 +10939,9 @@ snapshots:
     dependencies:
       which-pm-runs: 1.1.0
 
-  openai@6.49.0(ws@8.22.2):
+  openai@7.54.0(google-auth-library@10.9.1(supports-color@8.1.1))(ws@8.22.2):
     optionalDependencies:
+      google-auth-library: 10.9.1(supports-color@8.1.1)
       ws: 8.22.2
 
   opencollective-postinstall@2.0.3: {}
