@@ -28,7 +28,7 @@
     "express-async-handler": "^1.2.0",
     "express-rate-limit": "^8.2.1",
     "google-auth-library": "^10.5.0",
-    "googleapis": "^170.1.0",
+    "googleapis": "^189.0.0",
     "jsonwebtoken": "^9.0.2",
     "mathjs": "^15.1.0",
     "mongoose": "^8.16.1",
